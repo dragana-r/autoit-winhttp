@@ -1,0 +1,34 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+    <head>
+        <title>Intro</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    </head>
+    <body>
+        <p>WinHTTP-UDFs and this helpfile are created by trancexx and ProgAndy. Current version is 0.0.0.0.</p>
+        <h2>About WinHTTP <i>(MSDN)</i></h2>
+        <p>Microsoft Windows HTTP Services (WinHTTP) provides developers with a server-supported, high-level interface to the HTTP/1.1 Internet protocol. WinHTTP is designed to be used primarily in server-based scenarios by server applications that communicate with HTTP servers.</p>
+        <p>WinHTTP is also designed for use in system services and HTTP-based client applications. WinHTTP is more secure and robust than WinINet. However, single-user applications that require FTP or Gopher protocol functionality, cookie persistence, caching, automatic credential dialog handling, Internet Explorer compatibility, or downlevel platform support should consider using WinInet.</p>
+        <p class="note"><strong>Caution</strong>&nbsp;&nbsp;WinHTTP is not reentrant except during asynchronous completion callback. That is, while a thread has a call pending to one of the WinHTTP functions such as WinHttpSendRequest, WinHttpReceiveResponse, WinHttpQueryDataAvailable, WinHttpSendData, or WinHttpWriteData, it must never call WinHTTP a second time until the first call has completed. One scenario under which a second call could occur is as follows: If an application queues an Asynchronous Procedure Call (APC) to the thread that calls into WinHTTP, and if WinHTTP performs an alertable wait internally, the APC can run. If the APC routine happens also to call WinHTTP, it reenters the WinHTTP API, and the internal state of WinHTTP can be corrupted.</p>
+        <h3><a id="winhttp_5.1_features"><!----></a>WinHTTP 5.1 Features</h3>
+        <p>The following features have been added in version 5.1 of WinHTTP:</p>
+        <ul>
+            <li>IPv6 support.</li>
+            <li>AutoProxy capabilities.</li>
+            <li>HTTP/1.0 protocol, including support for keep-alive (persistent) connections and session cookies.</li>
+            <li>HTTP/1.1 chunked transfer support for HTTP responses.</li>
+            <li>Keep-alive pooling of anonymous connections across sessions.</li>
+            <li>Secure Sockets Layer (SSL) functionality, including client certificates. Supported SSL protocols include the following: SSL 2.0, SSL 3.0, and Transport Layer Security (TLS) 1.0.</li>
+            <li>Support for server and proxy authentication, including integrated support for Microsoft Passport 1.4 and the Negotiate/ <a id="ctl00_MTCS_main_ctl05" href="http://msdn.microsoft.com/en-us/library/ms690406%28VS.85%29.aspx">Kerberos</a> package.</li>
+            <li>Automatic handling of redirects unless suppressed.</li>
+            <li>Scriptable interface in addition to the API.</li>
+            <li>Trace utility to help troubleshoot problems.</li>
+        </ul>
+        <p>A number of <a id="ctl00_MTCS_main_ctl06" href="http://msdn.microsoft.com/en-us/library/aa385331%28VS.85%29.aspx">WinINet</a> features are not supported in WinHTTP, including URL caching and persistent cookies, autoproxy, autodialing, offline support, File Transfer Protocol (FTP), and the Gopher protocol.</p>
+        <p>For more information about changes introduced in version 5.1, see <a id="ctl00_MTCS_main_ctl07" href="http://msdn.microsoft.com/en-us/library/aa384086%28VS.85%29.aspx">What's New in WinHTTP 5.1</a>.</p>
+        <p>&nbsp;</p>
+        <p>&nbsp;</p>
+        <p>&nbsp;</p>
+        <p>&nbsp;</p>
+    </body>
+</html>
