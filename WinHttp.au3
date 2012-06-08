@@ -6,7 +6,7 @@
 ; #INDEX# ===================================================================================
 ; Title ...............: WinHttp
 ; File Name............: WinHttp.au3
-; File Version.........: 1.6.2.6
+; File Version.........: 1.6.2.4
 ; Min. AutoIt Version..: v3.3.2.0
 ; Description .........: AutoIt wrapper for WinHttp functions
 ; Author... ...........: trancexx, ProgAndy
@@ -1177,15 +1177,13 @@ Func _WinHttpSimpleFormFill(ByRef $hInternet, $sActionPage = Default, $sFormId =
 		If Not $sMethod Then $sMethod = "GET"
 		$aCrackURL = _WinHttpCrackUrl($sAction)
 		If @error Then
-			If $sAction Then
-				If StringLeft($sAction, 1) <> "/" Then
-					Local $sCurrent
-					Local $aURL = StringRegExp($sActionPage, '(.*)/', 3)
-					If Not @error Then $sCurrent = $aURL[0]
-					If $sCurrent Then $sAction = $sCurrent & "/" & $sAction
-				EndIf
-				If StringLeft($sAction, 1) = "?" Then $sAction = $sActionPage & $sAction
+			If StringLeft($sAction, 1) <> "/" Then
+				Local $sCurrent
+				Local $aURL = StringRegExp($sActionPage, '(.*)/', 3)
+				If Not @error Then $sCurrent = $aURL[0]
+				If $sCurrent Then $sAction = $sCurrent & "/" & $sAction
 			EndIf
+			If StringLeft($sAction, 1) = "?" Then $sAction = $sActionPage & $sAction
 			If Not $sAction Then $sAction = $sActionPage
 			$sAction = StringRegExpReplace($sAction, "\A(/*\.\./)*", "") ; /../
 		Else
