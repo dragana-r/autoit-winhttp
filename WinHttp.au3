@@ -1205,7 +1205,8 @@ Func _WinHttpSimpleFormFill(ByRef $hInternet, $sActionPage = Default, $sFormId =
 				For $i = 0 To UBound($aInput) - 1 ; for all input elements
 					__WinHttpFormAttrib($aInputIds, $i, $aInput[$i])
 					If $aInputIds[1][$i] Then ; if there is 'name' field then add it
-						$sAddData &= $aInputIds[1][$i] & "=" & $aInputIds[2][$i] & "&"
+						$aInputIds[2][$i] = __WinHttpURLEncode($aInputIds[2][$i])
+                        $sAddData &= $aInputIds[1][$i] & "=" & $aInputIds[2][$i] & "&"
 						If $aInputIds[3][$i] = "submit" Then $sSubmit &= $aInputIds[1][$i] & "=" & $aInputIds[2][$i] & $sGrSep ; add to overall "submit" string
 						If $aInputIds[3][$i] = "radio" Then $sRadio &= $aInputIds[1][$i] & "=" & $aInputIds[2][$i] & $sGrSep ; add to overall "radio" string
 						If $aInputIds[3][$i] = "checkbox" Then $sCheckBox &= $aInputIds[1][$i] & "=" & $aInputIds[2][$i] & $sGrSep ; add to overall "checkbox" string
