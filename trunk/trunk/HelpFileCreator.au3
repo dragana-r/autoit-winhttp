@@ -432,7 +432,7 @@ Func _CHM_WriteHomePage($sHomePage, $sLogoPic, $sWorkingFolder)
 			"    <body>" & @CRLF & _
 			"        <h1>" & $sName & "</h1>" & @CRLF & _
 			'        <p align="center"><img src="Images/' & StringRegExpReplace($sLogoPic, ".*\\", "") & '" width="400" height="150" border="0" alt=""></p>' & @CRLF & _
-			"        <p>Welcome to the helpfile of <strong>" & $sName & "!</strong><br>" & @CRLF & _
+			"        <br><p>Welcome to the helpfile of <strong>" & $sName & "!</strong><br>" & @CRLF & _
 			"<!--Start passed content-->" & @CRLF & _
 			$sHomePage & @CRLF & _
 			"<!--End passed content-->" & @CRLF & _
