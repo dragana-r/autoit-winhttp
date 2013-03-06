@@ -23,10 +23,10 @@ Global Const $CHM_FOLDERSUFFIX = "_Help"
 #XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 ; These eight global variables define the help file
 Global $sChangeLogFile = ""
-Global $sHomeLink = "http://winhttp.origo.ethz.ch/"
+Global $sHomeLink = "http://code.google.com/p/autoit-winhttp/"
 Global $sHomePage = @ScriptDir & "\Home.htm"
 Global $sLogoPic = @ScriptDir & "\WinHttp.png"
-Global $sGradientPic = @ScriptDir & "\gradient_1024x24.jpg"
+Global $sCssFile = @ScriptDir & "\default1.css"
 Global $sFile = @ScriptDir & "\WinHttp.au3"
 Global $sExamplesFolder = @ScriptDir & "\WinHttp_Examples"
 Global Const $sCurrentVersionNumber = _GetVersionNumber($sFile)
@@ -41,7 +41,7 @@ _CHM_WriteIndex($sWorkingFolder, $aFunctions)
 _CHM_WriteTOC($sChangeLogFile, $sWorkingFolder, $aFunctions)
 Global $sHHPFile = _WriteHHP($sWorkingFolder, $aFunctions, $sHomeLink)
 _CHM_WriteFUNC($sFile, $sWorkingFolder)
-_CHM_WriteHomePage($sHomePage, $sLogoPic, $sGradientPic, $sWorkingFolder)
+_CHM_WriteHomePage($sHomePage, $sLogoPic, $sWorkingFolder)
 
 Global Const $hCHMDLL__HHADLL = _CHM_HHAdll()
 If $hCHMDLL__HHADLL = -1 Then
@@ -99,20 +99,20 @@ Func _CHM_UDFToHTMPages($sFileUDF, ByRef $aFunctions, $sFolder = Default)
 				"    </head>" & @CRLF & @CRLF & _
 				"    <body>" & @CRLF & @CRLF
 		$sHTM &= "<!--Description Section-->" & @CRLF
-		$sHTM &= "        <h1>Function Reference</h1>" & @CRLF & _
-				'        <font size="+1">' & $sFunctionName & '</font>' & @CRLF & _
+		$sHTM &= '        <h1 class="small">Function Reference</h1>' & @CRLF & _
+				'        <h1>' & $sFunctionName & '</h1>' & @CRLF & _
 				'        <hr style="height:0px">' & @CRLF & _
 				"        <p>" & _CHM_GetHeaderData($aHeaders[$j], "Description") & "<br></p>" & @CRLF & @CRLF
 
 		$sHTM &= "<!--Syntax Section-->" & @CRLF
+		$sHTM &= "        <h2>Syntax</h2>" & @CRLF & "        <p>"
 		$sHTM &= '        <p class="codeheader">' & @CRLF & _
 				'        #Include "' & $sInclude & '"<br>' & @CRLF & _
 				"        " & _CHM_GetHeaderData($aHeaders[$j], "Syntax") & "<br>" & @CRLF & _
-				"        </p>" & @CRLF & _
-				"        <p>&nbsp;</p>" & @CRLF & @CRLF
+				"        </p>" & @CRLF & @CRLF
 
 		$sHTM &= "<!--Parameters Section-->" & @CRLF
-		$sHTM &= "        <p><b>Parameters</b></p>" & @CRLF
+		$sHTM &= "        <h2>Parameters</h2>" & @CRLF
 		$sParams = _CHM_GetHeaderData($aHeaders[$j], "Parameters")
 		If StringLeft(StringStripWS($sParams, 8), 4) = "none" Or Not $sParams Then
 			$sHTM &= "        <p>&nbsp;None.</p><br>" & @CRLF & @CRLF
@@ -131,25 +131,24 @@ Func _CHM_UDFToHTMPages($sFileUDF, ByRef $aFunctions, $sFolder = Default)
 
 				EndIf
 			Next
-			$sHTM &= "        </table>" & @CRLF & _
-					"        <p>&nbsp;</p>" & @CRLF & @CRLF
+			$sHTM &= "        </table>" & @CRLF & @CRLF
 		EndIf
 
 		$sHTM &= "<!--Return Value Section-->" & @CRLF
-		$sHTM &= "        <p><b>Return Value</b></p>" & @CRLF & "        <p>"
+		$sHTM &= "        <h2>Return Value</h2>" & @CRLF & "        <p>"
 		$sHTM &= StringReplace(StringStripCR(StringReplace(StringRegExpReplace(StringRegExpReplace(_CHM_GetHeaderData($aHeaders[$j], "Return values"), ";\h*", "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"), "(\Q&nbsp;\E)+\QFailure\E", "Failure"), "|", "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;")), @LF, "<br>" & @CRLF & "        ") & "</p>"
-		$sHTM &= @CRLF & "        <p>&nbsp;</p>" & @CRLF & @CRLF
+		$sHTM &= @CRLF & @CRLF
 
 		$sHTM &= "<!--Remarks Section-->" & @CRLF
 		$sRemarks = _CHM_GetHeaderData($aHeaders[$j], "Remarks")
-		If Not $sRemarks Then $sRemarks = "None."
-		$sHTM &= "        <p><b>Remarks</b></p>" & @CRLF & _
-				"        <p>" & StringReplace(StringRegExpReplace(StringRegExpReplace($sRemarks, ";\h*\+", "<br>"), ";\h*", ""), "|", "<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;") & "</p>" & @CRLF & _
-				"        <br>" & @CRLF & _
-				"        <p>&nbsp;</p>" & @CRLF & @CRLF
+		If $sRemarks Then
+			$sHTM &= "        <h2>Remarks</h2>" & @CRLF & _
+					"        <p>" & StringReplace(StringRegExpReplace(StringRegExpReplace($sRemarks, ";\h*\+", "<br>"), ";\h*", ""), "|", "<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;") & "</p>" & @CRLF & _
+					"        <br>" & @CRLF & @CRLF
+		EndIf
 
 		$sHTM &= "<!--Related Section-->" & @CRLF
-		$sHTM &= "        <p><b>Related</b></p>"
+		$sHTM &= "        <h2>Related</h2>"
 		$sRelated = _CHM_GetHeaderData($aHeaders[$j], "Related")
 		$aRelated = StringRegExp($sRelated, "\h*(\w+)\h*(?:\,|\Z)", 3)
 		For $i = 0 To UBound($aRelated) - 1
@@ -160,29 +159,28 @@ Func _CHM_UDFToHTMPages($sFileUDF, ByRef $aFunctions, $sFolder = Default)
 				$sHTM &= ", "
 			EndIf
 		Next
-		$sHTM &= "        <br>" & @CRLF & _
-				"        <p>&nbsp;</p>" & @CRLF & @CRLF
+		$sHTM &= "        <br>" & @CRLF & @CRLF
 
 		$sHTM &= "<!--Link Section-->" & @CRLF
-		$sHTM &= "        <p><b>See Also</b></p>" & @CRLF
 		$sLink = _CHM_GetHeaderData($aHeaders[$j], "Link")
-		If $sLink Then $sHTM &= '        <a title="External link" href="' & $sLink & '">MSDN</a>' & @CRLF & @CRLF ; MSDN as visible text
-
-		$sHTM &= "        <br>" & @CRLF & _
-				"        <p>&nbsp;</p>" & @CRLF & @CRLF
+		If $sLink Then
+			$sHTM &= "        <h2>See Also</h2>" & @CRLF
+			$sHTM &= '        <a title="External link" href="' & $sLink & '">MSDN</a>' & @CRLF & @CRLF ; MSDN as visible text
+			$sHTM &= "        <br>" & @CRLF & @CRLF
+		EndIf
 
 		$sHTM &= "<!--Example Section-->" & @CRLF
-		$sHTM &= "        <p><b>Example</b></p>" & @CRLF
+		$sHTM &= "        <h2>Example</h2>" & @CRLF
 		$sAu3File = $sExamplesFolder & "\" & $sFunctionName & ".au3"
 		If FileExists($sAu3File) Then
 			$sAu3Code = FileRead($sAu3File)
 			If StringStripWS($sAu3Code, 8) Then
 				$sInnerCode = '<a class="button" ' & _
-						'onmouseover="this.style.color=&quot;#FFFFFF&quot;;this.style.background=&quot;#999999&quot;; "' & _
-						'onmouseout="this.style.color=&quot;#000066&quot;;this.style.background=&quot;#E9E9E9&quot;; ToolTip.style.visibility=&quot;hidden&quot;"' & _
+						'onmouseover="this.style.color=&quot;#fff&quot;;this.style.background=&quot;#999&quot;; "' & _
+						'onmouseout="this.style.color=&quot;#444&quot;;this.style.background=&quot;#E9E9E9&quot;; ToolTip.style.visibility=&quot;hidden&quot;"' & _
 						'onclick="clipboardData.setData(&quot;Text&quot;, au3code.innerText); ' & _
 						'         ToolTip.innerHTML=&quot;<table><tr><td class=tooltip>Copied!&lt;/td>&lt;/tr>&lt;/table>&quot;; ' & _
-						'         ToolTip.style.pixelLeft=(event.x-125+document.body.scrollLeft); ' & _
+						'         ToolTip.style.pixelLeft=(event.x+20+document.body.scrollLeft); ' & _
 						'         ToolTip.style.pixelTop=(event.y+15+document.body.scrollTop); ' & _
 						'         ToolTip.style.visibility=&quot;visible&quot;; ' & _
 						'         setTimeout(&#39;ToolTip.style.visibility=&quot;hidden&quot;&#39;, 1200);' & _
@@ -192,7 +190,9 @@ Func _CHM_UDFToHTMPages($sFileUDF, ByRef $aFunctions, $sFolder = Default)
 						"document.write('" & $sInnerCode & "');" & @CRLF & _
 						'        </script>' & @CRLF
 				$sHTM &= '        <div id="ToolTip" class="tip"></div>' & @CRLF
-			    $sHTM &= _CHM_SyntaxHighlight($sAu3Code) & "</p>"
+
+				$sHTM &= _CHM_SyntaxHighlight($sAu3Code) & "</p>" & @CRLF
+
 			EndIf
 		EndIf
 
@@ -200,7 +200,7 @@ Func _CHM_UDFToHTMPages($sFileUDF, ByRef $aFunctions, $sFolder = Default)
 				"        <p>&nbsp;</p>" & @CRLF & @CRLF
 
 		$sHTM &= "<!--Footer Section-->" & @CRLF
-		$sHTM &= '        <img src="../Images/gradient_1024x24.jpg" width="100%" height="1" alt="">' & @CRLF & _
+		$sHTM &= '<hr style="height:0px">' & @CRLF & _
 				"        <p>" & $sName & "</p>" & @CRLF
 		$sHTM &= "    </body>" & @CRLF & _
 				"</html>" & @CRLF
@@ -224,279 +224,7 @@ EndFunc   ;==>_CHM_GetHeaderData
 
 
 Func _CHM_WriteDefaultCSS($sWorkingFolder)
-	Local $sCSS = "body {" & @CRLF & _
-			"background-color : #ffffff;" & @CRLF & _
-			'font-family : Verdana, Arial, Helvetica, sans-serif, "MS sans serif";' & @CRLF & _
-			"font-size : x-small;" & @CRLF & _
-			"font-weight : normal;" & @CRLF & _
-			"color : #000000;" & @CRLF & _
-			"}" & @CRLF & @CRLF
-
-	$sCSS &= "table {" & @CRLF & _
-			'font-family : Verdana, Arial, Helvetica, sans-serif, "MS sans serif";' & @CRLF & _
-			"font-size : x-small;" & @CRLF & _
-			"}" & @CRLF & @CRLF
-	$sCSS &= "table.paramstable {" & @CRLF & _
-			"width : 100%;" & @CRLF & _
-			"padding : 0;" & @CRLF & _
-			"border-collapse : collapse;" & @CRLF & _
-			"border : 2px solid #c0c0c0;" & @CRLF & _
-			"}" & @CRLF & @CRLF
-	$sCSS &= "tr {" & @CRLF & _
-			'font-family : Verdana, Arial, Helvetica, sans-serif, "MS sans serif";' & @CRLF & _
-			"font-size : x-small;" & @CRLF & _
-			"border : 2px solid #c0c0c0;" & @CRLF & _
-			"height : 22px;" & @CRLF & _
-			"}" & @CRLF & @CRLF
-	$sCSS &= "td {" & @CRLF & _
-			'font-family : Verdana, Arial, Helvetica, sans-serif, "MS sans serif";' & @CRLF & _
-			"font-size : x-small;" & @CRLF & _
-			"border : 2px solid #c0c0c0;" & @CRLF & _
-			"height : 22px;" & @CRLF & _
-			"padding : 0px 2px;" & @CRLF & _
-			"}" & @CRLF & @CRLF
-	$sCSS &= "td.leftpane {" & @CRLF & _
-			"width: 15%;" & @CRLF & _
-			"}" & @CRLF & @CRLF
-	$sCSS &= "td.rightpane {" & @CRLF & _
-			"width: 85%;" & @CRLF & _
-			"}" & @CRLF & @CRLF
-	$sCSS &= "td.leftfuncpane {" & @CRLF & _
-			"background-color: #0000cc;" & @CRLF & _
-			"height: 16px;" & @CRLF & _
-			"width: 25%;" & @CRLF & _
-			"}" & @CRLF & @CRLF
-	$sCSS &= "td.rightfuncpane {" & @CRLF & _
-			"background-color: #0000cc;" & @CRLF & _
-			"height: 16px;" & @CRLF & _
-			"width: 75%;" & @CRLF & _
-			"}" & @CRLF & @CRLF
-	$sCSS &= "td.tooltip {" & @CRLF & _
-			"border-width: 0px;" & @CRLF & _
-			"font-size : large;" & @CRLF & _
-			"font-style : italic;" & @CRLF & _
-			"text-align: center;" & @CRLF & _
-			"width: 120px;" & @CRLF & _
-			"}" & @CRLF & @CRLF
-
-	$sCSS &= "div {" & @CRLF & _
-			'font-family : Verdana, Arial, Helvetica, sans-serif, "MS sans serif";' & @CRLF & _
-			"}" & @CRLF & @CRLF
-	$sCSS &= "div.tip {" & @CRLF & _
-			"background-color: #ffffff;" & @CRLF & _
-			"border: 1px solid #103060;" & @CRLF & _
-			"font-size : large;" & @CRLF & _
-			"width: 120px;" & @CRLF & _
-			"position: absolute;" & @CRLF & _
-			"top: 0px;" & @CRLF & _
-			"left: 0px;" & @CRLF & _
-			"visibility: hidden;" & @CRLF & _
-			"}" & @CRLF & @CRLF
-
-	$sCSS &= "b {" & @CRLF & _
-			"font-weight : bold;" & @CRLF & _
-			"}" & @CRLF & @CRLF
-	$sCSS &= "p {" & @CRLF & _
-			'font-family : Verdana, Arial, Helvetica, sans-serif, "MS sans serif";' & @CRLF & _
-			"line-height : normal;" & @CRLF & _
-			"margin-top : 0.5em;" & @CRLF & _
-			"margin-bottom : 0.5em;" & @CRLF & _
-			"}" & @CRLF & @CRLF
-	$sCSS &= "a {" & @CRLF & _
-			'font-family : Verdana, Arial, Helvetica, sans-serif, "MS sans serif";' & @CRLF & _
-			"text-decoration : none;" & @CRLF & _
-			"}" & @CRLF & @CRLF
-
-	$sCSS &= "a:link {" & @CRLF & _
-			'font-family : Verdana, Arial, Helvetica, sans-serif, "MS sans serif";' & @CRLF & _
-			"text-decoration : none;" & @CRLF & _
-			"color : #000099;" & @CRLF & _
-			"}" & @CRLF & @CRLF
-	$sCSS &= "a:visited {" & @CRLF & _
-			'font-family : Verdana, Arial, Helvetica, sans-serif, "MS sans serif";' & @CRLF & _
-			"text-decoration : none;" & @CRLF & _
-			"color : #000088;" & @CRLF & _
-			"}" & @CRLF & @CRLF
-	$sCSS &= "a:active {" & @CRLF & _
-			'font-family : Verdana, Arial, Helvetica, sans-serif, "MS sans serif";' & @CRLF & _
-			"text-decoration : none;" & @CRLF & _
-			"color : #000099;" & @CRLF & _
-			"}" & @CRLF & @CRLF
-	$sCSS &= "a:hover {" & @CRLF & _
-			'font-family : Verdana, Arial, Helvetica, sans-serif, "MS sans serif";' & @CRLF & _
-			"text-decoration : underline;" & @CRLF & _
-			"color : #6666cc;" & @CRLF & _
-			"}" & @CRLF & @CRLF
-	$sCSS &= "a.ext:link {" & @CRLF & _
-			'font-family : Verdana, Arial, Helvetica, sans-serif, "MS sans serif";' & @CRLF & _
-			"text-decoration : none;" & @CRLF & _
-			"color : #990000;" & @CRLF & _
-			"}" & @CRLF & @CRLF
-	$sCSS &= "a.ext:visited {" & @CRLF & _
-			'font-family : Verdana, Arial, Helvetica, sans-serif, "MS sans serif";' & @CRLF & _
-			"text-decoration : none;" & @CRLF & _
-			"color : #880000;" & @CRLF & _
-			"}" & @CRLF & @CRLF
-	$sCSS &= "a.ext:active {" & @CRLF & _
-			'font-family : Verdana, Arial, Helvetica, sans-serif, "MS sans serif";' & @CRLF & _
-			"text-decoration : none;" & @CRLF & _
-			"color : #990000;" & @CRLF & _
-			"}" & @CRLF & @CRLF
-	$sCSS &= "a.ext:hover {" & @CRLF & _
-			'font-family : Verdana, Arial, Helvetica, sans-serif, "MS sans serif";' & @CRLF & _
-			"text-decoration : underline;" & @CRLF & _
-			"color : #cc6666;" & @CRLF & _
-			"}" & @CRLF & @CRLF
-
-	$sCSS &= "a.button {" & @CRLF & _
-	        "float:right;" & @CRLF & _
-			"padding:4px;" & @CRLF & _
-			"margin:-12 10px 10px 0;" & @CRLF & _
-			"background:#E9E9E9;" & @CRLF & _
-			"border:1px solid #999999;" & @CRLF & _
-			"text-decoration:none;" & @CRLF & _
-			"font-size:10px;" & @CRLF & _
-			"line-height:16px;" & @CRLF & _
-			"text-align:center;" & @CRLF & _
-			"color:#000066;" & @CRLF & _
-			"cursor:hand;" & @CRLF & _
-			"}" & @CRLF & @CRLF
-
-	$sCSS &= "H1 {" & @CRLF & _
-			'font-family : Verdana, Arial, Helvetica, sans-serif, "MS sans serif";' & @CRLF & _
-			"font-size : small;" & @CRLF & _
-			"line-height : normal;" & @CRLF & _
-			"color : #0000aa;" & @CRLF & _
-			"background-image : url('../Images/gradient_1024x24.jpg');" & @CRLF & _
-			"background-repeat : repeat-y;" & @CRLF & _
-			"}" & @CRLF & @CRLF
-	$sCSS &= "H2 {" & @CRLF & _
-			'font-family : Verdana, Arial, Helvetica, sans-serif, "MS sans serif";' & @CRLF & _
-			"font-size : small;" & @CRLF & _
-			"font-weight : bold;" & @CRLF & _
-			"color : #000080;" & @CRLF & _
-			"line-height : normal;" & @CRLF & _
-			"}" & @CRLF & @CRLF
-	$sCSS &= ".code {" & @CRLF & _
-			'font-family : "Courier New", Courier, mono;' & @CRLF & _
-			"font-size : x-small;" & @CRLF & _
-			"white-space : nowrap;" & @CRLF & _
-			"}" & @CRLF & @CRLF
-
-	$sCSS &= ".codeheader {" & @CRLF & _
-			"border-bottom : 1px solid #aaaaaa;" & @CRLF & _
-			"border-left : 1px solid #aaaaaa;" & @CRLF & _
-			"border-right : 1px solid #aaaaaa;" & @CRLF & _
-			"border-top : 1px solid #aaaaaa;" & @CRLF & _
-			"padding-right : 16px;" & @CRLF & _
-			"padding-left : 16px;" & @CRLF & _
-			"padding-bottom : 16px;" & @CRLF & _
-			"padding-top : 16px;" & @CRLF & _
-			"font-size : x-small;" & @CRLF & _
-			'font-family : "Courier New", Courier, Verdana, Arial;' & @CRLF & _
-			"color : #000000;" & @CRLF & _
-			"white-space : normal;" & @CRLF & _
-			"background-color : #ffffaa;" & @CRLF & _
-			"}" & @CRLF & @CRLF
-
-	$sCSS &= ".codebox {" & @CRLF & _
-			"border-bottom : 1px solid #aaaaaa;" & @CRLF & _
-			"border-left : 1px solid #aaaaaa;" & @CRLF & _
-			"border-right : 1px solid #aaaaaa;" & @CRLF & _
-			"border-top : 1px solid #aaaaaa;" & @CRLF & _
-			"padding-right : 8px;" & @CRLF & _
-			"padding-left : 8px;" & @CRLF & _
-			"padding-bottom : 8px;" & @CRLF & _
-			"padding-top : 8px;" & @CRLF & _
-			"font-size : x-small;" & @CRLF & _
-			'font-family : "Courier New", Courier, Verdana, Arial;' & @CRLF & _
-			"color : #465584;" & @CRLF & _
-			"white-space : normal;" & @CRLF & _
-			"background-color : #ffffff;" & @CRLF & _
-			"}" & @CRLF & @CRLF
-
-	$sCSS &= ".S0 {" & @CRLF & _
-			"color : #000000;" & @CRLF & _
-			"background : #ffffff;" & @CRLF & _
-			"}" & @CRLF & @CRLF
-	$sCSS &= ".S1 {" & @CRLF & _
-			"font-style : italic;" & @CRLF & _
-			"color : #009933;" & @CRLF & _
-			"background : #ffffff;" & @CRLF & _
-			"}" & @CRLF & @CRLF
-	$sCSS &= ".S2 {" & @CRLF & _
-			"font-style : italic;" & @CRLF & _
-			"color : #b9b9b9;" & @CRLF & _
-			"background : #ffffff;" & @CRLF & _
-			"}" & @CRLF & @CRLF
-	$sCSS &= ".S3 {" & @CRLF & _
-			"color : #004040;" & @CRLF & _
-			"background : #ffffff;" & @CRLF & _
-			"}" & @CRLF & @CRLF
-	$sCSS &= ".S4 {" & @CRLF & _
-			"font-style : italic;" & @CRLF & _
-			"color : #0000c6;" & @CRLF & _
-			"background : #ffffff;" & @CRLF & _
-			"}" & @CRLF & @CRLF
-	$sCSS &= ".S5 {" & @CRLF & _
-			"color : #0000ff;" & @CRLF & _
-			"background : #ffffff;" & @CRLF & _
-			"}" & @CRLF & @CRLF
-	$sCSS &= ".S6 {" & @CRLF & _
-			"color : #800000;" & @CRLF & _
-			"background : #ffffff;" & @CRLF & _
-			"}" & @CRLF & @CRLF
-	$sCSS &= ".S7 {" & @CRLF & _
-			"color : #ff0000;" & @CRLF & _
-			"background : #ffffff;" & @CRLF & _
-			"}" & @CRLF & @CRLF
-	$sCSS &= ".S8 {" & @CRLF & _
-			"color : #000000;" & @CRLF & _
-			"background : #ffffff;" & @CRLF & _
-			"}" & @CRLF & @CRLF
-	$sCSS &= ".S9 {" & @CRLF & _
-			"color : #5a5a5a;" & @CRLF & _
-			"background : #ffffff;" & @CRLF & _
-			"}" & @CRLF & @CRLF
-	$sCSS &= ".S10 {" & @CRLF & _
-			"color : #d97200;" & @CRLF & _
-			"background : #ffffff;" & @CRLF & _
-			"}" & @CRLF & @CRLF
-	$sCSS &= ".S11 {" & @CRLF & _
-			"font-style : italic;" & @CRLF & _
-			"color : #0000ff;" & @CRLF & _
-			"background : #ffffff;" & @CRLF & _
-			"}" & @CRLF & @CRLF
-	$sCSS &= ".S12 {" & @CRLF & _
-			"font-style : italic;" & @CRLF & _
-			"color : #dc143c;" & @CRLF & _
-			"background : #ffffff;" & @CRLF & _
-			"}" & @CRLF & @CRLF
-	$sCSS &= ".S14 {" & @CRLF & _
-			"font-style : italic;" & @CRLF & _
-			"color : #9933ff;" & @CRLF & _
-			"background : #ffffff;" & @CRLF & _
-			"}" & @CRLF & @CRLF
-	$sCSS &= ".S15 {" & @CRLF & _
-			"font-style : italic;" & @CRLF & _
-			"font-weight : bold;" & @CRLF & _
-			"color : #0080ff;" & @CRLF & _
-			"background : #ffffff;" & @CRLF & _
-			"}" & @CRLF & @CRLF
-	$sCSS &= "span {" & @CRLF & _
-			'font-family : "Courier New";' & @CRLF & _
-			"color : #000000;" & @CRLF & _
-			"background : #ffffff;" & @CRLF & _
-			"}" & @CRLF & @CRLF
-	$sCSS &= ".indented {" & @CRLF & _
-			"padding-left: 50pt;" & @CRLF & _
-			"padding-right: 50pt;" & @CRLF & _
-			"}" & @CRLF & @CRLF
-
-	Local $hFileCSS = FileOpen($sWorkingFolder & "\HTML\CSS\Default1.css", 10)
-	FileWrite($hFileCSS, $sCSS)
-	FileClose($hFileCSS)
-	Return $hFileCSS
+	FileCopy($sCssFile, $sWorkingFolder & "\HTML\CSS\Default1.css", 1)
 EndFunc   ;==>_CHM_WriteDefaultCSS
 
 
@@ -647,8 +375,8 @@ Func _CHM_WriteFUNC($sFileUDF, $sWorkingFolder)
 			"<p>&nbsp;</p>" & @CRLF & _
 			'<table class="paramstable" summary="list of functions">' & @CRLF & _
 			"<tr>" & @CRLF & _
-			'  <td class="leftfuncpane"><font color="#ffffff"><b>' & $sName & ' Function</b></font></td>' & @CRLF & _
-			'  <td class="rightfuncpane"><font color="#ffffff"><b>Description</b></font></td>' & @CRLF & _
+			'  <th width="25%">' & $sName & ' Function</th>' & @CRLF & _
+			'  <th width="75%">Description</th>' & @CRLF & _
 			"</tr>" & @CRLF
 
 	Local $sData = FileRead($sFileUDF)
@@ -669,7 +397,7 @@ Func _CHM_WriteFUNC($sFileUDF, $sWorkingFolder)
 	$sHTM &= "<br>" & @CRLF & _
 			"<p>&nbsp;</p>" & @CRLF & @CRLF
 
-	$sHTM &= '<img src="../Images/gradient_1024x24.jpg" width="100%" height="1" alt="">' & @CRLF & _
+	$sHTM &= '<hr style="height:0px">' & @CRLF & _
 			"<p>" & $sName & "</p>" & @CRLF
 	$sHTM &= "</body>" & @CRLF & _
 			"</html>" & @CRLF
@@ -682,7 +410,7 @@ Func _CHM_WriteFUNC($sFileUDF, $sWorkingFolder)
 EndFunc   ;==>_CHM_WriteFUNC
 
 
-Func _CHM_WriteHomePage($sHomePage, $sLogoPic, $sGradientPic, $sWorkingFolder)
+Func _CHM_WriteHomePage($sHomePage, $sLogoPic, $sWorkingFolder)
 	Local $sName = StringReplace(StringRegExpReplace($sWorkingFolder, ".*\\", ""), $CHM_FOLDERSUFFIX, "")
 	If FileExists($sHomePage) Then
 		$sHomePage = FileRead($sHomePage)
@@ -692,7 +420,6 @@ Func _CHM_WriteHomePage($sHomePage, $sLogoPic, $sGradientPic, $sWorkingFolder)
 		$sHomePage = ""
 	EndIf
 	If FileExists($sLogoPic) Then FileCopy($sLogoPic, $sWorkingFolder & "\HTML\Images\" & StringRegExpReplace($sLogoPic, ".*\\", ""), 9)
-	If FileExists($sGradientPic) Then FileCopy($sGradientPic, $sWorkingFolder & "\HTML\Images\gradient_1024x24.jpg", 9)
 	Local $sHTM = '<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">' & @CRLF & _
 			"<html>" & @CRLF & _
 			"    <head>" & @CRLF & _
@@ -707,7 +434,7 @@ Func _CHM_WriteHomePage($sHomePage, $sLogoPic, $sGradientPic, $sWorkingFolder)
 			"<!--Start passed content-->" & @CRLF & _
 			$sHomePage & @CRLF & _
 			"<!--End passed content-->" & @CRLF & _
-			'        <img src="images/gradient_1024x24.jpg" width="100%" height="1" alt="">' & @CRLF & _
+			'        <hr style="height:0px">' & @CRLF & _
 			"        <p>" & $sName & "</p>" & @CRLF & _
 			"    </body>" & @CRLF & _
 			"</html>" & @CRLF
