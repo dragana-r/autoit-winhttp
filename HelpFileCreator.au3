@@ -416,7 +416,7 @@ Func _CHM_WriteHomePage($sHomePage, $sLogoPic, $sWorkingFolder)
 	Local $sName = StringReplace(StringRegExpReplace($sWorkingFolder, ".*\\", ""), $CHM_FOLDERSUFFIX, "")
 	If FileExists($sHomePage) Then
 		$sHomePage = FileRead($sHomePage)
-		$sHomePage = StringRegExpReplace($sHomePage, "\QCurrent version is \E\d+\.\d+\.(\d+\.)?(\d+?\.)?", 'Current version is ' & $sCurrentVersionNumber)
+		$sHomePage = StringRegExpReplace($sHomePage, "\QCurrent version is \E\d+\.\d+\.(\d+\.)?(\d+?\.)?", 'Current version is <span class="mark_v">' & $sCurrentVersionNumber & "</span>")
 		$sHomePage = StringRegExpReplace($sHomePage, "(?si)(<\s*/*\Qbody\E.*?>|<\s*/*\Qhtml\E.*?>|<\s*head\s*>.*?<\s*/head\s*>|<\s*\Q!DOCTYPE\E.*?>)", "")
 	Else
 		$sHomePage = ""
@@ -427,12 +427,13 @@ Func _CHM_WriteHomePage($sHomePage, $sLogoPic, $sWorkingFolder)
 			"    <head>" & @CRLF & _
 			"        <title>" & $sName & "</title>" & @CRLF & _
 			'        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">' & @CRLF & _
-			'        <link href="CSS/Default1.css" rel="stylesheet" type="text/css">' & @CRLF & _
+			'        <meta http-equiv="X-UA-Compatible" content="IE=9">' & @CRLF & _
+            '        <link href="CSS/Default1.css" rel="stylesheet" type="text/css">' & @CRLF & _
 			"    </head>" & @CRLF & @CRLF & _
 			"    <body>" & @CRLF & _
 			"        <h1>" & $sName & "</h1>" & @CRLF & _
 			'        <p align="center"><img src="Images/' & StringRegExpReplace($sLogoPic, ".*\\", "") & '" width="400" height="150" border="0" alt=""></p>' & @CRLF & _
-			"        <br><p>Welcome to the helpfile of <strong>" & $sName & "!</strong><br>" & @CRLF & _
+			"        <p>Welcome to the helpfile of <strong>" & $sName & "!</strong><br>" & @CRLF & _
 			"<!--Start passed content-->" & @CRLF & _
 			$sHomePage & @CRLF & _
 			"<!--End passed content-->" & @CRLF & _
