@@ -107,7 +107,7 @@ Func _CHM_UDFToHTMPages($sFileUDF, ByRef $aFunctions, $sFolder = Default)
 		$sHTM &= "<!--Syntax Section-->" & @CRLF
 		$sHTM &= "        <h2>Syntax</h2>" & @CRLF & "        <p>"
 		$sHTM &= '        <p class="codeheader">' & @CRLF & _
-				'        #Include "' & $sInclude & '"<br>' & @CRLF & _
+				'        #include "' & $sInclude & '"<br>' & @CRLF & _
 				"        " & _CHM_GetHeaderData($aHeaders[$j], "Syntax") & "<br>" & @CRLF & _
 				"        </p>" & @CRLF & @CRLF
 
