@@ -314,7 +314,7 @@ h3
 
 .code
 {
-	font-family:"Courier New", Courier, mono;
+	font-family:Consolas, "Courier New", Courier, mono;
 	font-size:12px;
 	white-space:nowrap;
 }
@@ -327,7 +327,7 @@ h3
 	border-right:1px solid #aaa;
 	border-top:1px solid #aaa;
 	color:#000;
-	font-family:"Courier New", Courier, Verdana, Arial;
+	font-family:Consolas, "Courier New", Courier, Verdana, Arial;
 	font-size:12px;
 	padding:16px;
 	white-space:normal;
@@ -342,7 +342,7 @@ h3
 	border-right:1px solid #aaa;
 	border-top:1px solid #aaa;
 	color:#465584;
-	font-family:"Courier New", Courier, Verdana, Arial;
+	font-family:Consolas, "Courier New", Courier, Verdana, Arial;
 	font-size:12px;
 	overflow-x:auto;
 	padding:8px 8px 24px;
@@ -452,7 +452,7 @@ span
 {
 	background:#fff;
 	color:#000;
-	font-family:"Courier New";
+	font-family:Consolas, "Courier New";
 }
 
 span.emphasis
