@@ -250,7 +250,7 @@ Func _WinHttpCrackUrl($sURL, $iFlag = Default)
 			"wstr", $sURL, _
 			"dword", $iURLLen, _
 			"dword", $iFlag, _
-			"ptr", DllStructGetPtr($tURL_COMPONENTS))
+			"struct*", $tURL_COMPONENTS)
 	If @error Or Not $aCall[0] Then Return SetError(1, 0, 0)
 	Local $aRet[8] = [DllStructGetData($tBuffers[0], 1), _
 			DllStructGetData($tURL_COMPONENTS, "Scheme"), _
@@ -352,7 +352,7 @@ Func _WinHttpCreateUrl($aURLArray)
 	DllStructSetData($tURL_COMPONENTS, "Scheme", $aURLArray[1])
 	DllStructSetData($tURL_COMPONENTS, "Port", $aURLArray[3])
 	Local $aCall = DllCall($hWINHTTPDLL__WINHTTP, "bool", "WinHttpCreateUrl", _
-			"ptr", DllStructGetPtr($tURL_COMPONENTS), _
+			"struct*", $tURL_COMPONENTS, _
 			"dword", $ICU_ESCAPE, _
 			"ptr", 0, _
 			"dword*", 0)
@@ -360,9 +360,9 @@ Func _WinHttpCreateUrl($aURLArray)
 	Local $iURLLen = $aCall[4]
 	Local $URLBuffer = DllStructCreate("wchar[" & ($iURLLen + 1) & "]")
 	$aCall = DllCall($hWINHTTPDLL__WINHTTP, "bool", "WinHttpCreateUrl", _
-			"ptr", DllStructGetPtr($tURL_COMPONENTS), _
+			"struct*", $tURL_COMPONENTS, _
 			"dword", $ICU_ESCAPE, _
-			"ptr", DllStructGetPtr($URLBuffer), _
+			"struct*", $URLBuffer, _
 			"dword*", $iURLLen)
 	If @error Or Not $aCall[0] Then Return SetError(3, 0, "")
 	Return DllStructGetData($URLBuffer, 1)
@@ -425,7 +425,7 @@ Func _WinHttpGetDefaultProxyConfiguration()
 	Local $tWINHTTP_PROXY_INFO = DllStructCreate("dword AccessType;" & _
 			"ptr Proxy;" & _
 			"ptr ProxyBypass")
-	Local $aCall = DllCall($hWINHTTPDLL__WINHTTP, "bool", "WinHttpGetDefaultProxyConfiguration", "ptr", DllStructGetPtr($tWINHTTP_PROXY_INFO))
+	Local $aCall = DllCall($hWINHTTPDLL__WINHTTP, "bool", "WinHttpGetDefaultProxyConfiguration", "struct*", $tWINHTTP_PROXY_INFO)
 	If @error Or Not $aCall[0] Then Return SetError(1, 0, 0)
 	Local $iAccessType = DllStructGetData($tWINHTTP_PROXY_INFO, "AccessType")
 	Local $pProxy = DllStructGetData($tWINHTTP_PROXY_INFO, "Proxy")
@@ -477,7 +477,7 @@ Func _WinHttpGetIEProxyConfigForCurrentUser()
 			"ptr AutoConfigUrl;" & _
 			"ptr Proxy;" & _
 			"ptr ProxyBypass;")
-	Local $aCall = DllCall($hWINHTTPDLL__WINHTTP, "bool", "WinHttpGetIEProxyConfigForCurrentUser", "ptr", DllStructGetPtr($tWINHTTP_CURRENT_USER_IE_PROXY_CONFIG))
+	Local $aCall = DllCall($hWINHTTPDLL__WINHTTP, "bool", "WinHttpGetIEProxyConfigForCurrentUser", "struct*", $tWINHTTP_CURRENT_USER_IE_PROXY_CONFIG)
 	If @error Or Not $aCall[0] Then Return SetError(1, 0, 0)
 	Local $iAutoDetect = DllStructGetData($tWINHTTP_CURRENT_USER_IE_PROXY_CONFIG, "AutoDetect")
 	Local $pAutoConfigUrl = DllStructGetData($tWINHTTP_CURRENT_USER_IE_PROXY_CONFIG, "AutoConfigUrl")
@@ -702,7 +702,7 @@ Func _WinHttpQueryOption($hInternet, $iOption)
 	$aCall = DllCall($hWINHTTPDLL__WINHTTP, "bool", "WinHttpQueryOption", _
 			"handle", $hInternet, _
 			"dword", $iOption, _
-			"ptr", DllStructGetPtr($tBuffer), _
+			"struct*", $tBuffer, _
 			"dword*", $iSize)
 	If @error Or Not $aCall[0] Then Return SetError(2, 0, "")
 	Return DllStructGetData($tBuffer, 1)
@@ -751,7 +751,7 @@ Func _WinHttpReadData($hRequest, $iMode = Default, $iNumberOfBytesToRead = Defau
 	EndSwitch
 	Local $aCall = DllCall($hWINHTTPDLL__WINHTTP, "bool", "WinHttpReadData", _
 			"handle", $hRequest, _
-			"ptr", DllStructGetPtr($tBuffer), _
+			"struct*", $tBuffer, _
 			"dword", $iNumberOfBytesToRead, _
 			"dword*", 0)
 	If @error Or Not $aCall[0] Then Return SetError(1, 0, "")
@@ -902,7 +902,7 @@ Func _WinHttpSetDefaultProxyConfiguration($iAccessType, $sProxy = "", $sProxyByp
 		DllStructSetData($tWINHTTP_PROXY_INFO, "Proxy", DllStructGetPtr($tProxy))
 		DllStructSetData($tWINHTTP_PROXY_INFO, "ProxyBypass", DllStructGetPtr($tProxyBypass))
 	EndIf
-	Local $aCall = DllCall($hWINHTTPDLL__WINHTTP, "bool", "WinHttpSetDefaultProxyConfiguration", "ptr", DllStructGetPtr($tWINHTTP_PROXY_INFO))
+	Local $aCall = DllCall($hWINHTTPDLL__WINHTTP, "bool", "WinHttpSetDefaultProxyConfiguration", "struct*", $tWINHTTP_PROXY_INFO)
 	If @error Or Not $aCall[0] Then Return SetError(1, 0, 0)
 	Return 1
 EndFunc   ;==>_WinHttpSetDefaultProxyConfiguration
@@ -1792,10 +1792,10 @@ Func _WinHttpTimeFromSystemTime()
 			"word Minute;" & _
 			"word Second;" & _
 			"word Milliseconds")
-	DllCall("kernel32.dll", "none", "GetSystemTime", "ptr", DllStructGetPtr($SYSTEMTIME))
+	DllCall("kernel32.dll", "none", "GetSystemTime", "struct*", $SYSTEMTIME)
 	If @error Then Return SetError(1, 0, "")
 	Local $tTime = DllStructCreate("wchar[62]")
-	Local $aCall = DllCall($hWINHTTPDLL__WINHTTP, "bool", "WinHttpTimeFromSystemTime", "ptr", DllStructGetPtr($SYSTEMTIME), "ptr", DllStructGetPtr($tTime))
+	Local $aCall = DllCall($hWINHTTPDLL__WINHTTP, "bool", "WinHttpTimeFromSystemTime", "struct*", $SYSTEMTIME, "struct*", $tTime)
 	If @error Or Not $aCall[0] Then Return SetError(2, 0, "")
 	Return DllStructGetData($tTime, 1)
 EndFunc   ;==>_WinHttpTimeFromSystemTime
@@ -1834,7 +1834,7 @@ Func _WinHttpTimeToSystemTime($sHttpTime)
 			"word Milliseconds")
 	Local $tTime = DllStructCreate("wchar[62]")
 	DllStructSetData($tTime, 1, $sHttpTime)
-	Local $aCall = DllCall($hWINHTTPDLL__WINHTTP, "bool", "WinHttpTimeToSystemTime", "ptr", DllStructGetPtr($tTime), "ptr", DllStructGetPtr($SYSTEMTIME))
+	Local $aCall = DllCall($hWINHTTPDLL__WINHTTP, "bool", "WinHttpTimeToSystemTime", "struct*", $tTime, "struct*", $SYSTEMTIME)
 	If @error Or Not $aCall[0] Then Return SetError(2, 0, 0)
 	Local $aRet[8] = [DllStructGetData($SYSTEMTIME, "Year"), _
 			DllStructGetData($SYSTEMTIME, "Month"), _
@@ -1885,7 +1885,7 @@ Func _WinHttpWriteData($hRequest, $vData, $iMode = Default)
 	EndIf
 	Local $aCall = DllCall($hWINHTTPDLL__WINHTTP, "bool", "WinHttpWriteData", _
 			"handle", $hRequest, _
-			"ptr", DllStructGetPtr($tData), _
+			"struct*", $tData, _
 			"dword", $iNumberOfBytesToWrite, _
 			"dword*", 0)
 	If @error Or Not $aCall[0] Then Return SetError(1, 0, 0)
