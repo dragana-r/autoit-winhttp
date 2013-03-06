@@ -224,7 +224,7 @@ EndFunc   ;==>_CHM_GetHeaderData
 
 
 Func _CHM_WriteDefaultCSS($sWorkingFolder)
-	FileCopy($sCssFile, $sWorkingFolder & "\HTML\CSS\Default1.css", 1)
+	FileCopy($sCssFile, $sWorkingFolder & "\HTML\CSS\Default1.css", 9)
 EndFunc   ;==>_CHM_WriteDefaultCSS
 
 
