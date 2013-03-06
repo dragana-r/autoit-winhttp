@@ -284,7 +284,8 @@ Func _CHM_WriteTOC($sChangeLogFile, $sWorkingFolder, $aFunctions)
 			'        <li> <object type="text/sitemap">' & @CRLF & _
 			'            <param name="Name" value="' & $sName & ' Functions">' & @CRLF & _
 			'            <param name="Local" value="HTML/Functions/Functions.htm">' & @CRLF & _
-			"        </object>" & @CRLF & _
+			'            <param name="Font" value="Segoe UI,9,0">' & @CRLF & _
+            "        </object>" & @CRLF & _
 			"        <ul>" & @CRLF & _
 			'            <li> <object type="text/sitemap">' & @CRLF & _
 			'                <param name="Name" value="' & $sName & ' Function Notes">' & @CRLF & _
@@ -337,6 +338,7 @@ Func _WriteHHP($sWorkingFolder, $aFunctions, $sHomeLink = "")
 			"Default Window=NewWindow" & @CRLF & _
 			"Display compile progress=Yes" & @CRLF & _
 			"Display compile notes=Yes" & @CRLF & _
+            "Default Font=Segoe UI, 9" & @CRLF & _
 			"Full-text search=Yes" & @CRLF & @CRLF
 
 	$sData &= "[WINDOWS]" & @CRLF & _
