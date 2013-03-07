@@ -7,7 +7,7 @@
 ; Title ...............: WinHttp
 ; File Name............: WinHttp.au3
 ; File Version.........: 1.6.2.7
-; Min. AutoIt Version..: v3.3.2.0
+; Min. AutoIt Version..: v3.3.7.20
 ; Description .........: AutoIt wrapper for WinHttp functions
 ; Author... ...........: trancexx, ProgAndy
 ; Dll .................: winhttp.dll, kernel32.dll
