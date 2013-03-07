@@ -663,7 +663,7 @@ Func _CHM_SyntaxHighlight($sAu3Code) ; MrCreator's modified
 	$sAu3Code = StringRegExpReplace($sAu3Code, ">\h+<", ">&nbsp;<")
 	$sAu3Code = StringReplace($sAu3Code, "<>", "")
 	$sAu3Code = StringReplace($sAu3Code, "&<", "&amp;<")
-	Return '<p class="codebox" id="au3code"> ' & @CRLF & $sAu3Code ; <-! no closing tag
+	Return '<p class="codebox" id="au3code"><br> ' & @CRLF & $sAu3Code ; <-! no closing tag
 EndFunc   ;==>_CHM_SyntaxHighlight
 
 
