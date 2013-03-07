@@ -344,7 +344,7 @@ Func _WriteHHP($sWorkingFolder, $aFunctions, $sHomeLink = "")
 	$sData &= "[WINDOWS]" & @CRLF & _
 			'NewWindow="' & $sName & _
 			' Help","TOC.hhc","Index.hhk","html\CHM_HomePage.htm","' & $sHomeLink _
-			 & '",,,,,0x20420,,0x10284e,,0x10030000,,,,,,0' & @CRLF & @CRLF
+			 & '",,,,,0x20420,,0x00284e,,0x10030000,,,,,,0' & @CRLF & @CRLF
 
 	$sData &= "[FILES]" & @CRLF
 
