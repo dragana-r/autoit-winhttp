@@ -100,9 +100,9 @@ Func _CHM_UDFToHTMPages($sFileUDF, ByRef $aFunctions, $sFolder = Default)
 				"    <body>" & @CRLF & @CRLF
 		$sHTM &= "<!--Description Section-->" & @CRLF
 		$sHTM &= '        <h1 class="small">Function Reference</h1>' & @CRLF & _
-				'        <h1>' & $sFunctionName & '</h1>' & @CRLF & _
 				'        <hr style="height:0px">' & @CRLF & _
-				"        <p>" & _CHM_GetHeaderData($aHeaders[$j], "Description") & "<br></p>" & @CRLF & @CRLF
+				'        <h1>' & $sFunctionName & '</h1>' & @CRLF & _
+				'        <p class="funcdesc">' & _CHM_GetHeaderData($aHeaders[$j], "Description") & "<br></p>" & @CRLF & @CRLF
 
 		$sHTM &= "<!--Syntax Section-->" & @CRLF
 		$sHTM &= "        <h2>Syntax</h2>" & @CRLF & "        <p>"
@@ -148,18 +148,20 @@ Func _CHM_UDFToHTMPages($sFileUDF, ByRef $aFunctions, $sFolder = Default)
 		EndIf
 
 		$sHTM &= "<!--Related Section-->" & @CRLF
-		$sHTM &= "        <h2>Related</h2>"
 		$sRelated = _CHM_GetHeaderData($aHeaders[$j], "Related")
-		$aRelated = StringRegExp($sRelated, "\h*(\w+)\h*(?:\,|\Z)", 3)
-		For $i = 0 To UBound($aRelated) - 1
-			$sHTM &= StringRegExpReplace($aRelated[$i], "(\w+)", '<a href="$1.htm">$1</a>')
-			If $i = UBound($aRelated) - 1 Then
-				$sHTM &= @CRLF
-			Else
-				$sHTM &= ", "
-			EndIf
-		Next
-		$sHTM &= "        <br>" & @CRLF & @CRLF
+		If $sRelated Then
+			$sHTM &= "        <h2>Related</h2>"
+			$aRelated = StringRegExp($sRelated, "\h*(\w+)\h*(?:\,|\Z)", 3)
+			For $i = 0 To UBound($aRelated) - 1
+				$sHTM &= StringRegExpReplace($aRelated[$i], "(\w+)", '<a href="$1.htm">$1</a>')
+				If $i = UBound($aRelated) - 1 Then
+					$sHTM &= @CRLF
+				Else
+					$sHTM &= ", "
+				EndIf
+			Next
+			$sHTM &= "        <br>" & @CRLF & @CRLF
+		EndIf
 
 		$sHTM &= "<!--Link Section-->" & @CRLF
 		$sLink = _CHM_GetHeaderData($aHeaders[$j], "Link")
