@@ -8,7 +8,7 @@
 ; File Name............: WinHttp.au3
 ; File Version.........: 1.6.2.8
 ; Min. AutoIt Version..: v3.3.7.20
-; Description .........: AutoIt wrapper for WinHttp functions
+; Description .........: AutoIt wrapper for WinHTTP functions
 ; Author... ...........: trancexx, ProgAndy
 ; Dll .................: winhttp.dll, kernel32.dll
 ; ===========================================================================================
@@ -1138,8 +1138,10 @@ Func _WinHttpSimpleFormFill(ByRef $hInternet, $sActionPage = Default, $sFormId =
 		EndIf
 	EndIf
 	; Variables
-	Local $sForm, $sAttributes, $aAttributes, $aInput
-	Local $iNumParams = Ceiling((@NumParams - 2) / 2)
+	Local $sForm, $sAttributes, $aAttributes, $aInput, $sAdditionalHeaders
+    Local $iNumArgs = @NumParams
+    If Not Mod($iNumArgs, 2) Then $sAdditionalHeaders = Eval("sFieldId" & $iNumArgs/2 -1)
+    Local $iNumParams = Ceiling(($iNumArgs - 2) / 2)
 	Local $sAddData
 	Local $aCrackURL, $sNewURL
 	; Loop thru all forms on the page and find one that was specified
@@ -1498,10 +1500,10 @@ Func _WinHttpSimpleFormFill(ByRef $hInternet, $sActionPage = Default, $sFormId =
 				$hInternet = _WinHttpConnect($hOpen, $sNewURL)
 			EndIf
 		EndIf
-		Local $hRequest = __WinHttpFormSend($hInternet, $sMethod, $sAction, $fMultiPart, $sBoundary, $sAddData)
+		Local $hRequest = __WinHttpFormSend($hInternet, $sMethod, $sAction, $fMultiPart, $sBoundary, $sAddData, False, $sAdditionalHeaders)
 		If _WinHttpQueryHeaders($hRequest, $WINHTTP_QUERY_STATUS_CODE) > $HTTP_STATUS_BAD_REQUEST Then
 			_WinHttpCloseHandle($hRequest)
-			$hRequest = __WinHttpFormSend($hInternet, $sMethod, $sAction, $fMultiPart, $sBoundary, $sAddData, True) ; try adding $WINHTTP_FLAG_SECURE
+			$hRequest = __WinHttpFormSend($hInternet, $sMethod, $sAction, $fMultiPart, $sBoundary, $sAddData, True, $sAdditionalHeaders) ; try adding $WINHTTP_FLAG_SECURE
 		EndIf
 		Local $sReturned = _WinHttpSimpleReadData($hRequest)
 		If @error Then
@@ -2007,7 +2009,7 @@ Func __WinHttpFormAttrib(ByRef $aAttrib, $i, $sElement)
 	If Not @error Then $aAttrib[3][$i] = $aArray[UBound($aArray) - 1] ; type
 EndFunc   ;==>__WinHttpFormAttrib
 
-Func __WinHttpFormSend($hInternet, $sMethod, $sAction, $fMultiPart, $sBoundary, $sAddData, $fSecure = False)
+Func __WinHttpFormSend($hInternet, $sMethod, $sAction, $fMultiPart, $sBoundary, $sAddData, $fSecure = False, $sAdditionalHeaders = "")
 	Local $hRequest
 	If $fSecure Then
 		$hRequest = _WinHttpOpenRequest($hInternet, $sMethod, $sAction, Default, Default, Default, $WINHTTP_FLAG_SECURE)
@@ -2021,7 +2023,8 @@ Func __WinHttpFormSend($hInternet, $sMethod, $sAction, $fMultiPart, $sBoundary, 
 	EndIf
 	_WinHttpAddRequestHeaders($hRequest, "Accept: application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,*/*;q=0.5")
 	_WinHttpAddRequestHeaders($hRequest, "Accept-Charset: utf-8;q=0.7")
-	_WinHttpSendRequest($hRequest, Default, $sAddData)
+	If $sAdditionalHeaders Then _WinHttpAddRequestHeaders($hRequest, $sAdditionalHeaders)
+    _WinHttpSendRequest($hRequest, Default, $sAddData)
 	_WinHttpReceiveResponse($hRequest)
 	Return $hRequest
 EndFunc   ;==>__WinHttpFormSend
