@@ -161,7 +161,7 @@ EndFunc   ;==>_WinHttpCloseHandle
 ; Name...........: _WinHttpConnect
 ; Description ...: Specifies the initial target server of an HTTP request and returns connection handle to an HTTP session for that initial target.
 ; Syntax.........: _WinHttpConnect($hSession, $sServerName [, $iServerPort = Default ])
-; Parameters ....: $hSession - Valid WinHttp session handle returned by a previous call to WinHttpOpen.
+; Parameters ....: $hSession - Valid WinHttp session handle returned by a previous call to _WinHttpOpen().
 ;                  $sServerName - Host name of an HTTP server.
 ;                  $iServerPort - [optional] TCP/IP port on the server to which a connection is made (default is $INTERNET_DEFAULT_PORT)
 ; Return values .: Success - Returns a valid connection handle to the HTTP session
@@ -1139,9 +1139,9 @@ Func _WinHttpSimpleFormFill(ByRef $hInternet, $sActionPage = Default, $sFormId =
 	EndIf
 	; Variables
 	Local $sForm, $sAttributes, $aAttributes, $aInput, $sAdditionalHeaders
-    Local $iNumArgs = @NumParams
-    If Not Mod($iNumArgs, 2) Then $sAdditionalHeaders = Eval("sFieldId" & $iNumArgs/2 -1)
-    Local $iNumParams = Ceiling(($iNumArgs - 2) / 2)
+	Local $iNumArgs = @NumParams
+	If Not Mod($iNumArgs, 2) Then $sAdditionalHeaders = Eval("sFieldId" & $iNumArgs / 2 - 1)
+	Local $iNumParams = Ceiling(($iNumArgs - 2) / 2)
 	Local $sAddData
 	Local $aCrackURL, $sNewURL
 	; Loop thru all forms on the page and find one that was specified
@@ -1208,7 +1208,7 @@ Func _WinHttpSimpleFormFill(ByRef $hInternet, $sActionPage = Default, $sFormId =
 					__WinHttpFormAttrib($aInputIds, $i, $aInput[$i])
 					If $aInputIds[1][$i] Then ; if there is 'name' field then add it
 						$aInputIds[2][$i] = __WinHttpURLEncode($aInputIds[2][$i])
-                        $sAddData &= $aInputIds[1][$i] & "=" & $aInputIds[2][$i] & "&"
+						$sAddData &= $aInputIds[1][$i] & "=" & $aInputIds[2][$i] & "&"
 						If $aInputIds[3][$i] = "submit" Then $sSubmit &= $aInputIds[1][$i] & "=" & $aInputIds[2][$i] & $sGrSep ; add to overall "submit" string
 						If $aInputIds[3][$i] = "radio" Then $sRadio &= $aInputIds[1][$i] & "=" & $aInputIds[2][$i] & $sGrSep ; add to overall "radio" string
 						If $aInputIds[3][$i] = "checkbox" Then $sCheckBox &= $aInputIds[1][$i] & "=" & $aInputIds[2][$i] & $sGrSep ; add to overall "checkbox" string
@@ -2024,7 +2024,7 @@ Func __WinHttpFormSend($hInternet, $sMethod, $sAction, $fMultiPart, $sBoundary, 
 	_WinHttpAddRequestHeaders($hRequest, "Accept: application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,*/*;q=0.5")
 	_WinHttpAddRequestHeaders($hRequest, "Accept-Charset: utf-8;q=0.7")
 	If $sAdditionalHeaders Then _WinHttpAddRequestHeaders($hRequest, $sAdditionalHeaders)
-    _WinHttpSendRequest($hRequest, Default, $sAddData)
+	_WinHttpSendRequest($hRequest, Default, $sAddData)
 	_WinHttpReceiveResponse($hRequest)
 	Return $hRequest
 EndFunc   ;==>__WinHttpFormSend
