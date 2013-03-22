@@ -528,7 +528,7 @@ EndFunc   ;==>_WinHttpGetIEProxyConfigForCurrentUser
 ;                  |1 - DllCall failed
 ; Author ........: trancexx
 ; Modified.......:
-; Remarks .......: For asynchronous mode set $iFlag to $WINHTTP_FLAG_ASYNC
+; Remarks .......: For asynchronous mode set $iFlag to $WINHTTP_FLAG_ASYNC. In that case $WINHTTP_OPTION_CONTEXT_VALUE for the handle will inernally be set to $WINHTTP_FLAG_ASYNC also.
 ; Related .......: _WinHttpCloseHandle, _WinHttpConnect
 ; Link ..........: http://msdn.microsoft.com/en-us/library/aa384098(VS.85).aspx
 ; Example .......:
@@ -546,6 +546,7 @@ Func _WinHttpOpen($sUserAgent = Default, $iAccessType = Default, $sProxyName = D
 			"wstr", $sProxyBypass, _
 			"dword", $iFlag)
 	If @error Or Not $aCall[0] Then Return SetError(1, 0, 0)
+	If $iFlag = $WINHTTP_FLAG_ASYNC Then _WinHttpSetOption($aCall[0], $WINHTTP_OPTION_CONTEXT_VALUE, $WINHTTP_FLAG_ASYNC)
 	Return $aCall[0]
 EndFunc   ;==>_WinHttpOpen
 
@@ -620,7 +621,9 @@ EndFunc   ;==>_WinHttpOpenRequest
 ; Example .......:
 ;============================================================================================
 Func _WinHttpQueryDataAvailable($hRequest)
-	Local $aCall = DllCall($hWINHTTPDLL__WINHTTP, "bool", "WinHttpQueryDataAvailable", "handle", $hRequest, "dword*", 0)
+	Local $sReadType = "dword*"
+	If BitAND(_WinHttpQueryOption(_WinHttpQueryOption(_WinHttpQueryOption($hRequest, $WINHTTP_OPTION_PARENT_HANDLE), $WINHTTP_OPTION_PARENT_HANDLE), $WINHTTP_OPTION_CONTEXT_VALUE), $WINHTTP_FLAG_ASYNC) Then $sReadType = "ptr"
+	Local $aCall = DllCall($hWINHTTPDLL__WINHTTP, "bool", "WinHttpQueryDataAvailable", "handle", $hRequest, $sReadType, 0)
 	If @error Then Return SetError(1, 0, 0)
 	Return SetExtended($aCall[2], $aCall[0])
 EndFunc   ;==>_WinHttpQueryDataAvailable
@@ -751,11 +754,13 @@ Func _WinHttpReadData($hRequest, $iMode = Default, $iNumberOfBytesToRead = Defau
 				$tBuffer = DllStructCreate("char[" & $iNumberOfBytesToRead & "]")
 			EndIf
 	EndSwitch
+	Local $sReadType = "dword*"
+	If BitAND(_WinHttpQueryOption(_WinHttpQueryOption(_WinHttpQueryOption($hRequest, $WINHTTP_OPTION_PARENT_HANDLE), $WINHTTP_OPTION_PARENT_HANDLE), $WINHTTP_OPTION_CONTEXT_VALUE), $WINHTTP_FLAG_ASYNC) Then $sReadType = "ptr"
 	Local $aCall = DllCall($hWINHTTPDLL__WINHTTP, "bool", "WinHttpReadData", _
 			"handle", $hRequest, _
 			"struct*", $tBuffer, _
 			"dword", $iNumberOfBytesToRead, _
-			"dword*", 0)
+			$sReadType, 0)
 	If @error Or Not $aCall[0] Then Return SetError(1, 0, "")
 	If Not $aCall[4] Then Return SetError(-1, 0, "")
 	If $aCall[4] < $iNumberOfBytesToRead Then
