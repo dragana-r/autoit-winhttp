@@ -696,6 +696,8 @@ Func _WinHttpQueryOption($hInternet, $iOption)
 				$WINHTTP_OPTION_MAX_CONNS_PER_SERVER, $WINHTTP_OPTION_MAX_HTTP_AUTOMATIC_REDIRECTS, $WINHTTP_OPTION_RECEIVE_RESPONSE_TIMEOUT, $WINHTTP_OPTION_RECEIVE_TIMEOUT, _
 				$WINHTTP_OPTION_RESOLVE_TIMEOUT, $WINHTTP_OPTION_SECURITY_FLAGS, $WINHTTP_OPTION_SECURITY_KEY_BITNESS, $WINHTTP_OPTION_SEND_TIMEOUT
 			$tBuffer = DllStructCreate("int")
+		Case $WINHTTP_OPTION_CONTEXT_VALUE
+			$tBuffer = DllStructCreate("dword_ptr")
 		Case Else
 			$tBuffer = DllStructCreate("byte[" & $iSize & "]")
 	EndSwitch
@@ -955,7 +957,7 @@ Func _WinHttpSetOption($hInternet, $iOption, $vSetting, $iSize = Default)
 			If @AutoItX64 Then $iSize = 8
 			If Not IsPtr($vSetting) Then Return SetError(3, 0, 0)
 		Case $WINHTTP_OPTION_CONTEXT_VALUE
-			$sType = "dword_ptr"
+			$sType = "dword_ptr*"
 			$iSize = 4
 			If @AutoItX64 Then $iSize = 8
 		Case $WINHTTP_OPTION_PASSWORD, $WINHTTP_OPTION_PROXY_PASSWORD, $WINHTTP_OPTION_PROXY_USERNAME, $WINHTTP_OPTION_USER_AGENT, $WINHTTP_OPTION_USERNAME
