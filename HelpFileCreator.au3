@@ -100,9 +100,13 @@ Func _CHM_UDFToHTMPages($sFileUDF, ByRef $aFunctions, $sFolder = Default)
 				"    <body>" & @CRLF & @CRLF
 		$sHTM &= "<!--Description Section-->" & @CRLF
 		$sHTM &= '        <h1 class="small">Function Reference</h1>' & @CRLF & _
-				'        <hr style="height:0px">' & @CRLF & _
-				'        <h1>' & $sFunctionName & '</h1>' & @CRLF & _
-				'        <p class="funcdesc">' & _CHM_GetHeaderData($aHeaders[$j], "Description") & "<br></p>" & @CRLF & @CRLF
+				'        <hr style="height:0px">' & @CRLF
+		If $sFunctionName = "_WinHttpSimpleReadDataAsync" Then
+			$sHTM &= '        <h1 class="left_behind">' & $sFunctionName & '</h1>' & @CRLF
+		Else
+			$sHTM &= '        <h1>' & $sFunctionName & '</h1>' & @CRLF
+		EndIf
+		$sHTM &= '        <p class="funcdesc">' & _CHM_GetHeaderData($aHeaders[$j], "Description") & "<br></p>" & @CRLF & @CRLF
 
 		$sHTM &= "<!--Syntax Section-->" & @CRLF
 		$sHTM &= "        <h2>Syntax</h2>" & @CRLF & "        <p>"
