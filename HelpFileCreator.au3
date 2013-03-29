@@ -123,7 +123,7 @@ Func _CHM_UDFToHTMPages($sFileUDF, ByRef $aFunctions, $sFolder = Default)
 			$iParamsUBound = UBound($aParams) - 1
 			For $i = 0 To $iParamsUBound
 				If Mod($i, 2) Then
-					$sHTM &= '                <td class="rightpane">' & StringReplace($aParams[$i], "[optional]", "<b>[optional]</b>", 1) & "</td>" & @CRLF
+					$sHTM &= '                <td class="rightpane">' & StringRegExpReplace($aParams[$i], "(\[.*\])", "<b>$1</b>") & "</td>" & @CRLF
 					$sHTM &= "            </tr>" & @CRLF
 					If $i < $iParamsUBound Then $sHTM &= "            <tr>" & @CRLF
 				Else
