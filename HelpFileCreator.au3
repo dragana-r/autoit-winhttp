@@ -62,7 +62,7 @@ EndIf
 
 
 Func _GetVersionNumber($sFile)
-	Local $sVer = FileRead($sFile, 1024)
+	Local $sVer = FileRead($sFile, 2048)
 	Local $aArray = StringRegExp($sVer, "(?s).*?\Q; File Version.........:\E\s*(.*?)\v+", 3)
 	If @error Then Return SetError(1, 0, "")
 	Return $aArray[0]
