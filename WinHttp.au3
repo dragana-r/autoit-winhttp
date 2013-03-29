@@ -1092,7 +1092,7 @@ EndFunc
 
 ; #FUNCTION# ;===============================================================================
 ; Name...........: _WinHttpSimpleFormFill
-; Description ...: Fills form.
+; Description ...: Fills web form.
 ; Syntax.........: _WinHttpSimpleFormFill(ByRef $hInternet [, $sActionPage = Default [, $sFormId = Default [, $sFieldId1 = Default [, $sData1 = Default [, (...)]]]]])
 ; Parameters ....: $hInternet - Handle returned by _WinHttpConnect() or string variable with form.
 ;                  $sActionPage -  [optional] path to the page with form or session handle if $hInternet is string (default: "" - empty string; meaning 'default' page on the server in former).
