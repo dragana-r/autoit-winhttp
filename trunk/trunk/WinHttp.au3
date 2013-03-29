@@ -1,7 +1,7 @@
 
 ; For those who would fear the license - don't. I tried to license it as liberal as possible.
 ; It really means you can do what ever you want with this.
-Donations are wellcome And will be accepted via PayPal address: trancexx at yahoo dot com
+; Donations are wellcome And will be accepted via PayPal address: trancexx at yahoo dot com
 ; Thank you for the shiny stuff :kiss:
 
 #comments-start
@@ -547,7 +547,8 @@ EndFunc
 ;                  |1 - DllCall failed
 ; Author ........: trancexx
 ; Modified.......:
-; Remarks .......: For asynchronous mode set $iFlag to $WINHTTP_FLAG_ASYNC. In that case $WINHTTP_OPTION_CONTEXT_VALUE for the handle will inernally be set to $WINHTTP_FLAG_ASYNC also.
+; Remarks .......: <b>You are strongly discouraged to use WinHTTP in asynchronous mode with AutoIt. AutoIt's callback implementation can't handle reentrancy properly.</b>
+;                  +For asynchronous mode set $iFlag to $WINHTTP_FLAG_ASYNC. In that case $WINHTTP_OPTION_CONTEXT_VALUE for the handle will inernally be set to $WINHTTP_FLAG_ASYNC also.
 ; Related .......: _WinHttpCloseHandle, _WinHttpConnect
 ; Link ..........: http://msdn.microsoft.com/en-us/library/aa384098(VS.85).aspx
 ; Example .......:
@@ -1599,7 +1600,8 @@ EndFunc
 ; Return values .: Same as for _WinHttpReadData. Due to async nature here it has no meaning except in case of possible error.
 ; Author ........: trancexx
 ; Modified.......:
-; Remarks .......: WinHttp is rentrant during asynchronous completion callback. Make sure you have only one callback running and only one request handled though it at time.
+; Remarks .......: <b>You are strongly discouraged to use WinHTTP in asynchronous mode with AutoIt. AutoIt's callback implementation can't handle reentrancy properly.</b>
+;                  +WinHttp is rentrant during asynchronous completion callback. Make sure you have only one callback running and only one request handled though it at time.
 ;                  +Also make sure memory buffer is at least 8192 bytes in size if $iNumberOfBytesToRead is left default.
 ; Related .......: _WinHttpSimpleReadData, _WinHttpReadData
 ; Link ..........:
