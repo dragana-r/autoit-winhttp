@@ -3,7 +3,7 @@
 
 Opt("MustDeclareVars", 1)
 
-Global Const $sAddress = "192.168.1.1" ; <- some address that requires authentication
+Global Const $sAddress = "192.168.1.1" ; <- some address that requires authorization
 
 ; Credentials (incorrect values here - the example will fail therefore!)
 Global Const $sUserName = "user", $sPassword = "password"
