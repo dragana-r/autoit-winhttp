@@ -26,7 +26,7 @@
 ; #INDEX# ===================================================================================
 ; Title ...............: WinHttp
 ; File Name............: WinHttp.au3
-; File Version.........: 1.6.2.8
+; File Version.........: 1.6.2.9
 ; Min. AutoIt Version..: v3.3.7.20
 ; Description .........: AutoIt wrapper for WinHTTP functions
 ; Author... ...........: trancexx, ProgAndy
