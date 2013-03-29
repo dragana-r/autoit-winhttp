@@ -88,7 +88,7 @@ DllOpen("winhttp.dll") ; making sure reference count never reaches 0
 ; Modified.......:
 ; Remarks .......: In case of multiple additions at once, must use @CRLF to separate each $hRequest and responded $sHeaders and $iModifiers.
 ; Related .......: _WinHttpOpenRequest, _WinHttpQueryHeaders
-; Link ..........: http://msdn.microsoft.com/en-us/library/aa384087(VS.85).aspx
+; Link ..........: http://msdn.microsoft.com/en-us/library/aa384087.aspx
 ;============================================================================================
 Func _WinHttpAddRequestHeaders($hRequest, $sHeader, $iModifier = Default)
 	__WinHttpDefault($iModifier, $WINHTTP_ADDREQ_FLAG_ADD_IF_NEW)
@@ -145,7 +145,7 @@ EndFunc
 ; Modified.......:
 ; Remarks .......:
 ; Related .......:
-; Link ..........: http://msdn.microsoft.com/en-us/library/aa384089(VS.85).aspx
+; Link ..........: http://msdn.microsoft.com/en-us/library/aa384089.aspx
 ;============================================================================================
 Func _WinHttpCheckPlatform()
 	Local $aCall = DllCall($hWINHTTPDLL__WINHTTP, "bool", "WinHttpCheckPlatform")
@@ -165,7 +165,7 @@ EndFunc
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _WinHttpConnect, _WinHttpOpen, _WinHttpOpenRequest
-; Link ..........: http://msdn.microsoft.com/en-us/library/aa384090(VS.85).aspx
+; Link ..........: http://msdn.microsoft.com/en-us/library/aa384090.aspx
 ;============================================================================================
 Func _WinHttpCloseHandle($hInternet)
 	Local $aCall = DllCall($hWINHTTPDLL__WINHTTP, "bool", "WinHttpCloseHandle", "handle", $hInternet)
@@ -187,7 +187,7 @@ EndFunc
 ; Modified.......:
 ; Remarks .......: $iServerPort can be defined via global constants $INTERNET_DEFAULT_PORT, $INTERNET_DEFAULT_HTTP_PORT or $INTERNET_DEFAULT_HTTPS_PORT
 ; Related .......: _WinHttpOpen
-; Link ..........: http://msdn.microsoft.com/en-us/library/aa384091(VS.85).aspx
+; Link ..........: http://msdn.microsoft.com/en-us/library/aa384091.aspx
 ;============================================================================================
 Func _WinHttpConnect($hSession, $sServerName, $iServerPort = Default)
 	__WinHttpDefault($iServerPort, $INTERNET_DEFAULT_PORT)
@@ -223,7 +223,7 @@ EndFunc
 ;                  |$ICU_DECODE - Converts characters that are "escape encoded" (%xx) to their non-escaped form.
 ;                  |$ICU_ESCAPE - Escapes certain characters to their escape sequences (%xx).
 ; Related .......: _WinHttpCreateUrl
-; Link ..........: http://msdn.microsoft.com/en-us/library/aa384092(VS.85).aspx
+; Link ..........: http://msdn.microsoft.com/en-us/library/aa384092.aspx
 ;============================================================================================
 Func _WinHttpCrackUrl($sURL, $iFlag = Default)
 	__WinHttpDefault($iFlag, $ICU_ESCAPE)
@@ -299,7 +299,7 @@ EndFunc
 ;                  |- seventh element [6] is URL path
 ;                  |- eighth element [7] is extra information
 ; Related .......: _WinHttpCrackUrl
-; Link ..........: http://msdn.microsoft.com/en-us/library/aa384093(VS.85).aspx
+; Link ..........: http://msdn.microsoft.com/en-us/library/aa384093.aspx
 ;============================================================================================
 Func _WinHttpCreateUrl($aURLArray)
 	If UBound($aURLArray) - 8 Then Return SetError(1, 0, "")
@@ -394,7 +394,7 @@ EndFunc
 ; Modified.......:
 ; Remarks .......: $iAutoDetectFlags values are defined in WinHttpconstants.au3
 ; Related .......: _WinHttpGetDefaultProxyConfiguration, _WinHttpGetIEProxyConfigForCurrentUser, _WinHttpSetDefaultProxyConfiguration
-; Link ..........: http://msdn.microsoft.com/en-us/library/aa384094(VS.85).aspx
+; Link ..........: http://msdn.microsoft.com/en-us/library/aa384094.aspx
 ;============================================================================================
 Func _WinHttpDetectAutoProxyConfigUrl($iAutoDetectFlags)
 	Local $aCall = DllCall($hWINHTTPDLL__WINHTTP, "bool", "WinHttpDetectAutoProxyConfigUrl", "dword", $iAutoDetectFlags, "ptr*", 0)
@@ -429,7 +429,7 @@ EndFunc
 ;                  |$WINHTTP_ACCESS_TYPE_NO_PROXY = 1
 ;                  |$WINHTTP_ACCESS_TYPE_NAMED_PROXY = 3
 ; Related .......: _WinHttpDetectAutoProxyConfigUrl, _WinHttpGetIEProxyConfigForCurrentUser, _WinHttpSetDefaultProxyConfiguration
-; Link ..........: http://msdn.microsoft.com/en-us/library/aa384095(VS.85).aspx
+; Link ..........: http://msdn.microsoft.com/en-us/library/aa384095.aspx
 ;============================================================================================
 Func _WinHttpGetDefaultProxyConfiguration()
 	Local $tWINHTTP_PROXY_INFO = DllStructCreate("dword AccessType;" & _
@@ -479,7 +479,7 @@ EndFunc
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _WinHttpDetectAutoProxyConfigUrl, _WinHttpGetDefaultProxyConfiguration, _WinHttpSetDefaultProxyConfiguration
-; Link ..........: http://msdn.microsoft.com/en-us/library/aa384096(VS.85).aspx
+; Link ..........: http://msdn.microsoft.com/en-us/library/aa384096.aspx
 ;============================================================================================
 Func _WinHttpGetIEProxyConfigForCurrentUser()
 	Local $tWINHTTP_CURRENT_USER_IE_PROXY_CONFIG = DllStructCreate("int AutoDetect;" & _
@@ -540,7 +540,7 @@ EndFunc
 ; Remarks .......: <b>You are strongly discouraged to use WinHTTP in asynchronous mode with AutoIt. AutoIt's callback implementation can't handle reentrancy properly.</b>
 ;                  +For asynchronous mode set $iFlag to $WINHTTP_FLAG_ASYNC. In that case $WINHTTP_OPTION_CONTEXT_VALUE for the handle will inernally be set to $WINHTTP_FLAG_ASYNC also.
 ; Related .......: _WinHttpCloseHandle, _WinHttpConnect
-; Link ..........: http://msdn.microsoft.com/en-us/library/aa384098(VS.85).aspx
+; Link ..........: http://msdn.microsoft.com/en-us/library/aa384098.aspx
 ;============================================================================================
 Func _WinHttpOpen($sUserAgent = Default, $iAccessType = Default, $sProxyName = Default, $sProxyBypass = Default, $iFlag = Default)
 	__WinHttpDefault($sUserAgent, "AutoIt/3.3")
@@ -577,7 +577,7 @@ EndFunc
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _WinHttpCloseHandle, _WinHttpConnect, _WinHttpSendRequest
-; Link ..........: http://msdn.microsoft.com/en-us/library/aa384099(VS.85).aspx
+; Link ..........: http://msdn.microsoft.com/en-us/library/aa384099.aspx
 ;============================================================================================
 Func _WinHttpOpenRequest($hConnect, $sVerb = Default, $sObjectName = Default, $sVersion = Default, $sReferrer = Default, $sAcceptTypes = Default, $iFlags = Default)
 	__WinHttpDefault($sVerb, "GET")
@@ -625,7 +625,7 @@ EndFunc
 ; Modified.......:
 ; Remarks .......: _WinHttpReceiveResponse must have been called for this handle and completed before _WinHttpQueryDataAvailable is called.
 ; Related .......: _WinHttpOpenRequest, _WinHttpReadData, _WinHttpReceiveResponse
-; Link ..........: http://msdn.microsoft.com/en-us/library/aa384101(VS.85).aspx
+; Link ..........: http://msdn.microsoft.com/en-us/library/aa384101.aspx
 ;============================================================================================
 Func _WinHttpQueryDataAvailable($hRequest)
 	Local $sReadType = "dword*"
@@ -651,7 +651,7 @@ EndFunc
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _WinHttpAddRequestHeaders, _WinHttpOpenRequest
-; Link ..........: http://msdn.microsoft.com/en-us/library/aa384102(VS.85).aspx
+; Link ..........: http://msdn.microsoft.com/en-us/library/aa384102.aspx
 ;============================================================================================
 Func _WinHttpQueryHeaders($hRequest, $iInfoLevel = Default, $sName = Default, $iIndex = Default)
 	__WinHttpDefault($iInfoLevel, $WINHTTP_QUERY_RAW_HEADERS_CRLF)
@@ -682,7 +682,7 @@ EndFunc
 ; Modified.......:
 ; Remarks .......: Type of the returned data varies on request.
 ; Related .......: _WinHttpSetOption
-; Link ..........: http://msdn.microsoft.com/en-us/library/aa384103(VS.85).aspx
+; Link ..........: http://msdn.microsoft.com/en-us/library/aa384103.aspx
 ;============================================================================================
 Func _WinHttpQueryOption($hInternet, $iOption)
 	Local $aCall = DllCall($hWINHTTPDLL__WINHTTP, "bool", "WinHttpQueryOption", _
@@ -737,7 +737,7 @@ EndFunc
 ;                  |1 - UTF8
 ;                  |2 - Binary
 ; Related .......: _WinHttpOpenRequest, _WinHttpWriteData
-; Link ..........: http://msdn.microsoft.com/en-us/library/aa384104(VS.85).aspx
+; Link ..........: http://msdn.microsoft.com/en-us/library/aa384104.aspx
 ;============================================================================================
 Func _WinHttpReadData($hRequest, $iMode = Default, $iNumberOfBytesToRead = Default, $pBuffer = Default)
 	__WinHttpDefault($iMode, 0)
@@ -798,7 +798,7 @@ EndFunc
 ; Modified.......:
 ; Remarks .......: Call to _WinHttpReceiveResponse() must be done before _WinHttpQueryDataAvailable() and _WinHttpReadData().
 ; Related .......: _WinHttpOpenRequest, _WinHttpSetTimeouts
-; Link ..........: http://msdn.microsoft.com/en-us/library/aa384105(VS.85).aspx
+; Link ..........: http://msdn.microsoft.com/en-us/library/aa384105.aspx
 ;============================================================================================
 Func _WinHttpReceiveResponse($hRequest)
 	Local $aCall = DllCall($hWINHTTPDLL__WINHTTP, "bool", "WinHttpReceiveResponse", "handle", $hRequest, "ptr", 0)
@@ -822,7 +822,7 @@ EndFunc
 ; Modified.......:
 ; Remarks .......: Specifying optional data ($sOptional) will cause $iTotalLength to receive the size of that data if left default value.
 ; Related .......: _WinHttpOpenRequest
-; Link ..........: http://msdn.microsoft.com/en-us/library/aa384110(VS.85).aspx
+; Link ..........: http://msdn.microsoft.com/en-us/library/aa384110.aspx
 ;============================================================================================
 Func _WinHttpSendRequest($hRequest, $sHeaders = Default, $sOptional = Default, $iTotalLength = Default, $iContext = Default)
 	__WinHttpDefault($sHeaders, $WINHTTP_NO_ADDITIONAL_HEADERS)
@@ -866,7 +866,7 @@ EndFunc
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _WinHttpOpenRequest
-; Link ..........: http://msdn.microsoft.com/en-us/library/aa384112(VS.85).aspx
+; Link ..........: http://msdn.microsoft.com/en-us/library/aa384112.aspx
 ;============================================================================================
 Func _WinHttpSetCredentials($hRequest, $iAuthTargets, $iAuthScheme, $sUserName, $sPassword)
 	Local $aCall = DllCall($hWINHTTPDLL__WINHTTP, "bool", "WinHttpSetCredentials", _
@@ -894,7 +894,7 @@ EndFunc
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _WinHttpDetectAutoProxyConfigUrl, _WinHttpGetDefaultProxyConfiguration, _WinHttpGetIEProxyConfigForCurrentUser
-; Link ..........: http://msdn.microsoft.com/en-us/library/aa384113(VS.85).aspx
+; Link ..........: http://msdn.microsoft.com/en-us/library/aa384113.aspx
 ;============================================================================================
 Func _WinHttpSetDefaultProxyConfiguration($iAccessType, $sProxy = "", $sProxyBypass = "")
 	Local $tProxy = DllStructCreate("wchar[" & StringLen($sProxy) + 1 & "]")
@@ -932,7 +932,7 @@ EndFunc
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _WinHttpQueryOption
-; Link ..........: http://msdn.microsoft.com/en-us/library/aa384114(VS.85).aspx
+; Link ..........: http://msdn.microsoft.com/en-us/library/aa384114.aspx
 ;============================================================================================
 Func _WinHttpSetOption($hInternet, $iOption, $vSetting, $iSize = Default)
 	If $iSize = Default Then $iSize = -1
@@ -1006,7 +1006,7 @@ EndFunc
 ; Modified.......: trancexx
 ; Remarks .......:
 ; Related .......: _WinHttpOpen
-; Link ..........: http://msdn.microsoft.com/en-us/library/aa384115(VS.85).aspx
+; Link ..........: http://msdn.microsoft.com/en-us/library/aa384115.aspx
 ;============================================================================================
 Func _WinHttpSetStatusCallback($hInternet, $hInternetCallback, $iNotificationFlags = Default)
 	__WinHttpDefault($iNotificationFlags, $WINHTTP_CALLBACK_FLAG_ALL_NOTIFICATIONS)
@@ -1039,7 +1039,7 @@ EndFunc
 ;                  |- $iSendTimeout = 30000
 ;                  |- $iReceiveTimeout = 30000
 ; Related .......: _WinHttpReceiveResponse
-; Link ..........: http://msdn.microsoft.com/en-us/library/aa384116(VS.85).aspx
+; Link ..........: http://msdn.microsoft.com/en-us/library/aa384116.aspx
 ;============================================================================================
 Func _WinHttpSetTimeouts($hInternet, $iResolveTimeout = Default, $iConnectTimeout = Default, $iSendTimeout = Default, $iReceiveTimeout = Default)
 	__WinHttpDefault($iResolveTimeout, 0)
@@ -1780,7 +1780,7 @@ EndFunc
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _WinHttpTimeToSystemTime
-; Link ..........: http://msdn.microsoft.com/en-us/library/aa384117(VS.85).aspx
+; Link ..........: http://msdn.microsoft.com/en-us/library/aa384117.aspx
 ;============================================================================================
 Func _WinHttpTimeFromSystemTime()
 	Local $SYSTEMTIME = DllStructCreate("word Year;" & _
@@ -1819,7 +1819,7 @@ EndFunc
 ; Modified.......:
 ; Remarks .......:
 ; Related .......: _WinHttpTimeFromSystemTime
-; Link ..........: http://msdn.microsoft.com/en-us/library/aa384118(VS.85).aspx
+; Link ..........: http://msdn.microsoft.com/en-us/library/aa384118.aspx
 ;============================================================================================
 Func _WinHttpTimeToSystemTime($sHttpTime)
 	Local $SYSTEMTIME = DllStructCreate("word Year;" & _
@@ -1863,7 +1863,7 @@ EndFunc
 ;                  |0 - to write ANSI string
 ;                  |1 - to write binary data
 ; Related .......: _WinHttpSendRequest, _WinHttpReadData
-; Link ..........: http://msdn.microsoft.com/en-us/library/aa384120(VS.85).aspx
+; Link ..........: http://msdn.microsoft.com/en-us/library/aa384120.aspx
 ;============================================================================================
 Func _WinHttpWriteData($hRequest, $vData, $iMode = Default)
 	__WinHttpDefault($iMode, 0)
