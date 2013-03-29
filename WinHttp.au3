@@ -89,7 +89,6 @@ DllOpen("winhttp.dll") ; making sure reference count never reaches 0
 ; Remarks .......: In case of multiple additions at once, must use @CRLF to separate each $hRequest and responded $sHeaders and $iModifiers.
 ; Related .......: _WinHttpOpenRequest, _WinHttpQueryHeaders
 ; Link ..........: http://msdn.microsoft.com/en-us/library/aa384087(VS.85).aspx
-; Example .......: 3456
 ;============================================================================================
 Func _WinHttpAddRequestHeaders($hRequest, $sHeader, $iModifier = Default)
 	__WinHttpDefault($iModifier, $WINHTTP_ADDREQ_FLAG_ADD_IF_NEW)
@@ -116,7 +115,6 @@ EndFunc
 ; Remarks .......:
 ; Related .......: _WinHttpReadData
 ; Link ..........:
-; Example .......:
 ;============================================================================================
 Func _WinHttpBinaryConcat(ByRef $bBinary1, ByRef $bBinary2)
 	Switch IsBinary($bBinary1) + 2 * IsBinary($bBinary2)
@@ -148,7 +146,6 @@ EndFunc
 ; Remarks .......:
 ; Related .......:
 ; Link ..........: http://msdn.microsoft.com/en-us/library/aa384089(VS.85).aspx
-; Example .......:
 ;============================================================================================
 Func _WinHttpCheckPlatform()
 	Local $aCall = DllCall($hWINHTTPDLL__WINHTTP, "bool", "WinHttpCheckPlatform")
@@ -169,7 +166,6 @@ EndFunc
 ; Remarks .......:
 ; Related .......: _WinHttpConnect, _WinHttpOpen, _WinHttpOpenRequest
 ; Link ..........: http://msdn.microsoft.com/en-us/library/aa384090(VS.85).aspx
-; Example .......:
 ;============================================================================================
 Func _WinHttpCloseHandle($hInternet)
 	Local $aCall = DllCall($hWINHTTPDLL__WINHTTP, "bool", "WinHttpCloseHandle", "handle", $hInternet)
@@ -192,7 +188,6 @@ EndFunc
 ; Remarks .......: $iServerPort can be defined via global constants $INTERNET_DEFAULT_PORT, $INTERNET_DEFAULT_HTTP_PORT or $INTERNET_DEFAULT_HTTPS_PORT
 ; Related .......: _WinHttpOpen
 ; Link ..........: http://msdn.microsoft.com/en-us/library/aa384091(VS.85).aspx
-; Example .......:
 ;============================================================================================
 Func _WinHttpConnect($hSession, $sServerName, $iServerPort = Default)
 	__WinHttpDefault($iServerPort, $INTERNET_DEFAULT_PORT)
@@ -229,7 +224,6 @@ EndFunc
 ;                  |$ICU_ESCAPE - Escapes certain characters to their escape sequences (%xx).
 ; Related .......: _WinHttpCreateUrl
 ; Link ..........: http://msdn.microsoft.com/en-us/library/aa384092(VS.85).aspx
-; Example .......:
 ;============================================================================================
 Func _WinHttpCrackUrl($sURL, $iFlag = Default)
 	__WinHttpDefault($iFlag, $ICU_ESCAPE)
@@ -306,7 +300,6 @@ EndFunc
 ;                  |- eighth element [7] is extra information
 ; Related .......: _WinHttpCrackUrl
 ; Link ..........: http://msdn.microsoft.com/en-us/library/aa384093(VS.85).aspx
-; Example .......:
 ;============================================================================================
 Func _WinHttpCreateUrl($aURLArray)
 	If UBound($aURLArray) - 8 Then Return SetError(1, 0, "")
@@ -402,7 +395,6 @@ EndFunc
 ; Remarks .......: $iAutoDetectFlags values are defined in WinHttpconstants.au3
 ; Related .......: _WinHttpGetDefaultProxyConfiguration, _WinHttpGetIEProxyConfigForCurrentUser, _WinHttpSetDefaultProxyConfiguration
 ; Link ..........: http://msdn.microsoft.com/en-us/library/aa384094(VS.85).aspx
-; Example .......:
 ;============================================================================================
 Func _WinHttpDetectAutoProxyConfigUrl($iAutoDetectFlags)
 	Local $aCall = DllCall($hWINHTTPDLL__WINHTTP, "bool", "WinHttpDetectAutoProxyConfigUrl", "dword", $iAutoDetectFlags, "ptr*", 0)
@@ -438,7 +430,6 @@ EndFunc
 ;                  |$WINHTTP_ACCESS_TYPE_NAMED_PROXY = 3
 ; Related .......: _WinHttpDetectAutoProxyConfigUrl, _WinHttpGetIEProxyConfigForCurrentUser, _WinHttpSetDefaultProxyConfiguration
 ; Link ..........: http://msdn.microsoft.com/en-us/library/aa384095(VS.85).aspx
-; Example .......:
 ;============================================================================================
 Func _WinHttpGetDefaultProxyConfiguration()
 	Local $tWINHTTP_PROXY_INFO = DllStructCreate("dword AccessType;" & _
@@ -489,7 +480,6 @@ EndFunc
 ; Remarks .......:
 ; Related .......: _WinHttpDetectAutoProxyConfigUrl, _WinHttpGetDefaultProxyConfiguration, _WinHttpSetDefaultProxyConfiguration
 ; Link ..........: http://msdn.microsoft.com/en-us/library/aa384096(VS.85).aspx
-; Example .......:
 ;============================================================================================
 Func _WinHttpGetIEProxyConfigForCurrentUser()
 	Local $tWINHTTP_CURRENT_USER_IE_PROXY_CONFIG = DllStructCreate("int AutoDetect;" & _
@@ -551,7 +541,6 @@ EndFunc
 ;                  +For asynchronous mode set $iFlag to $WINHTTP_FLAG_ASYNC. In that case $WINHTTP_OPTION_CONTEXT_VALUE for the handle will inernally be set to $WINHTTP_FLAG_ASYNC also.
 ; Related .......: _WinHttpCloseHandle, _WinHttpConnect
 ; Link ..........: http://msdn.microsoft.com/en-us/library/aa384098(VS.85).aspx
-; Example .......:
 ;============================================================================================
 Func _WinHttpOpen($sUserAgent = Default, $iAccessType = Default, $sProxyName = Default, $sProxyBypass = Default, $iFlag = Default)
 	__WinHttpDefault($sUserAgent, "AutoIt/3.3")
@@ -589,7 +578,6 @@ EndFunc
 ; Remarks .......:
 ; Related .......: _WinHttpCloseHandle, _WinHttpConnect, _WinHttpSendRequest
 ; Link ..........: http://msdn.microsoft.com/en-us/library/aa384099(VS.85).aspx
-; Example .......:
 ;============================================================================================
 Func _WinHttpOpenRequest($hConnect, $sVerb = Default, $sObjectName = Default, $sVersion = Default, $sReferrer = Default, $sAcceptTypes = Default, $iFlags = Default)
 	__WinHttpDefault($sVerb, "GET")
@@ -638,7 +626,6 @@ EndFunc
 ; Remarks .......: _WinHttpReceiveResponse must have been called for this handle and completed before _WinHttpQueryDataAvailable is called.
 ; Related .......: _WinHttpOpenRequest, _WinHttpReadData, _WinHttpReceiveResponse
 ; Link ..........: http://msdn.microsoft.com/en-us/library/aa384101(VS.85).aspx
-; Example .......:
 ;============================================================================================
 Func _WinHttpQueryDataAvailable($hRequest)
 	Local $sReadType = "dword*"
@@ -665,7 +652,6 @@ EndFunc
 ; Remarks .......:
 ; Related .......: _WinHttpAddRequestHeaders, _WinHttpOpenRequest
 ; Link ..........: http://msdn.microsoft.com/en-us/library/aa384102(VS.85).aspx
-; Example .......:
 ;============================================================================================
 Func _WinHttpQueryHeaders($hRequest, $iInfoLevel = Default, $sName = Default, $iIndex = Default)
 	__WinHttpDefault($iInfoLevel, $WINHTTP_QUERY_RAW_HEADERS_CRLF)
@@ -697,7 +683,6 @@ EndFunc
 ; Remarks .......: Type of the returned data varies on request.
 ; Related .......: _WinHttpSetOption
 ; Link ..........: http://msdn.microsoft.com/en-us/library/aa384103(VS.85).aspx
-; Example .......:
 ;============================================================================================
 Func _WinHttpQueryOption($hInternet, $iOption)
 	Local $aCall = DllCall($hWINHTTPDLL__WINHTTP, "bool", "WinHttpQueryOption", _
@@ -753,7 +738,6 @@ EndFunc
 ;                  |2 - Binary
 ; Related .......: _WinHttpOpenRequest, _WinHttpWriteData
 ; Link ..........: http://msdn.microsoft.com/en-us/library/aa384104(VS.85).aspx
-; Example .......:
 ;============================================================================================
 Func _WinHttpReadData($hRequest, $iMode = Default, $iNumberOfBytesToRead = Default, $pBuffer = Default)
 	__WinHttpDefault($iMode, 0)
@@ -815,7 +799,6 @@ EndFunc
 ; Remarks .......: Call to _WinHttpReceiveResponse() must be done before _WinHttpQueryDataAvailable() and _WinHttpReadData().
 ; Related .......: _WinHttpOpenRequest, _WinHttpSetTimeouts
 ; Link ..........: http://msdn.microsoft.com/en-us/library/aa384105(VS.85).aspx
-; Example .......:
 ;============================================================================================
 Func _WinHttpReceiveResponse($hRequest)
 	Local $aCall = DllCall($hWINHTTPDLL__WINHTTP, "bool", "WinHttpReceiveResponse", "handle", $hRequest, "ptr", 0)
@@ -840,7 +823,6 @@ EndFunc
 ; Remarks .......: Specifying optional data ($sOptional) will cause $iTotalLength to receive the size of that data if left default value.
 ; Related .......: _WinHttpOpenRequest
 ; Link ..........: http://msdn.microsoft.com/en-us/library/aa384110(VS.85).aspx
-; Example .......:
 ;============================================================================================
 Func _WinHttpSendRequest($hRequest, $sHeaders = Default, $sOptional = Default, $iTotalLength = Default, $iContext = Default)
 	__WinHttpDefault($sHeaders, $WINHTTP_NO_ADDITIONAL_HEADERS)
@@ -885,7 +867,6 @@ EndFunc
 ; Remarks .......:
 ; Related .......: _WinHttpOpenRequest
 ; Link ..........: http://msdn.microsoft.com/en-us/library/aa384112(VS.85).aspx
-; Example .......:
 ;============================================================================================
 Func _WinHttpSetCredentials($hRequest, $iAuthTargets, $iAuthScheme, $sUserName, $sPassword)
 	Local $aCall = DllCall($hWINHTTPDLL__WINHTTP, "bool", "WinHttpSetCredentials", _
@@ -914,7 +895,6 @@ EndFunc
 ; Remarks .......:
 ; Related .......: _WinHttpDetectAutoProxyConfigUrl, _WinHttpGetDefaultProxyConfiguration, _WinHttpGetIEProxyConfigForCurrentUser
 ; Link ..........: http://msdn.microsoft.com/en-us/library/aa384113(VS.85).aspx
-; Example .......:
 ;============================================================================================
 Func _WinHttpSetDefaultProxyConfiguration($iAccessType, $sProxy = "", $sProxyBypass = "")
 	Local $tProxy = DllStructCreate("wchar[" & StringLen($sProxy) + 1 & "]")
@@ -953,7 +933,6 @@ EndFunc
 ; Remarks .......:
 ; Related .......: _WinHttpQueryOption
 ; Link ..........: http://msdn.microsoft.com/en-us/library/aa384114(VS.85).aspx
-; Example .......:
 ;============================================================================================
 Func _WinHttpSetOption($hInternet, $iOption, $vSetting, $iSize = Default)
 	If $iSize = Default Then $iSize = -1
@@ -1028,7 +1007,6 @@ EndFunc
 ; Remarks .......:
 ; Related .......: _WinHttpOpen
 ; Link ..........: http://msdn.microsoft.com/en-us/library/aa384115(VS.85).aspx
-; Example .......:
 ;============================================================================================
 Func _WinHttpSetStatusCallback($hInternet, $hInternetCallback, $iNotificationFlags = Default)
 	__WinHttpDefault($iNotificationFlags, $WINHTTP_CALLBACK_FLAG_ALL_NOTIFICATIONS)
@@ -1062,7 +1040,6 @@ EndFunc
 ;                  |- $iReceiveTimeout = 30000
 ; Related .......: _WinHttpReceiveResponse
 ; Link ..........: http://msdn.microsoft.com/en-us/library/aa384116(VS.85).aspx
-; Example .......:
 ;============================================================================================
 Func _WinHttpSetTimeouts($hInternet, $iResolveTimeout = Default, $iConnectTimeout = Default, $iSendTimeout = Default, $iReceiveTimeout = Default)
 	__WinHttpDefault($iResolveTimeout, 0)
@@ -1120,7 +1097,6 @@ EndFunc
 ;                  +Muliple files are always separated with vertical line ASCII character when filling the form.
 ; Related .......: _WinHttpConnect
 ; Link ..........:
-; Example .......:
 ;============================================================================================
 Func _WinHttpSimpleFormFill(ByRef $hInternet, $sActionPage = Default, $sFormId = Default, $sFieldId1 = Default, $sData1 = Default, $sFieldId2 = Default, $sData2 = Default, $sFieldId3 = Default, $sData3 = Default, $sFieldId4 = Default, $sData4 = Default, $sFieldId5 = Default, $sData5 = Default, $sFieldId6 = Default, $sData6 = Default, $sFieldId7 = Default, $sData7 = Default, $sFieldId8 = Default, $sData8 = Default, $sFieldId9 = Default, $sData9 = Default, $sFieldId10 = Default, $sData10 = Default, _
 		$sFieldId11 = Default, $sData11 = Default, $sFieldId12 = Default, $sData12 = Default, $sFieldId13 = Default, $sData13 = Default, $sFieldId14 = Default, $sData14 = Default, $sFieldId15 = Default, $sData15 = Default, $sFieldId16 = Default, $sData16 = Default, $sFieldId17 = Default, $sData17 = Default, $sFieldId18 = Default, $sData18 = Default, $sFieldId19 = Default, $sData19 = Default, $sFieldId20 = Default, $sData20 = Default, _
@@ -1562,7 +1538,6 @@ EndFunc
 ; Remarks .......:
 ; Related .......: _WinHttpReadData, _WinHttpSimpleRequest, _WinHttpSimpleSSLRequest
 ; Link ..........:
-; Example .......:
 ; ===============================================================================================================================
 Func _WinHttpSimpleReadData($hRequest, $iMode = Default)
 	__WinHttpDefault($iMode, 0)
@@ -1605,7 +1580,6 @@ EndFunc
 ;                  +Also make sure memory buffer is at least 8192 bytes in size if $iNumberOfBytesToRead is left default.
 ; Related .......: _WinHttpSimpleReadData, _WinHttpReadData
 ; Link ..........:
-; Example .......:
 ; ===============================================================================================================================
 Func _WinHttpSimpleReadDataAsync($hInternet, ByRef $pBuffer, $iNumberOfBytesToRead = Default)
 	__WinHttpDefault($iNumberOfBytesToRead, 8192)
@@ -1642,7 +1616,6 @@ EndFunc
 ; Remarks .......:
 ; Related .......: _WinHttpSimpleSSLRequest, _WinHttpSimpleSendRequest, _WinHttpSimpleSendSSLRequest, _WinHttpQueryHeaders, _WinHttpSimpleReadData
 ; Link ..........:
-; Example .......:
 ; ===============================================================================================================================
 Func _WinHttpSimpleRequest($hConnect, $sType = Default, $sPath = Default, $sReferrer = Default, $sData = Default, $sHeader = Default, $fGetHeaders = Default, $iMode = Default)
 	; Author: ProgAndy
@@ -1686,7 +1659,6 @@ EndFunc
 ; Remarks .......:
 ; Related .......: _WinHttpSimpleRequest, _WinHttpSimpleSendSSLRequest, _WinHttpSimpleReadData
 ; Link ..........:
-; Example .......:
 ; ===============================================================================================================================
 Func _WinHttpSimpleSendRequest($hConnect, $sType = Default, $sPath = Default, $sReferrer = Default, $sData = Default, $sHeader = Default)
 	; Author: ProgAndy
@@ -1725,7 +1697,6 @@ EndFunc
 ; Remarks .......:
 ; Related .......: _WinHttpSimpleSSLRequest, _WinHttpSimpleSendRequest, _WinHttpSimpleReadData
 ; Link ..........:
-; Example .......:
 ; ===============================================================================================================================
 Func _WinHttpSimpleSendSSLRequest($hConnect, $sType = Default, $sPath = Default, $sReferrer = Default, $sData = Default, $sHeader = Default)
 	; Author: ProgAndy
@@ -1773,7 +1744,6 @@ EndFunc
 ; Remarks .......:
 ; Related .......: _WinHttpSimpleRequest, _WinHttpSimpleSendSSLRequest, _WinHttpSimpleSendRequest, _WinHttpQueryHeaders, _WinHttpSimpleReadData
 ; Link ..........:
-; Example .......:
 ; ===============================================================================================================================
 Func _WinHttpSimpleSSLRequest($hConnect, $sType = Default, $sPath = Default, $sReferrer = Default, $sData = Default, $sHeader = Default, $fGetHeaders = Default, $iMode = Default)
 	; Author: ProgAndy
@@ -1811,7 +1781,6 @@ EndFunc
 ; Remarks .......:
 ; Related .......: _WinHttpTimeToSystemTime
 ; Link ..........: http://msdn.microsoft.com/en-us/library/aa384117(VS.85).aspx
-; Example .......:
 ;============================================================================================
 Func _WinHttpTimeFromSystemTime()
 	Local $SYSTEMTIME = DllStructCreate("word Year;" & _
@@ -1851,7 +1820,6 @@ EndFunc
 ; Remarks .......:
 ; Related .......: _WinHttpTimeFromSystemTime
 ; Link ..........: http://msdn.microsoft.com/en-us/library/aa384118(VS.85).aspx
-; Example .......:
 ;============================================================================================
 Func _WinHttpTimeToSystemTime($sHttpTime)
 	Local $SYSTEMTIME = DllStructCreate("word Year;" & _
@@ -1896,7 +1864,6 @@ EndFunc
 ;                  |1 - to write binary data
 ; Related .......: _WinHttpSendRequest, _WinHttpReadData
 ; Link ..........: http://msdn.microsoft.com/en-us/library/aa384120(VS.85).aspx
-; Example .......:
 ;============================================================================================
 Func _WinHttpWriteData($hRequest, $vData, $iMode = Default)
 	__WinHttpDefault($iMode, 0)
