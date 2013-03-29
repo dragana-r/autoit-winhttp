@@ -51,6 +51,7 @@ DllOpen("winhttp.dll") ; making sure reference count never reaches 0
 ;_WinHttpGetIEProxyConfigForCurrentUser
 ;_WinHttpOpen
 ;_WinHttpOpenRequest
+;_WinHttpQueryAuthSchemes
 ;_WinHttpQueryDataAvailable
 ;_WinHttpQueryHeaders
 ;_WinHttpQueryOption
@@ -609,6 +610,39 @@ Func _WinHttpOpenRequest($hConnect, $sVerb = Default, $sObjectName = Default, $s
 			"dword", $iFlags)
 	If @error Or Not $aCall[0] Then Return SetError(1, 0, 0)
 	Return $aCall[0]
+EndFunc
+
+; #FUNCTION# ====================================================================================================================
+; Name ..........: _WinHttpQueryAuthSchemes
+; Description ...: Returns the authorization schemes that are supported by the server.
+; Syntax ........: _WinHttpQueryAuthSchemes($hRequest, Byref $iSupportedSchemes, Byref $iFirstScheme, Byref $iAuthTarget)
+; Parameters ....: $hRequest - Valid handle returned by _WinHttpSendRequest().
+;                  $iSupportedSchemes - [out] Supported authentication schemes. See remarks.
+;                  $iFirstScheme - [out] First authentication scheme listed by the server. See remarks.
+;                  $iAuthTarget - [out] A flag that contains the authentication target. See remarks.
+; Return values .: Success - Returns 1
+;                  Failure - Returns 0 and sets @error:
+;                  |1 - DllCall failed
+; Author ........: trancexx
+; Modified ......:
+; Remarks .......: _WinHttpQueryAuthSchemes() is called after _WinHttpQueryHeaders().
+;                  +Arguments are accepted ByRef.
+;                  +Both $iSupportedSchemes and $iFirstScheme is set to combination of any of $WINHTTP_AUTH_SCHEME_ flags.
+;                  +$iAuthTarget parameter is set to one or more $WINHTTP_AUTH_TARGET_ constants values.
+; Related .......: _WinHttpSetCredentials, _WinHttpQueryHeaders, _WinHttpOpenRequest
+; Link ..........: http://msdn.microsoft.com/en-us/library/aa384100.aspx
+; ===============================================================================================================================
+Func _WinHttpQueryAuthSchemes($hRequest, ByRef $iSupportedSchemes, ByRef $iFirstScheme, ByRef $iAuthTarget)
+	Local $aCall = DllCall($hWINHTTPDLL__WINHTTP, "bool", "WinHttpQueryAuthSchemes", _
+			"handle", $hRequest, _
+			"dword*", 0, _
+			"dword*", 0, _
+			"dword*", 0)
+	If @error Or Not $aCall[0] Then Return SetError(1, 0, 0)
+	$iSupportedSchemes = $aCall[2]
+	$iFirstScheme = $aCall[3]
+	$iAuthTarget = $aCall[4]
+	Return 1
 EndFunc
 
 ; #FUNCTION# ;===============================================================================
