@@ -1,4 +1,24 @@
-#AutoIt3Wrapper_Au3Check_Parameters=-d -w 1 -w 2 -w 3 -w 4 -w 5 -w 6
+
+; For those who would fear the license - don't. I tried to license it as liberal as possible.
+; It really means you can do what ever you want with this.
+Donations are wellcome And will be accepted via PayPal address: trancexx at yahoo dot com
+; Thank you for the shiny stuff :kiss:
+
+#comments-start
+	Copyright 2013 Dragana R. <trancexx at yahoo dot com>
+
+	Licensed under the Apache License, Version 2.0 (the "License");
+	you may not use this file except in compliance with the License.
+	You may obtain a copy of the License at
+
+	http://www.apache.org/licenses/LICENSE-2.0
+
+	Unless required by applicable law or agreed to in writing, software
+	distributed under the License is distributed on an "AS IS" BASIS,
+	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	See the License for the specific language governing permissions and
+	limitations under the License.
+#comments-end
 
 #include-once
 #include "WinHttpConstants.au3"
@@ -80,7 +100,7 @@ Func _WinHttpAddRequestHeaders($hRequest, $sHeader, $iModifier = Default)
 			"dword", $iModifier)
 	If @error Or Not $aCall[0] Then Return SetError(1, 0, 0)
 	Return 1
-EndFunc   ;==>_WinHttpAddRequestHeaders
+EndFunc
 
 ; #FUNCTION# ;===============================================================================
 ; Name...........: _WinHttpBinaryConcat
@@ -112,7 +132,7 @@ Func _WinHttpBinaryConcat(ByRef $bBinary1, ByRef $bBinary2)
 	DllStructSetData($tAuxiliary, 2, $bBinary2)
 	Local $tOutput = DllStructCreate("byte[" & DllStructGetSize($tAuxiliary) & "]", DllStructGetPtr($tAuxiliary))
 	Return DllStructGetData($tOutput, 1)
-EndFunc   ;==>_WinHttpBinaryConcat
+EndFunc
 
 ; #FUNCTION# ;===============================================================================
 ; Name...........: _WinHttpCheckPlatform
@@ -134,7 +154,7 @@ Func _WinHttpCheckPlatform()
 	Local $aCall = DllCall($hWINHTTPDLL__WINHTTP, "bool", "WinHttpCheckPlatform")
 	If @error Then Return SetError(1, 0, 0)
 	Return $aCall[0]
-EndFunc   ;==>_WinHttpCheckPlatform
+EndFunc
 
 ; #FUNCTION# ;===============================================================================
 ; Name...........: _WinHttpCloseHandle
@@ -155,7 +175,7 @@ Func _WinHttpCloseHandle($hInternet)
 	Local $aCall = DllCall($hWINHTTPDLL__WINHTTP, "bool", "WinHttpCloseHandle", "handle", $hInternet)
 	If @error Or Not $aCall[0] Then Return SetError(1, 0, 0)
 	Return 1
-EndFunc   ;==>_WinHttpCloseHandle
+EndFunc
 
 ; #FUNCTION# ;===============================================================================
 ; Name...........: _WinHttpConnect
@@ -183,7 +203,7 @@ Func _WinHttpConnect($hSession, $sServerName, $iServerPort = Default)
 			"dword", 0)
 	If @error Or Not $aCall[0] Then Return SetError(1, 0, 0)
 	Return $aCall[0]
-EndFunc   ;==>_WinHttpConnect
+EndFunc
 
 ; #FUNCTION# ;===============================================================================
 ; Name...........: _WinHttpCrackUrl
@@ -261,7 +281,7 @@ Func _WinHttpCrackUrl($sURL, $iFlag = Default)
 			DllStructGetData($tBuffers[4], 1), _
 			DllStructGetData($tBuffers[5], 1)]
 	Return $aRet
-EndFunc   ;==>_WinHttpCrackUrl
+EndFunc
 
 ; #FUNCTION# ;===============================================================================
 ; Name...........: _WinHttpCreateUrl
@@ -366,7 +386,7 @@ Func _WinHttpCreateUrl($aURLArray)
 			"dword*", $iURLLen)
 	If @error Or Not $aCall[0] Then Return SetError(3, 0, "")
 	Return DllStructGetData($URLBuffer, 1)
-EndFunc   ;==>_WinHttpCreateUrl
+EndFunc
 
 ; #FUNCTION# ;===============================================================================
 ; Name...........: _WinHttpDetectAutoProxyConfigUrl
@@ -397,8 +417,7 @@ Func _WinHttpDetectAutoProxyConfigUrl($iAutoDetectFlags)
 		Return $sString
 	EndIf
 	Return ""
-EndFunc   ;==>_WinHttpDetectAutoProxyConfigUrl
-
+EndFunc
 
 ; #FUNCTION# ;===============================================================================
 ; Name...........: _WinHttpGetDefaultProxyConfiguration
@@ -450,7 +469,7 @@ Func _WinHttpGetDefaultProxyConfiguration()
 	EndIf
 	Local $aRet[3] = [$iAccessType, $sProxy, $sProxyBypass]
 	Return $aRet
-EndFunc   ;==>_WinHttpGetDefaultProxyConfiguration
+EndFunc
 
 ; #FUNCTION# ;===============================================================================
 ; Name...........: _WinHttpGetIEProxyConfigForCurrentUser
@@ -512,7 +531,7 @@ Func _WinHttpGetIEProxyConfigForCurrentUser()
 	EndIf
 	Local $aOutput[4] = [$iAutoDetect, $sAutoConfigUrl, $sProxy, $sProxyBypass]
 	Return $aOutput
-EndFunc   ;==>_WinHttpGetIEProxyConfigForCurrentUser
+EndFunc
 
 ; #FUNCTION# ;===============================================================================
 ; Name...........: _WinHttpOpen
@@ -548,7 +567,7 @@ Func _WinHttpOpen($sUserAgent = Default, $iAccessType = Default, $sProxyName = D
 	If @error Or Not $aCall[0] Then Return SetError(1, 0, 0)
 	If $iFlag = $WINHTTP_FLAG_ASYNC Then _WinHttpSetOption($aCall[0], $WINHTTP_OPTION_CONTEXT_VALUE, $WINHTTP_FLAG_ASYNC)
 	Return $aCall[0]
-EndFunc   ;==>_WinHttpOpen
+EndFunc
 
 ; #FUNCTION# ;===============================================================================
 ; Name...........: _WinHttpOpenRequest
@@ -601,7 +620,7 @@ Func _WinHttpOpenRequest($hConnect, $sVerb = Default, $sObjectName = Default, $s
 			"dword", $iFlags)
 	If @error Or Not $aCall[0] Then Return SetError(1, 0, 0)
 	Return $aCall[0]
-EndFunc   ;==>_WinHttpOpenRequest
+EndFunc
 
 ; #FUNCTION# ;===============================================================================
 ; Name...........: _WinHttpQueryDataAvailable
@@ -626,7 +645,7 @@ Func _WinHttpQueryDataAvailable($hRequest)
 	Local $aCall = DllCall($hWINHTTPDLL__WINHTTP, "bool", "WinHttpQueryDataAvailable", "handle", $hRequest, $sReadType, 0)
 	If @error Then Return SetError(1, 0, 0)
 	Return SetExtended($aCall[2], $aCall[0])
-EndFunc   ;==>_WinHttpQueryDataAvailable
+EndFunc
 
 ; #FUNCTION# ;===============================================================================
 ; Name...........: _WinHttpQueryHeaders
@@ -660,7 +679,7 @@ Func _WinHttpQueryHeaders($hRequest, $iInfoLevel = Default, $sName = Default, $i
 			"dword*", $iIndex)
 	If @error Or Not $aCall[0] Then Return SetError(1, 0, "")
 	Return SetExtended($aCall[6], $aCall[4])
-EndFunc   ;==>_WinHttpQueryHeaders
+EndFunc
 
 ; #FUNCTION# ;===============================================================================
 ; Name...........: _WinHttpQueryOption
@@ -711,7 +730,7 @@ Func _WinHttpQueryOption($hInternet, $iOption)
 			"dword*", $iSize)
 	If @error Or Not $aCall[0] Then Return SetError(2, 0, "")
 	Return DllStructGetData($tBuffer, 1)
-EndFunc   ;==>_WinHttpQueryOption
+EndFunc
 
 ; #FUNCTION# ;===============================================================================
 ; Name...........: _WinHttpReadData
@@ -780,7 +799,7 @@ Func _WinHttpReadData($hRequest, $iMode = Default, $iNumberOfBytesToRead = Defau
 				Return SetExtended($aCall[4], BinaryToString(DllStructGetData($tBuffer, 1), 4))
 		EndSwitch
 	EndIf
-EndFunc   ;==>_WinHttpReadData
+EndFunc
 
 ; #FUNCTION# ;===============================================================================
 ; Name...........: _WinHttpReceiveResponse
@@ -801,7 +820,7 @@ Func _WinHttpReceiveResponse($hRequest)
 	Local $aCall = DllCall($hWINHTTPDLL__WINHTTP, "bool", "WinHttpReceiveResponse", "handle", $hRequest, "ptr", 0)
 	If @error Or Not $aCall[0] Then Return SetError(1, 0, 0)
 	Return 1
-EndFunc   ;==>_WinHttpReceiveResponse
+EndFunc
 
 ; #FUNCTION# ;===============================================================================
 ; Name...........: _WinHttpSendRequest
@@ -846,7 +865,7 @@ Func _WinHttpSendRequest($hRequest, $sHeaders = Default, $sOptional = Default, $
 			"dword_ptr", $iContext)
 	If @error Or Not $aCall[0] Then Return SetError(1, 0, 0)
 	Return 1
-EndFunc   ;==>_WinHttpSendRequest
+EndFunc
 
 ; #FUNCTION# ;===============================================================================
 ; Name...........: _WinHttpSetCredentials
@@ -877,7 +896,7 @@ Func _WinHttpSetCredentials($hRequest, $iAuthTargets, $iAuthScheme, $sUserName, 
 			"ptr", 0)
 	If @error Or Not $aCall[0] Then Return SetError(1, 0, 0)
 	Return 1
-EndFunc   ;==>_WinHttpSetCredentials
+EndFunc
 
 ; #FUNCTION# ;===============================================================================
 ; Name...........: _WinHttpSetDefaultProxyConfiguration
@@ -912,7 +931,7 @@ Func _WinHttpSetDefaultProxyConfiguration($iAccessType, $sProxy = "", $sProxyByp
 	Local $aCall = DllCall($hWINHTTPDLL__WINHTTP, "bool", "WinHttpSetDefaultProxyConfiguration", "struct*", $tWINHTTP_PROXY_INFO)
 	If @error Or Not $aCall[0] Then Return SetError(1, 0, 0)
 	Return 1
-EndFunc   ;==>_WinHttpSetDefaultProxyConfiguration
+EndFunc
 
 ; #FUNCTION# ;===============================================================================
 ; Name...........: _WinHttpSetOption
@@ -991,7 +1010,7 @@ Func _WinHttpSetOption($hInternet, $iOption, $vSetting, $iSize = Default)
 	EndIf
 	If @error Or Not $aCall[0] Then Return SetError(4, 0, 0)
 	Return 1
-EndFunc   ;==>_WinHttpSetOption
+EndFunc
 
 ; #FUNCTION# ;===============================================================================
 ; Name...........: _WinHttpSetStatusCallback
@@ -1019,7 +1038,7 @@ Func _WinHttpSetStatusCallback($hInternet, $hInternetCallback, $iNotificationFla
 			"ptr", 0)
 	If @error Then Return SetError(1, 0, 0)
 	Return $aCall[0]
-EndFunc   ;==>_WinHttpSetStatusCallback
+EndFunc
 
 ; #FUNCTION# ;===============================================================================
 ; Name...........: _WinHttpSetTimeouts
@@ -1057,7 +1076,7 @@ Func _WinHttpSetTimeouts($hInternet, $iResolveTimeout = Default, $iConnectTimeou
 			"int", $iReceiveTimeout)
 	If @error Or Not $aCall[0] Then Return SetError(1, 0, 0)
 	Return 1
-EndFunc   ;==>_WinHttpSetTimeouts
+EndFunc
 
 ; #FUNCTION# ;===============================================================================
 ; Name...........: _WinHttpSimpleFormFill
@@ -1522,7 +1541,7 @@ Func _WinHttpSimpleFormFill(ByRef $hInternet, $sActionPage = Default, $sFormId =
 	EndIf
 	; If here then there is no form on the page with specified attributes (name, id or index)
 	Return SetError(3, 0, "")
-EndFunc   ;==>_WinHttpSimpleFormFill
+EndFunc
 
 ; #FUNCTION# ====================================================================================================================
 ; Name...........: _WinHttpSimpleReadData
@@ -1565,7 +1584,7 @@ Func _WinHttpSimpleReadData($hRequest, $iMode = Default)
 		EndIf
 	EndIf
 	Return SetError(2, 0, $vData)
-EndFunc   ;==>_WinHttpSimpleReadData
+EndFunc
 
 ; #FUNCTION# ====================================================================================================================
 ; Name...........: _WinHttpSimpleReadDataAsync
@@ -1590,7 +1609,7 @@ Func _WinHttpSimpleReadDataAsync($hInternet, ByRef $pBuffer, $iNumberOfBytesToRe
 	__WinHttpDefault($iNumberOfBytesToRead, 8192)
 	Local $vOut = _WinHttpReadData($hInternet, 2, $iNumberOfBytesToRead, $pBuffer)
 	Return SetError(@error, @extended, $vOut)
-EndFunc   ;==>_WinHttpSimpleReadDataAsync
+EndFunc
 
 ; #FUNCTION# ====================================================================================================================
 ; Name...........: _WinHttpSimpleRequest
@@ -1643,7 +1662,7 @@ Func _WinHttpSimpleRequest($hConnect, $sType = Default, $sPath = Default, $sRefe
 	Local $sOutData = _WinHttpSimpleReadData($hRequest, $iMode)
 	_WinHttpCloseHandle($hRequest)
 	Return $sOutData
-EndFunc   ;==>_WinHttpSimpleRequest
+EndFunc
 
 ; #FUNCTION# ====================================================================================================================
 ; Name...........: _WinHttpSimpleSendRequest
@@ -1682,7 +1701,7 @@ Func _WinHttpSimpleSendRequest($hConnect, $sType = Default, $sPath = Default, $s
 	_WinHttpReceiveResponse($hRequest)
 	If @error Then Return SetError(3, 0 * _WinHttpCloseHandle($hRequest), 0)
 	Return $hRequest
-EndFunc   ;==>_WinHttpSimpleSendRequest
+EndFunc
 
 ; #FUNCTION# ====================================================================================================================
 ; Name...........: _WinHttpSimpleSendSSLRequest
@@ -1721,7 +1740,7 @@ Func _WinHttpSimpleSendSSLRequest($hConnect, $sType = Default, $sPath = Default,
 	_WinHttpReceiveResponse($hRequest)
 	If @error Then Return SetError(3, 0 * _WinHttpCloseHandle($hRequest), 0)
 	Return $hRequest
-EndFunc   ;==>_WinHttpSimpleSendSSLRequest
+EndFunc
 
 ; #FUNCTION# ====================================================================================================================
 ; Name...........: _WinHttpSimpleSSLRequest
@@ -1774,7 +1793,7 @@ Func _WinHttpSimpleSSLRequest($hConnect, $sType = Default, $sPath = Default, $sR
 	Local $sOutData = _WinHttpSimpleReadData($hRequest, $iMode)
 	_WinHttpCloseHandle($hRequest)
 	Return $sOutData
-EndFunc   ;==>_WinHttpSimpleSSLRequest
+EndFunc
 
 ; #FUNCTION# ;===============================================================================
 ; Name...........: _WinHttpTimeFromSystemTime
@@ -1807,7 +1826,7 @@ Func _WinHttpTimeFromSystemTime()
 	Local $aCall = DllCall($hWINHTTPDLL__WINHTTP, "bool", "WinHttpTimeFromSystemTime", "struct*", $SYSTEMTIME, "struct*", $tTime)
 	If @error Or Not $aCall[0] Then Return SetError(2, 0, "")
 	Return DllStructGetData($tTime, 1)
-EndFunc   ;==>_WinHttpTimeFromSystemTime
+EndFunc
 
 ; #FUNCTION# ;===============================================================================
 ; Name...........: _WinHttpTimeToSystemTime
@@ -1854,7 +1873,7 @@ Func _WinHttpTimeToSystemTime($sHttpTime)
 			DllStructGetData($SYSTEMTIME, "Second"), _
 			DllStructGetData($SYSTEMTIME, "Milliseconds")]
 	Return $aRet
-EndFunc   ;==>_WinHttpTimeToSystemTime
+EndFunc
 
 ; #FUNCTION# ;===============================================================================
 ; Name...........: _WinHttpWriteData
@@ -1899,7 +1918,7 @@ Func _WinHttpWriteData($hRequest, $vData, $iMode = Default)
 			"dword*", 0)
 	If @error Or Not $aCall[0] Then Return SetError(1, 0, 0)
 	Return SetExtended($aCall[4], 1)
-EndFunc   ;==>_WinHttpWriteData
+EndFunc
 
 
 ; #INTERNAL FUNCTIONS# ;=====================================================================
