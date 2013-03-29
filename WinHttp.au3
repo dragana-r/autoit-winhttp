@@ -528,7 +528,7 @@ EndFunc
 ; Name...........: _WinHttpOpen
 ; Description ...: Initializes the use of WinHttp functions and returns a WinHttp-session handle.
 ; Syntax.........: _WinHttpOpen([$sUserAgent = Default [, $iAccessType = Default [, $sProxyName = Default [, $sProxyBypass = Default [, $iFlag = Default ]]]]])
-; Parameters ....: $sUserAgent - [optional] The name of the application or entity calling the WinHttp functions. Default is "AutoIt/3.3".
+; Parameters ....: $sUserAgent - [optional] The name of the application or entity calling the WinHttp functions. Default is "AutoIt/3.3 WinHTTP/5.1".
 ;                  $iAccessType - [optional] Type of access required. Default is $WINHTTP_ACCESS_TYPE_NO_PROXY.
 ;                  $sProxyName - [optional] The name of the proxy server to use when proxy access is specified by setting $iAccessType to $WINHTTP_ACCESS_TYPE_NAMED_PROXY. Default is $WINHTTP_NO_PROXY_NAME.
 ;                  $sProxyBypass - [optional] An optional list of host names or IP addresses, or both, that should not be routed through the proxy when $iAccessType is set to $WINHTTP_ACCESS_TYPE_NAMED_PROXY. Default is $WINHTTP_NO_PROXY_BYPASS.
