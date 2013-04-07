@@ -1492,6 +1492,7 @@ Func _WinHttpSimpleFormFill(ByRef $hInternet, $sActionPage = Default, $sFormId =
 				EndIf
 				__WinHttpFinalizeCtrls($sSubmit, $sRadio, $sCheckBox, $sButton, $sAddData, $sGrSep)
 		EndSwitch
+		ExitLoop
 	Next
 	; Send
 	If $fSend Then
