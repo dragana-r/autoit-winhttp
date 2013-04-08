@@ -1181,6 +1181,7 @@ Func _WinHttpSimpleFormFill(ByRef $hInternet, $sActionPage = Default, $sFormId =
 		If $sFormId <> Default And $fGetFormById And $sFormId <> $sId Then ContinueLoop
 		If $fGetFormByName And $sFormName <> $sName Then ContinueLoop
 		If Not $sMethod Then $sMethod = "GET"
+        If $sMethod = "GET" Then $sEnctype = ""
 		$aCrackURL = _WinHttpCrackUrl($sAction)
 		If @error Then
 			If $sAction Then
