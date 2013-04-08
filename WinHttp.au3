@@ -1145,7 +1145,7 @@ Func _WinHttpSimpleFormFill(ByRef $hInternet, $sActionPage = Default, $sFormId =
 	Local $sForm, $sAttributes, $aAttributes, $aInput, $sAdditionalHeaders
 	Local $iNumArgs = @NumParams
 	If Not Mod($iNumArgs, 2) Then $sAdditionalHeaders = Eval("sFieldId" & $iNumArgs / 2 - 1)
-	Local $iNumParams = Ceiling(($iNumArgs - 2) / 2)
+	Local $iNumParams = Ceiling(($iNumArgs - 2) / 2) - 1
 	Local $sAddData
 	Local $aCrackURL, $sNewURL
 	; Loop thru all forms on the page and find one that was specified
