@@ -1977,13 +1977,13 @@ Func __WinHttpTrimBounds(ByRef $sData, $sBound)
 EndFunc
 
 Func __WinHttpFormAttrib(ByRef $aAttrib, $i, $sElement)
-	Local $aArray = StringRegExp($sElement, '(?i).*?id\h*=(\h*"(.*?)"|' & "\h*'(.*?)'|" & '(.*?)(?: |\Z))', 3) ; e.g. id="abc" or id='abc' or id=abc
+	Local $aArray = StringRegExp($sElement, '(?i).*?id\h*=(\h*"(.*?)"|' & "\h*'(.*?)'|" & '\h*(.*?)(?: |\Z))', 3) ; e.g. id="abc" or id='abc' or id=abc
 	If Not @error Then $aAttrib[0][$i] = $aArray[UBound($aArray) - 1] ; id
-	$aArray = StringRegExp($sElement, '(?i).*?name\h*=(\h*"(.*?)"|' & "\h*'(.*?)'" & '|(.*?)(?: |\Z))', 3) ; e.g. name="abc" or name='abc' or name=abc
+	$aArray = StringRegExp($sElement, '(?i).*?name\h*=(\h*"(.*?)"|' & "\h*'(.*?)'|" & '\h*(.*?)(?: |\Z))', 3) ; e.g. name="abc" or name='abc' or name=abc
 	If Not @error Then $aAttrib[1][$i] = $aArray[UBound($aArray) - 1] ; name
-	$aArray = StringRegExp($sElement, '(?i).*?value\h*=(\h*"(.*?)"|' & "\h*'(.*?)'" & '|(.*?)(?: |\Z))', 3) ; e.g. value="abc" or value='abc' or value=abc
+	$aArray = StringRegExp($sElement, '(?i).*?value\h*=(\h*"(.*?)"|' & "\h*'(.*?)|'" & '\h*(.*?)(?: |\Z))', 3) ; e.g. value="abc" or value='abc' or value=abc
 	If Not @error Then $aAttrib[2][$i] = $aArray[UBound($aArray) - 1] ; value
-	$aArray = StringRegExp($sElement, '(?i).*?type\h*=(\h*"(.*?)"|' & "\h*'(.*?)'|" & '(.*?)(?: |\Z))', 3) ; e.g. type="abc" or type='abc' or type=abc
+	$aArray = StringRegExp($sElement, '(?i).*?type\h*=(\h*"(.*?)"|' & "\h*'(.*?)'|" & '\h*(.*?)(?: |\Z))', 3) ; e.g. type="abc" or type='abc' or type=abc
 	If Not @error Then $aAttrib[3][$i] = $aArray[UBound($aArray) - 1] ; type
 EndFunc
 
