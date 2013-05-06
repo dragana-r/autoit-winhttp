@@ -1077,7 +1077,6 @@ EndFunc
 ;                  |5 - form's "action" is invalid
 ;                  |6 - invalid session handle passed
 ; Author ........: trancexx
-; Modified.......:
 ; Remarks .......: In case form requires redirection and $hInternet is internet handle, this handle will be closed and replaced with new and required one.
 ;                  +When $hInternet is form string, form's "action" must specify URL and $sActionPage parameter must be session handle. On succesful call this variable will be changed to connection handle of the internally made connection.
 ;                  Don't forget to close this handle after the function returns and when no longer needed.
