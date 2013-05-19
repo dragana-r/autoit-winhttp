@@ -177,30 +177,35 @@ Func _CHM_UDFToHTMPages($sFileUDF, ByRef $aFunctions, $sFolder = Default)
 
 		$sHTM &= "<!--Example Section-->" & @CRLF
 		$sHTM &= "        <h2>Example</h2>" & @CRLF
-		$sAu3File = $sExamplesFolder & "\" & $sFunctionName & ".au3"
-		If FileExists($sAu3File) Then
-			$sAu3Code = FileRead($sAu3File)
-			If StringStripWS($sAu3Code, 8) Then
-				$sInnerCode = '<a class="button" ' & _
-						'onmouseover="this.style.color=&quot;#fff&quot;;this.style.background=&quot;#999&quot;; "' & _
-						'onmouseout="this.style.color=&quot;#444&quot;;this.style.background=&quot;#E9E9E9&quot;; ToolTip.style.visibility=&quot;hidden&quot;"' & _
-						'onclick="clipboardData.setData(&quot;Text&quot;, au3code.innerText); ' & _
-						'         ToolTip.innerHTML=&quot;<table><tr><td class=tooltip>Copied!&lt;/td>&lt;/tr>&lt;/table>&quot;; ' & _
-						'         ToolTip.style.pixelLeft=(event.x+20+document.body.scrollLeft); ' & _
-						'         ToolTip.style.pixelTop=(event.y+15+document.body.scrollTop); ' & _
-						'         ToolTip.style.visibility=&quot;visible&quot;; ' & _
-						'         setTimeout(&#39;ToolTip.style.visibility=&quot;hidden&quot;&#39;, 1200);' & _
-						'">Copy to clipboard<\/a>'
-				$sHTM &= '        <script type="text/javascript">' & @CRLF & _
-						'            if (clipboardData && clipboardData.setData) ' & _ ; checking if possible to copy
-						"document.write('" & $sInnerCode & "');" & @CRLF & _
-						'        </script>' & @CRLF
-				$sHTM &= '        <div id="ToolTip" class="tip"></div>' & @CRLF
 
-				$sHTM &= _CHM_SyntaxHighlight($sAu3Code) & "</p>" & @CRLF
+		Local $sSuffix = "", $fHasExample = False
+		For $i = 0 To 10
+			If $i > 0 Then $sSuffix = "_" & $i
+			$sAu3File = $sExamplesFolder & "\" & $sFunctionName & $sSuffix & ".au3"
+			If FileExists($sAu3File) Then
+				$fHasExample = True
+				$sAu3Code = FileRead($sAu3File)
+				If StringStripWS($sAu3Code, 8) Then
+					$sInnerCode = '<a class="button" ' & _
+							'onmouseover="this.style.color=&quot;#fff&quot;;this.style.background=&quot;#999&quot;; "' & _
+							'onmouseout="this.style.color=&quot;#444&quot;;this.style.background=&quot;#E9E9E9&quot;; ToolTip.style.visibility=&quot;hidden&quot;"' & _
+							'onclick="clipboardData.setData(&quot;Text&quot;, au3code' & $sSuffix & '.innerText); ' & _
+							'         ToolTip.innerHTML=&quot;<table><tr><td class=tooltip>Copied!&lt;/td>&lt;/tr>&lt;/table>&quot;; ' & _
+							'         ToolTip.style.pixelLeft=(event.x+20+document.body.scrollLeft); ' & _
+							'         ToolTip.style.pixelTop=(event.y+15+document.body.scrollTop); ' & _
+							'         ToolTip.style.visibility=&quot;visible&quot;; ' & _
+							'         setTimeout(&#39;ToolTip.style.visibility=&quot;hidden&quot;&#39;, 1200);' & _
+							'">Copy to clipboard<\/a>'
+					$sHTM &= '        <script type="text/javascript">' & @CRLF & _
+							'            if (clipboardData && clipboardData.setData) ' & _ ; checking if possible to copy
+							"document.write('" & $sInnerCode & "');" & @CRLF & _
+							'        </script>' & @CRLF
 
+					$sHTM &= _CHM_SyntaxHighlight($sAu3Code, $sSuffix) & "</p><br>" & @CRLF
+				EndIf
 			EndIf
-		EndIf
+		Next
+		if $fHasExample Then $sHTM &= '        <div id="ToolTip" class="tip"></div>' & @CRLF
 
 		$sHTM &= "        <br>" & @CRLF & _
 				"        <p>&nbsp;</p>" & @CRLF & @CRLF
@@ -574,7 +579,7 @@ Func _CHM_Proc($sString)
 EndFunc   ;==>_CHM_Proc
 
 
-Func _CHM_SyntaxHighlight($sAu3Code) ; MrCreator's modified
+Func _CHM_SyntaxHighlight($sAu3Code, $sSuffix = "") ; MrCreator's modified
 	$sAu3Code = StringReplace($sAu3Code & @CRLF, @TAB, "    ")
 	Local $sPattern1, $sPattern2
 	Local $sReplace1, $sReplace2
@@ -669,7 +674,7 @@ Func _CHM_SyntaxHighlight($sAu3Code) ; MrCreator's modified
 	$sAu3Code = StringRegExpReplace($sAu3Code, ">\h+<", ">&nbsp;<")
 	$sAu3Code = StringReplace($sAu3Code, "<>", "")
 	$sAu3Code = StringReplace($sAu3Code, "&<", "&amp;<")
-	Return '<p class="codebox" id="au3code"><br> ' & @CRLF & $sAu3Code ; <-! no closing tag
+	Return '<p class="codebox" id="au3code' & $sSuffix & '"><br> ' & @CRLF & $sAu3Code ; <-! no closing tag
 EndFunc   ;==>_CHM_SyntaxHighlight
 
 
