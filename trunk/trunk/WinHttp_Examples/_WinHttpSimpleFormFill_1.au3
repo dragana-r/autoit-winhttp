@@ -6,29 +6,27 @@ Opt("MustDeclareVars", 1)
 Global $hOpen, $hConnect
 Global $sRead, $hFileHTM, $sFileHTM = @ScriptDir & "\Form.htm"
 
-; Example1:
-; 1. Open APNIC whois page (http://wq.apnic.net/apnic-bin/whois.pl)
+; Example 2:
+; 1. Open w3schools forms page (http://www.w3schools.com/html/html_forms.asp)
 ; 2. Fill form on that page with these values/conditins:
-; - fill default form
-; - set ip address 4.2.2.2 to input box. Use name propery to locate input
-; - send form (click button)
-; - gather returned data
+; - form is to be identifide by its name -input0-
+; - set -OMG!!!- data to input box. Locate input box by its name -user-
+; - gather data
 
 ; Initialize and get session handle
 $hOpen = _WinHttpOpen()
 ; Get connection handle
-$hConnect = _WinHttpConnect($hOpen, "wq.apnic.net")
+$hConnect = _WinHttpConnect($hOpen, "w3schools.com")
 ; Fill form on this page
-$sRead = _WinHttpSimpleFormFill($hConnect, "apnic-bin/whois.pl", Default, "name:searchtext", "4.2.2.2")
+$sRead = _WinHttpSimpleFormFill($hConnect, "html/html_forms.asp", "name:input0", "name:user", "OMG!!!")
 ; Close connection handle
 _WinHttpCloseHandle($hConnect)
 ; Close session handle
 _WinHttpCloseHandle($hOpen)
 
-; See what's returned (in default browser or whatever)
 If $sRead Then
     MsgBox(64 + 262144, "Done!", "Will open returned page in your default browser now." & @CRLF & _
-            "When you close that window another example will run.")
+            "You should see 'OMG!!!' or 'OMG%21%21%21' (encoded version) somewhere on that page.")
     $hFileHTM = FileOpen($sFileHTM, 2)
     FileWrite($hFileHTM, $sRead)
     FileClose($hFileHTM)
