@@ -357,105 +357,89 @@ h3
 
 .S0
 {
-	background:#fff;
 	color:#2a2a2a;
 }
 
 .S1
 {
-	background:#fff;
 	color:green;
 	font-style:italic;
 }
 
 .S2
 {
-	background:#fff;
 	color:green;
 	font-style:italic;
 }
 
 .S3
 {
-	background:#fff;
 	color:#00F;
 }
 
 .S4
 {
-	background:#fff;
 	color:#000090;
 }
 
 .S5
 {
-	background:#fff;
 	color:#00F;
 }
 
 .S6
 {
-	background:#fff;
 	color:olive;
 }
 
 .S7
 {
-	background:#fff;
 	color:red;
 }
 
 .S8
 {
-	background:#fff;
 	color:#FF8000;
 }
 
 .S9
 {
-	background:#fff;
 	color:#2a2a2a;
 }
 
 .S10
 {
-	background:#fff;
 	color:gray;
 }
 
 .S11
 {
-	background:#fff;
 	color:olive;
 }
 
 .S12
 {
-	background:#fff;
 	color:#dc143c;
 }
 
 .S13
 {
-	background:#DDE8F0;
 	color:red;
 }
 
 .S14
 {
-	background:#fff;
 	color:#939;
 }
 
 .S15
 {
-	background:#fff;
 	color:#0080ff;
 }
 
 span
 {
-	background:#fff;
+	background:transparent;
 	color:#000;
 	font-family:Consolas, "Courier New";
 }
