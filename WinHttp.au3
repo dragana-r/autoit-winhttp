@@ -40,7 +40,6 @@ DllOpen("winhttp.dll") ; making sure reference count never reaches 0
 
 ; #CURRENT# =================================================================================
 ;_WinHttpAddRequestHeaders
-;_WinHttpBinaryConcat
 ;_WinHttpCheckPlatform
 ;_WinHttpCloseHandle
 ;_WinHttpConnect
@@ -63,6 +62,7 @@ DllOpen("winhttp.dll") ; making sure reference count never reaches 0
 ;_WinHttpSetOption
 ;_WinHttpSetStatusCallback
 ;_WinHttpSetTimeouts
+;_WinHttpSimpleBinaryConcat
 ;_WinHttpSimpleFormFill
 ;_WinHttpSimpleReadData
 ;_WinHttpSimpleReadDataAsync
@@ -99,35 +99,6 @@ Func _WinHttpAddRequestHeaders($hRequest, $sHeader, $iModifier = Default)
 			"dword", $iModifier)
 	If @error Or Not $aCall[0] Then Return SetError(1, 0, 0)
 	Return 1
-EndFunc
-
-; #FUNCTION# ;===============================================================================
-; Name...........: _WinHttpBinaryConcat
-; Description ...: Concatenates two binary data returned by _WinHttpReadData() in binary mode.
-; Syntax.........: _WinHttpBinaryConcat(ByRef $bBinary1, ByRef $bBinary2)
-; Parameters ....: $bBinary1 - Binary data that is to be concatenated.
-;                  $bBinary2 - Binary data to concatenate.
-; Return values .: Success - Returns concatenated binary data.
-;                  Failure - Returns empty binary and sets @error:
-;                  |1 - Invalid input.
-; Author ........: ProgAndy
-; Modified.......: trancexx
-; Related .......: _WinHttpReadData
-;============================================================================================
-Func _WinHttpBinaryConcat(ByRef $bBinary1, ByRef $bBinary2)
-	Switch IsBinary($bBinary1) + 2 * IsBinary($bBinary2)
-		Case 0
-			Return SetError(1, 0, Binary(''))
-		Case 1
-			Return $bBinary1
-		Case 2
-			Return $bBinary2
-	EndSwitch
-	Local $tAuxiliary = DllStructCreate("byte[" & BinaryLen($bBinary1) & "];byte[" & BinaryLen($bBinary2) & "]")
-	DllStructSetData($tAuxiliary, 1, $bBinary1)
-	DllStructSetData($tAuxiliary, 2, $bBinary2)
-	Local $tOutput = DllStructCreate("byte[" & DllStructGetSize($tAuxiliary) & "]", DllStructGetPtr($tAuxiliary))
-	Return DllStructGetData($tOutput, 1)
 EndFunc
 
 ; #FUNCTION# ;===============================================================================
@@ -1056,6 +1027,35 @@ Func _WinHttpSetTimeouts($hInternet, $iResolveTimeout = Default, $iConnectTimeou
 			"int", $iReceiveTimeout)
 	If @error Or Not $aCall[0] Then Return SetError(1, 0, 0)
 	Return 1
+EndFunc
+
+; #FUNCTION# ;===============================================================================
+; Name...........: _WinHttpSimpleBinaryConcat
+; Description ...: Concatenates two binary data returned by _WinHttpReadData() in binary mode.
+; Syntax.........: _WinHttpSimpleBinaryConcat(ByRef $bBinary1, ByRef $bBinary2)
+; Parameters ....: $bBinary1 - Binary data that is to be concatenated.
+;                  $bBinary2 - Binary data to concatenate.
+; Return values .: Success - Returns concatenated binary data.
+;                  Failure - Returns empty binary and sets @error:
+;                  |1 - Invalid input.
+; Author ........: ProgAndy
+; Modified.......: trancexx
+; Related .......: _WinHttpReadData
+;============================================================================================
+Func _WinHttpSimpleBinaryConcat(ByRef $bBinary1, ByRef $bBinary2)
+	Switch IsBinary($bBinary1) + 2 * IsBinary($bBinary2)
+		Case 0
+			Return SetError(1, 0, Binary(''))
+		Case 1
+			Return $bBinary1
+		Case 2
+			Return $bBinary2
+	EndSwitch
+	Local $tAuxiliary = DllStructCreate("byte[" & BinaryLen($bBinary1) & "];byte[" & BinaryLen($bBinary2) & "]")
+	DllStructSetData($tAuxiliary, 1, $bBinary1)
+	DllStructSetData($tAuxiliary, 2, $bBinary2)
+	Local $tOutput = DllStructCreate("byte[" & DllStructGetSize($tAuxiliary) & "]", DllStructGetPtr($tAuxiliary))
+	Return DllStructGetData($tOutput, 1)
 EndFunc
 
 ; #FUNCTION# ;===============================================================================
@@ -2022,5 +2022,10 @@ Func __WinHttpPtrStringLenW($pString)
 	Local $aCall = DllCall("kernel32.dll", "dword", "lstrlenW", "ptr", $pString)
 	If @error Then Return SetError(1, 0, 0)
 	Return $aCall[0]
+EndFunc
+
+Func _WinHttpBinaryConcat(ByRef $bBinary1, ByRef $bBinary2)
+	Local $bOut = _WinHttpSimpleBinaryConcat($bBinary1, $bBinary2)
+	Return SetError(@error, 0, $bOut)
 EndFunc
 ;============================================================================================
