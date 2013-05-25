@@ -4,9 +4,9 @@
 
 Opt("MustDeclareVars", 1)
 
-Global $sHost = "www.smijesne-slike.net"
-Global $sTarget = "wp-content/uploads/2009/09/7.jpg"
-Global $sDestination = @ScriptDir & "\CatHot.jpg"
+Global $sHost = "images.fanpop.com"
+Global $sTarget = "images/image_uploads/Hello-Kitty-hello-kitty-181509_1024_768.jpg"
+Global $sDestination = @ScriptDir & "\HelloKitty.jpg"
 
 ; Initialize and get session handle
 Global $hHttpOpen = _WinHttpOpen()
@@ -46,7 +46,7 @@ If _WinHttpQueryDataAvailable($hHttpRequest) Then
 	While 1
 		$bChunk = _WinHttpReadData($hHttpRequest, 2) ; read binary
 		If @error Then ExitLoop
-		$bData = _WinHttpBinaryConcat($bData, $bChunk) ; concat two binary data
+		$bData = _WinHttpSimpleBinaryConcat($bData, $bChunk) ; concat two binary data
 	WEnd
     ; Save it to the file
 	$hFile = FileOpen($sDestination, 26)
