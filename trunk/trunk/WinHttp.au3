@@ -1147,7 +1147,7 @@ Func _WinHttpSimpleFormFill(ByRef $hInternet, $sActionPage = Default, $sFormId =
 	If Not Mod($iNumArgs, 2) Then $sAdditionalHeaders = Eval("sFieldId" & $iNumArgs / 2 - 1)
 	Local $iNumParams = Ceiling(($iNumArgs - 2) / 2) - 1
 	Local $sAddData
-	Local $aCrackURL, $sNewURL
+	Local $aCrackURL, $sNewURL, $iScheme = $INTERNET_SCHEME_HTTP
 	; Loop thru all forms on the page and find one that was specified
 	For $iFormOrdinal = 0 To UBound($aForm) - 1
 		If $fGetFormByIndex And $iFormOrdinal <> $iFormIndex Then ContinueLoop
@@ -1196,6 +1196,7 @@ Func _WinHttpSimpleFormFill(ByRef $hInternet, $sActionPage = Default, $sFormId =
 			If Not $sAction Then $sAction = $sActionPage
 			$sAction = StringRegExpReplace($sAction, "\A(/*\.\./)*", "") ; /../
 		Else
+			$iScheme = $aCrackURL[1]
 			$sNewURL = $aCrackURL[2]
 			$sAction = $aCrackURL[6] & $aCrackURL[7]
 		EndIf
@@ -1506,10 +1507,15 @@ Func _WinHttpSimpleFormFill(ByRef $hInternet, $sActionPage = Default, $sFormId =
 				$hInternet = _WinHttpConnect($hOpen, $sNewURL)
 			EndIf
 		EndIf
-		Local $hRequest = __WinHttpFormSend($hInternet, $sMethod, $sAction, $fMultiPart, $sBoundary, $sAddData, False, $sAdditionalHeaders)
-		If _WinHttpQueryHeaders($hRequest, $WINHTTP_QUERY_STATUS_CODE) > $HTTP_STATUS_BAD_REQUEST Then
-			_WinHttpCloseHandle($hRequest)
-			$hRequest = __WinHttpFormSend($hInternet, $sMethod, $sAction, $fMultiPart, $sBoundary, $sAddData, True, $sAdditionalHeaders) ; try adding $WINHTTP_FLAG_SECURE
+		Local $hRequest
+		If $iScheme = $INTERNET_SCHEME_HTTPS Then
+			$hRequest = __WinHttpFormSend($hInternet, $sMethod, $sAction, $fMultiPart, $sBoundary, $sAddData, True, $sAdditionalHeaders)
+		Else
+			$hRequest = __WinHttpFormSend($hInternet, $sMethod, $sAction, $fMultiPart, $sBoundary, $sAddData, False, $sAdditionalHeaders)
+			If _WinHttpQueryHeaders($hRequest, $WINHTTP_QUERY_STATUS_CODE) > $HTTP_STATUS_BAD_REQUEST Then
+				_WinHttpCloseHandle($hRequest)
+				$hRequest = __WinHttpFormSend($hInternet, $sMethod, $sAction, $fMultiPart, $sBoundary, $sAddData, True, $sAdditionalHeaders) ; try adding $WINHTTP_FLAG_SECURE
+			EndIf
 		EndIf
 		Local $sReturned = _WinHttpSimpleReadData($hRequest)
 		If @error Then
