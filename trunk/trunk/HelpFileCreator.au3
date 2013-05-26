@@ -121,7 +121,7 @@ Func _CHM_UDFToHTMPages($sFileUDF, ByRef $aFunctions, $sFolder = Default)
 		If StringLeft(StringStripWS($sParams, 8), 4) = "none" Or Not $sParams Then
 			$sHTM &= "        <p>&nbsp;None.</p><br>" & @CRLF & @CRLF
 		Else
-			$sHTM &= '        <table class="paramstable" summary="function parameters">' & @CRLF & _
+			$sHTM &= '        <table class="paramstable">' & @CRLF & _
 					"            <tr>" & @CRLF
 			$aParams = StringRegExp($sParams, "\h*(\$\w+|\Q(...)\E)\h*\-\h*(.+?)(?:\r\n|\Z)", 3)
 			$iParamsUBound = UBound($aParams) - 1
@@ -205,7 +205,7 @@ Func _CHM_UDFToHTMPages($sFileUDF, ByRef $aFunctions, $sFolder = Default)
 				EndIf
 			EndIf
 		Next
-		if $fHasExample Then $sHTM &= '        <div id="ToolTip" class="tip"></div>' & @CRLF
+		If $fHasExample Then $sHTM &= '        <div id="ToolTip" class="tip"></div>' & @CRLF
 
 		$sHTM &= "        <br>" & @CRLF & _
 				"        <p>&nbsp;</p>" & @CRLF & @CRLF
@@ -386,10 +386,10 @@ Func _CHM_WriteFUNC($sFileUDF, $sWorkingFolder)
 			"<p>Below is a complete list of the Functions available in " & $sName & ".<br>" & @CRLF & _
 			"Click on a function name for a detailed description.</p>" & @CRLF & _
 			"<p>&nbsp;</p>" & @CRLF & _
-			'<table class="paramstable" summary="list of functions">' & @CRLF & _
+			'<table class="paramstable">' & @CRLF & _
 			"<tr>" & @CRLF & _
-			'  <th width="25%">' & $sName & ' Function</th>' & @CRLF & _
-			'  <th width="75%">Description</th>' & @CRLF & _
+			'  <th class="left">' & $sName & ' Function</th>' & @CRLF & _
+			'  <th class="right">Description</th>' & @CRLF & _
 			"</tr>" & @CRLF
 
 	Local $sData = FileRead($sFileUDF)
@@ -443,7 +443,7 @@ Func _CHM_WriteHomePage($sHomePage, $sLogoPic, $sWorkingFolder)
 			"    </head>" & @CRLF & @CRLF & _
 			"    <body>" & @CRLF & _
 			"        <h1>" & $sName & "</h1>" & @CRLF & _
-			'        <p align="center"><img class="logo" src="Images/' & StringRegExpReplace($sLogoPic, ".*\\", "") & '" width="400" height="150" border="0" alt=""></p>' & @CRLF & _
+			'        <img class="logo" src="Images/' & StringRegExpReplace($sLogoPic, ".*\\", "") & '" width="400" height="150" alt=""><br>' & @CRLF & _
 			"        <p>Welcome to the helpfile of <strong>" & $sName & "!</strong><br>" & @CRLF & _
 			"<!--Start passed content-->" & @CRLF & _
 			$sHomePage & @CRLF & _
@@ -648,6 +648,7 @@ Func _CHM_SyntaxHighlight($sAu3Code, $sSuffix = "") ; MrCreator's modified
 
 	; Replace back the unique marks with the original one and wrap them with "string" tags
 	For $i = 0 To UBound($aQuote_Strings) - 1 Step 2
+		$aQuote_Strings[$i] = StringReplace($aQuote_Strings[$i], "&", "&amp;")
 		$sAu3Code = StringReplace($sAu3Code, $sUnique_Str_Quote, '<span class="S7">' & $aQuote_Strings[$i] & '</span>', 1)
 	Next
 	For $i = 0 To UBound($aInclude_Strings) - 1
@@ -730,6 +731,7 @@ Func _CHM_ParseComments($sAu3Code)
 		If StringRegExp($aCode[$i], '(\s+)?([^(&lt|&gt)]|\h+?|^);') Then
 			; Remove all tags
 			$aComments = StringRegExp($aCode[$i], '([^;]*);(.*?)$', 3)
+			$aComments[1] = StringReplace($aComments[1], "&", "&amp;")
 			If UBound($aComments) > 1 Then
 				Do
 					$aComments[1] = StringRegExpReplace($aComments[1], '<\w+\h?[^>]*?>(.*?)</\w+>', '\1')
@@ -740,6 +742,7 @@ Func _CHM_ParseComments($sAu3Code)
 			; Comment block
 		ElseIf StringRegExp($aCode[$i], '(?i)(\s+)?#(cs|comments.*?start)(.*)') Then
 			; Remove all tags
+			$aCode[$i] = StringReplace($aCode[$i], "&", "&amp;")
 			Do
 				$aCode[$i] = StringRegExpReplace($aCode[$i], '<\w+\h?[^>]*?>(.*?)</\w+>', '\1')
 			Until Not @extended
@@ -770,8 +773,6 @@ Func _CHM_ParseComments($sAu3Code)
 				EndIf
 			Next
 		Else
-			; Clean double tags (in sequence of keywords - operators for example: == )
-			$aCode[$i] = StringRegExpReplace($aCode[$i], '(?i)(?<=(<span class="S\d">))(?>(.*?)</span>)( *)\1|(?<=(<span class="S\d\d">))(?>(.*?)</span>)( *)\4', '\2\3\5\6')
 			$sCode &= $aCode[$i] & @CRLF
 		EndIf
 	Next

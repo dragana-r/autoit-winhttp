@@ -65,6 +65,16 @@ th a:hover
 	text-decoration:underline;
 }
 
+th.left
+{
+	width:25%;
+}
+
+th.right
+{
+	width:75%;
+}
+
 th.new
 {
 	width:224px;
@@ -270,7 +280,7 @@ a.button
 	line-height:16px;
 	text-align:center;
 	color:#444;
-	cursor:hand;
+	cursor:pointer;
 }
 
 h1
@@ -487,4 +497,8 @@ span.mark_v
 img.logo
 {
 	box-shadow: 5px 5px 20px #aaa;
+	border:0;
+	display:block;
+    margin-left:auto;
+    margin-right:auto;
 }
