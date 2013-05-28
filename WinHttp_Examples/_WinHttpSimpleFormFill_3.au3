@@ -9,7 +9,7 @@ Global $sRead
 ; Example 4:
 ; 1. Open yahoo mail login page (https://login.yahoo.com/config/login_verify2?&.src=ym)
 ; 2. Fill form on that page with these values/conditins:
-; - form is to be identifide by its name, Name is -login_form-
+; - form is to be identified by its name, Name is -login_form-
 ; - set -MyUserName- data to user-name input box. Locate input box by its Id -username-
 ; - set -MyPassword- data to password input box. Locate input box by its Id -passwd-
 ; - gather data
