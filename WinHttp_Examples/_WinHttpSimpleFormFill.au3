@@ -27,8 +27,7 @@ _WinHttpCloseHandle($hOpen)
 
 ; See what's returned (in default browser or whatever)
 If $sRead Then
-    MsgBox(64 + 262144, "Done!", "Will open returned page in your default browser now." & @CRLF & _
-            "When you close that window another example will run.")
+    MsgBox(64 + 262144, "Done!", "Will open returned page in your default browser now.")
     $hFileHTM = FileOpen($sFileHTM, 2)
     FileWrite($hFileHTM, $sRead)
     FileClose($hFileHTM)
