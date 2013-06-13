@@ -501,7 +501,7 @@ EndFunc
 ; Link ..........: http://msdn.microsoft.com/en-us/library/aa384098.aspx
 ;============================================================================================
 Func _WinHttpOpen($sUserAgent = Default, $iAccessType = Default, $sProxyName = Default, $sProxyBypass = Default, $iFlag = Default)
-	__WinHttpDefault($sUserAgent, "AutoIt/3.3 WinHTTP/5.1" )
+	__WinHttpDefault($sUserAgent, "AutoIt/3.3 WinHTTP/5.1")
 	__WinHttpDefault($iAccessType, $WINHTTP_ACCESS_TYPE_NO_PROXY)
 	__WinHttpDefault($sProxyName, $WINHTTP_NO_PROXY_NAME)
 	__WinHttpDefault($sProxyBypass, $WINHTTP_NO_PROXY_BYPASS)
@@ -1934,7 +1934,7 @@ Func __WinHttpMIMEAssocString()
 EndFunc
 
 Func __WinHttpURLEncode($vData)
-    If IsBool($vData) Then Return $vData
+	If IsBool($vData) Then Return $vData
 	Local $aData = StringToASCIIArray($vData, Default, Default, 2)
 	Local $sOut
 	For $i = 0 To UBound($aData) - 1
