@@ -1250,16 +1250,17 @@ Func _WinHttpSimpleFormFill(ByRef $hInternet, $sActionPage = Default, $sFormId =
 										EndIf
 									EndIf
 								ElseIf $aInputIds[3][$j] = "radio" Then
-									If $sRadio Then ; If not already processed; only the first is valid
-										If $sPassedData = $aInputIds[2][$j] Then
-											For $sChunkSub In StringSplit($sRadio, $sGrSep, 3) ; go tru all "radio" controls
-												If $sChunkSub <> $aInputIds[1][$j] & "=" & $sPassedData Then ; delete all but the set one
-													$sAddData = StringRegExpReplace($sAddData, "(?i)(?:&|\A)\Q" & $sChunkSub & "\E(?:&|\Z)", "&")
-													__WinHttpTrimBounds($sAddData, "&")
-												EndIf
-											Next
-											$sRadio = ""
-										EndIf
+									If $sPassedData = $aInputIds[2][$j] Then
+										For $sChunkSub In StringSplit($sRadio, $sGrSep, 3) ; go tru all "radio" controls
+											If $sChunkSub = $aInputIds[1][$j] & "=" & $sPassedData Then
+												$sAddData = StringRegExpReplace(StringReplace($sAddData, "&", "&&"), "(?i)(?:&|\A)\Q" & $aInputIds[1][$j] & "\E(.*?)(?:&|\Z)", "&")
+												$sAddData = StringReplace(StringReplace($sAddData, "&&", "&"), "&&", "&")
+												If StringLeft($sAddData, 1) = "&" Then $sAddData = StringTrimLeft($sAddData, 1)
+												$sAddData &= "&" & $sChunkSub
+												$sRadio = StringRegExpReplace(StringReplace($sRadio, $sGrSep, $sGrSep & $sGrSep), "(?i)(?:" & $sGrSep & "|\A)\Q" & $aInputIds[1][$j] & "\E(.*?)(?:" & $sGrSep & "|\Z)", $sGrSep)
+												$sRadio = StringReplace(StringReplace($sRadio, $sGrSep & $sGrSep, $sGrSep), $sGrSep & $sGrSep, $sGrSep)
+											EndIf
+										Next
 									EndIf
 								ElseIf $aInputIds[3][$j] = "checkbox" Then
 									$sCheckBox = StringRegExpReplace($sCheckBox, "(?i)\Q" & $aInputIds[1][$j] & "=" & $sPassedData & "\E" & $sGrSep & "*", "")
@@ -1302,15 +1303,15 @@ Func _WinHttpSimpleFormFill(ByRef $hInternet, $sActionPage = Default, $sFormId =
 									ContinueLoop 2 ; process next parameter
 								EndIf
 							ElseIf $aInputIds[1][$j] = $aSplit[1] And $aInputIds[3][$j] = "radio" Then
-								If $sRadio Then ; If not already processed; only the first is valid
-									For $sChunkSub In StringSplit($sRadio, $sGrSep, 3) ; go tru all "radio" controls
-										If $sChunkSub <> $aInputIds[1][$j] & "=" & $sPassedData Then ; delete all but the set one
-											$sAddData = StringRegExpReplace($sAddData, "(?i)(?:&|\A)\Q" & $sChunkSub & "\E(?:&|\Z)", "&")
-											__WinHttpTrimBounds($sAddData, "&")
-										EndIf
-									Next
-									$sRadio = ""
-								EndIf
+								For $sChunkSub In StringSplit($sRadio, $sGrSep, 3) ; go tru all "radio" controls
+									If $sChunkSub = $aInputIds[1][$j] & "=" & $sPassedData Then
+										$sAddData = StringReplace(StringReplace(StringRegExpReplace(StringReplace($sAddData, "&", "&&"), "(?i)(?:&|\A)\Q" & $aInputIds[1][$j] & "\E(.*?)(?:&|\Z)", "&"), "&&", "&"), "&&", "&")
+										If StringLeft($sAddData, 1) = "&" Then $sAddData = StringTrimLeft($sAddData, 1)
+										$sAddData &= "&" & $sChunkSub
+										$sRadio = StringRegExpReplace(StringReplace($sRadio, $sGrSep, $sGrSep & $sGrSep), "(?i)(?:" & $sGrSep & "|\A)\Q" & $aInputIds[1][$j] & "\E(.*?)(?:" & $sGrSep & "|\Z)", $sGrSep)
+										$sRadio = StringReplace(StringReplace($sRadio, $sGrSep & $sGrSep, $sGrSep), $sGrSep & $sGrSep, $sGrSep)
+									EndIf
+								Next
 								ContinueLoop 2 ; process next parameter
 							ElseIf $aInputIds[1][$j] = $aSplit[1] And $aInputIds[3][$j] = "checkbox" Then
 								$sCheckBox = StringRegExpReplace($sCheckBox, "(?i)\Q" & $aInputIds[1][$j] & "=" & $sPassedData & "\E" & $sGrSep & "*", "")
@@ -1402,15 +1403,15 @@ Func _WinHttpSimpleFormFill(ByRef $hInternet, $sActionPage = Default, $sFormId =
 											EndIf
 										EndIf
 									ElseIf $aInputIds[3][$j] = "radio" Then
-										If $sRadio Then ; If not already processed; only the first is valid
-											If $sPassedData = $aInputIds[2][$j] Then
-												For $sChunkSub In StringSplit($sRadio, $sGrSep, 3) ; go tru all "radio" controls
-													If $sChunkSub <> "--" & $sBoundary & @CRLF & _
-															$sCDisp & $aInputIds[1][$j] & '"' & @CRLF & @CRLF & _
-															$sPassedData & @CRLF Then $sAddData = StringReplace($sAddData, $sChunkSub, "") ; delete all but the set one
-												Next
-												$sRadio = ""
-											EndIf
+										If $sPassedData = $aInputIds[2][$j] Then
+											For $sChunkSub In StringSplit($sRadio, $sGrSep, 3) ; go tru all "radio" controls
+												If StringInStr($sChunkSub, "--" & $sBoundary & @CRLF & $sCDisp & $aInputIds[1][$j] & '"' & @CRLF & @CRLF & $sPassedData & @CRLF) Then
+													$sAddData = StringRegExpReplace($sAddData, "(?i)\Q--" & $sBoundary & @CRLF & $sCDisp & $aInputIds[1][$j] & '"' & @CRLF & @CRLF & "\E" & "(.*?)" & @CRLF, "")
+													$sAddData = StringReplace($sAddData, "--" & $sBoundary & "--" & @CRLF, "")
+													$sAddData &= $sChunkSub & "--" & $sBoundary & "--" & @CRLF
+													$sRadio = StringRegExpReplace($sRadio, "(?i)\Q--" & $sBoundary & @CRLF & $sCDisp & $aInputIds[1][$j] & '"' & @CRLF & @CRLF & "\E(.*?)" & @CRLF & $sGrSep & "?", "")
+												EndIf
+											Next
 										EndIf
 									ElseIf $aInputIds[3][$j] = "checkbox" Then
 										$sCheckBox = StringRegExpReplace($sCheckBox, "(?i)\Q--" & $sBoundary & @CRLF & _
@@ -1460,14 +1461,14 @@ Func _WinHttpSimpleFormFill(ByRef $hInternet, $sActionPage = Default, $sFormId =
 										ContinueLoop 2 ; process next parameter
 									EndIf
 								ElseIf $aInputIds[1][$j] = $aSplit[1] And $aInputIds[3][$j] = "radio" Then
-									If $sRadio Then ; If not already processed; only the first is valid
-										For $sChunkSub In StringSplit($sRadio, $sGrSep, 3) ; go tru all "radio" controls
-											If $sChunkSub <> "--" & $sBoundary & @CRLF & _
-													$sCDisp & $aInputIds[1][$j] & '"' & @CRLF & @CRLF & _
-													$sPassedData & @CRLF Then $sAddData = StringReplace($sAddData, $sChunkSub, "") ; delete all but the set one
-										Next
-										$sRadio = ""
-									EndIf
+									For $sChunkSub In StringSplit($sRadio, $sGrSep, 3) ; go tru all "radio" controls
+										If StringInStr($sChunkSub, "--" & $sBoundary & @CRLF & $sCDisp & $aInputIds[1][$j] & '"' & @CRLF & @CRLF & $sPassedData & @CRLF) Then
+											$sAddData = StringRegExpReplace($sAddData, "(?i)\Q--" & $sBoundary & @CRLF & $sCDisp & $aInputIds[1][$j] & '"' & @CRLF & @CRLF & "\E" & "(.*?)" & @CRLF, "")
+											$sAddData = StringReplace($sAddData, "--" & $sBoundary & "--" & @CRLF, "")
+											$sAddData &= $sChunkSub & "--" & $sBoundary & "--" & @CRLF
+											$sRadio = StringRegExpReplace($sRadio, "(?i)\Q--" & $sBoundary & @CRLF & $sCDisp & $aInputIds[1][$j] & '"' & @CRLF & @CRLF & "\E(.*?)" & @CRLF & $sGrSep & "?", "")
+										EndIf
+									Next
 									ContinueLoop 2 ; process next parameter
 								ElseIf $aInputIds[1][$j] = $aSplit[1] And $aInputIds[3][$j] = "checkbox" Then
 									$sCheckBox = StringRegExpReplace($sCheckBox, "(?i)\Q--" & $sBoundary & @CRLF & _
@@ -1880,7 +1881,7 @@ EndFunc
 
 
 ; #INTERNAL FUNCTIONS# ;=====================================================================
-Func __WinHttpFileContent($sAccept, $sName, $sFileString, $sBoundaryMain)
+Func __WinHttpFileContent($sAccept, $sName, $sFileString, $sBoundaryMain = "")
 	#forceref $sAccept ; FIXME: $sAccept is specified by the server (or left default). In case $sFileString is non-supported MIME type action should be aborted.
 	Local $fNonStandard = False
 	If StringLeft($sFileString, 10) = "PHP#50338:" Then
@@ -1958,10 +1959,12 @@ Func __WinHttpFinalizeCtrls($sSubmit, $sRadio, $sCheckBox, $sButton, ByRef $sAdd
 		__WinHttpTrimBounds($sAddData, $sBound)
 	EndIf
 	If $sRadio Then ; If no radio is specified
-		For $sElem In StringSplit($sRadio, $sGrSep, 3)
-			$sAddData = StringRegExpReplace($sAddData, "(?:\Q" & $sBound & "\E|\A)\Q" & $sElem & "\E(?:\Q" & $sBound & "\E|\z)", $sBound)
-		Next
-		__WinHttpTrimBounds($sAddData, $sBound)
+		If $sRadio <> $sGrSep Then
+			For $sElem In StringSplit($sRadio, $sGrSep, 3)
+				$sAddData = StringRegExpReplace($sAddData, "(?:\Q" & $sBound & "\E|\A)\Q" & $sElem & "\E(?:\Q" & $sBound & "\E|\z)", $sBound)
+			Next
+			__WinHttpTrimBounds($sAddData, $sBound)
+		EndIf
 	EndIf
 	If $sCheckBox Then ; If no checkbox is specified
 		For $sElem In StringSplit($sCheckBox, $sGrSep, 3)
