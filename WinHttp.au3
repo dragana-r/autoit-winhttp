@@ -86,7 +86,7 @@ DllOpen("winhttp.dll") ; making sure reference count never reaches 0
 ;                  Failure - Returns 0 and sets @error:
 ;                  |1 - DllCall failed
 ; Author ........: trancexx
-; Remarks .......: In case of multiple additions at once, must use @CRLF to separate each $hRequest and responded $sHeaders and $iModifiers.
+; Remarks .......: In case of multiple additions at once, must use [[@CRLF]] to separate each [[$hRequest]] and responded [[$sHeaders]] and [[$iModifiers]].
 ; Related .......: _WinHttpOpenRequest, _WinHttpQueryHeaders
 ; Link ..........: http://msdn.microsoft.com/en-us/library/aa384087.aspx
 ;============================================================================================
@@ -148,7 +148,7 @@ EndFunc
 ;                  Failure - Returns 0 and sets @error:
 ;                  |1 - DllCall failed
 ; Author ........: trancexx
-; Remarks .......: $iServerPort can be defined via global constants $INTERNET_DEFAULT_PORT, $INTERNET_DEFAULT_HTTP_PORT or $INTERNET_DEFAULT_HTTPS_PORT
+; Remarks .......: [[$iServerPort]] can be defined via global constants [[$INTERNET_DEFAULT_PORT]], [[$INTERNET_DEFAULT_HTTP_PORT]] or [[$INTERNET_DEFAULT_HTTPS_PORT]]
 ; Related .......: _WinHttpOpen
 ; Link ..........: http://msdn.microsoft.com/en-us/library/aa384091.aspx
 ;============================================================================================
@@ -182,7 +182,7 @@ EndFunc
 ;                  |1 - DllCall failed
 ; Author ........: ProgAndy
 ; Modified.......: trancexx
-; Remarks .......: $iFlag is defined in WinHttpConstants.au3 and can be:
+; Remarks .......: [[$iFlag]] is defined in WinHttpConstants.au3 and can be:
 ;                  |$ICU_DECODE - Converts characters that are "escape encoded" (%xx) to their non-escaped form.
 ;                  |$ICU_ESCAPE - Escapes certain characters to their escape sequences (%xx).
 ; Related .......: _WinHttpCreateUrl
@@ -354,7 +354,7 @@ EndFunc
 ;                  |1 - DllCall failed
 ;                  |2 - Internal failure.
 ; Author ........: trancexx
-; Remarks .......: $iAutoDetectFlags values are defined in WinHttpconstants.au3
+; Remarks .......: [[$iAutoDetectFlags]] values are defined in WinHttpconstants.au3
 ; Related .......: _WinHttpGetDefaultProxyConfiguration, _WinHttpGetIEProxyConfigForCurrentUser, _WinHttpSetDefaultProxyConfiguration
 ; Link ..........: http://msdn.microsoft.com/en-us/library/aa384094.aspx
 ;============================================================================================
@@ -429,9 +429,9 @@ EndFunc
 ; Syntax.........: _WinHttpGetIEProxyConfigForCurrentUser()
 ; Parameters ....: None.
 ; Return values .: Success - Returns array with 4 elements:
-;                  |$array[0] - if 1 indicates that the Internet Explorer proxy configuration for the current user specifies "automatically detect settings",
-;                  |$array[1] - auto-configuration URL if the Internet Explorer proxy configuration for the current user specifies "Use automatic proxy configuration",
-;                  |$array[2] - proxy URL if the Internet Explorer proxy configuration for the current user specifies "use a proxy server",
+;                  |$array[0] - if 1 indicates that the IE proxy configuration for the current user specifies "automatically detect settings",
+;                  |$array[1] - auto-configuration URL if the IE proxy configuration for the current user specifies "Use automatic proxy configuration",
+;                  |$array[2] - proxy URL if the IE proxy configuration for the current user specifies "use a proxy server",
 ;                  |$array[3] - optional proxy by-pass server list.
 ;                  Failure - Returns 0 and sets @error:
 ;                  |1 - DllCall failed
@@ -496,7 +496,7 @@ EndFunc
 ;                  |1 - DllCall failed
 ; Author ........: trancexx
 ; Remarks .......: <b>You are strongly discouraged to use WinHTTP in asynchronous mode with AutoIt. AutoIt's callback implementation can't handle reentrancy properly.</b>
-;                  +For asynchronous mode set $iFlag to $WINHTTP_FLAG_ASYNC. In that case $WINHTTP_OPTION_CONTEXT_VALUE for the handle will inernally be set to $WINHTTP_FLAG_ASYNC also.
+;                  +For asynchronous mode set [[$iFlag]] to [[$WINHTTP_FLAG_ASYNC]]. In that case [[$WINHTTP_OPTION_CONTEXT_VALUE]] for the handle will inernally be set to [[$WINHTTP_FLAG_ASYNC]] also.
 ; Related .......: _WinHttpCloseHandle, _WinHttpConnect
 ; Link ..........: http://msdn.microsoft.com/en-us/library/aa384098.aspx
 ;============================================================================================
@@ -581,8 +581,8 @@ EndFunc
 ; Author ........: trancexx
 ; Remarks .......: _WinHttpQueryAuthSchemes() is called after _WinHttpQueryHeaders().
 ;                  +Arguments are accepted ByRef.
-;                  +Both $iSupportedSchemes and $iFirstScheme is set to combination of any of $WINHTTP_AUTH_SCHEME_ flags.
-;                  +$iAuthTarget parameter is set to one or more $WINHTTP_AUTH_TARGET_ constants values.
+;                  +Both [[$iSupportedSchemes]] and [[$iFirstScheme]] is set to combination of any of [[$WINHTTP_AUTH_SCHEME_]] flags.
+;                  +[[$iAuthTarget]] parameter is set to one or more [[$WINHTTP_AUTH_TARGET_]] constants values.
 ; Related .......: _WinHttpSetCredentials, _WinHttpQueryHeaders, _WinHttpOpenRequest
 ; Link ..........: http://msdn.microsoft.com/en-us/library/aa384100.aspx
 ; ===============================================================================================================================
@@ -801,7 +801,7 @@ EndFunc
 ;                  Failure - Returns 0 and sets @error:
 ;                  |1 - DllCall failed
 ; Author ........: trancexx
-; Remarks .......: Specifying optional data ($sOptional) will cause $iTotalLength to receive the size of that data if left default value.
+; Remarks .......: Specifying optional data [[$sOptional]] will cause [[$iTotalLength]] to receive the size of that data if left default value.
 ; Related .......: _WinHttpOpenRequest
 ; Link ..........: http://msdn.microsoft.com/en-us/library/aa384110.aspx
 ;============================================================================================
@@ -1077,14 +1077,14 @@ EndFunc
 ;                  |5 - form's "action" is invalid
 ;                  |6 - invalid session handle passed
 ; Author ........: trancexx
-; Remarks .......: In case form requires redirection and $hInternet is internet handle, this handle will be closed and replaced with new and required one.
-;                  +When $hInternet is form string, form's "action" must specify URL and $sActionPage parameter must be session handle. On succesful call this variable will be changed to connection handle of the internally made connection.
+; Remarks .......: In case form requires redirection and [[$hInternet]] is internet handle, this handle will be closed and replaced with new and required one.
+;                  +When [[$hInternet]] is form string, form's "action" must specify URL and [[$sActionPage]] parameter must be session handle. On succesful call this variable will be changed to connection handle of the internally made connection.
 ;                  Don't forget to close this handle after the function returns and when no longer needed.
-;                  +$sFormId specifies Id of the form same as .getElementById(FormId). Aditionally you can use "index:FormIndex" to
+;                  +[[$sFormId]] specifies Id of the form same as [[.getElementById(FormId)]]. Aditionally you can use [["index:FormIndex"]] to
 ;                  identify form by its zero-based index number (in case of e.g. three forms on some page first one will have index=0, second index=1, third index=2).
-;                  Use "name:FormName" to identify form by its name like with .getElementsByName(FormName). FormName will be taken to be what's right of colon mark.
+;                  Use [["name:FormName"]] to identify form by its name like with [[.getElementsByName(FormName)]]. FormName will be taken to be what's right of colon mark.
 ;                  In that case first form with that name is filled.
-;                  +As for fields, If "name:FieldName" option is used all the fields except last with that name are removed from the form. Last one is filled with specified $sData data.
+;                  +As for fields, If [["name:FieldName"]] option is used all the fields except last with that name are removed from the form. Last one is filled with specified $sData data.
 ;                  +This function can be used to fill forms with up to 40 fields at once.
 ;                  +"Submit" control you want to keep (click) set to True. If no such control is set then the first one found in the form is "clicked"
 ;                  and the other removed from the submited form. "Checkbox" and "Button" input types are removed from the submitted form unless explicitly set. Same goes for "Radio" with exception that
@@ -1094,8 +1094,8 @@ EndFunc
 ;                  +
 ;                  +If this function is used to upload multiple files then there are two available ways. Default would be to submit the form following RFC2388 specification.
 ;                  In that case every file is represented as multipart/mixed part embedded within the multipart/form-data.
-;                  +If you want to upload using alternative way (to avoid certain PHP bug that could exist on server side) then prefix the file string with "PHP#50338:" string.
-;                  +For example: ..."name:files[]", "PHP#50338:" & $sFile1 & ...
+;                  +If you want to upload using alternative way (to avoid certain PHP bug that could exist on server side) then prefix the file string with [["PHP#50338:"]] string.
+;                  +For example: [[..."name:files[]", "PHP#50338:" & $sFile1 & "|" & $sFile2 ...]]
 ;                  +Muliple files are always separated with vertical line ASCII character when filling the form.
 ; Related .......: _WinHttpConnect
 ;============================================================================================
@@ -1583,7 +1583,7 @@ EndFunc
 ; Author ........: trancexx
 ; Remarks .......: <b>You are strongly discouraged to use WinHTTP in asynchronous mode with AutoIt. AutoIt's callback implementation can't handle reentrancy properly.</b>
 ;                  +WinHttp is rentrant during asynchronous completion callback. Make sure you have only one callback running and only one request handled though it at time.
-;                  +Also make sure memory buffer is at least 8192 bytes in size if $iNumberOfBytesToRead is left default.
+;                  +Also make sure memory buffer is at least 8192 bytes in size if [[$iNumberOfBytesToRead]] is left default.
 ; Related .......: _WinHttpSimpleReadData, _WinHttpReadData
 ; ===============================================================================================================================
 Func _WinHttpSimpleReadDataAsync($hInternet, ByRef $pBuffer, $iNumberOfBytesToRead = Default)
@@ -1848,8 +1848,8 @@ EndFunc
 ;                  Failure - Returns 0 and sets @error:
 ;                  |1 - DllCall failed
 ; Author ........: trancexx, ProgAndy
-; Remarks .......: $vData variable is either string or binary data to write.
-;                  $iMode can have these values:
+; Remarks .......: [[$vData]] variable is either string or binary data to write.
+;                  [[$iMode]] can have these values:
 ;                  |0 - to write ANSI string
 ;                  |1 - to write binary data
 ; Related .......: _WinHttpSendRequest, _WinHttpReadData

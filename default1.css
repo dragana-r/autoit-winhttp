@@ -337,11 +337,8 @@ h3
 .codeheader
 {
 	background-color:#eee;
-	border-bottom:1px solid #aaa;
-	border-left:1px solid #aaa;
-	border-right:1px solid #aaa;
-	border-top:1px solid #aaa;
-	color:#000;
+	border:1px solid #aaa;
+	color:#48484c;
 	font-family:Consolas, "Courier New", Courier, Verdana, Arial;
 	font-size:12px;
 	padding:16px;
@@ -349,8 +346,21 @@ h3
 	width:90%;
 }
 
+.codelike
+{
+	background-color:#eee;
+	border:1px solid #aaa;
+	border-radius:3px;
+	padding-right:5px;
+	padding-left:5px;
+	color:#48484c;
+	font-family:Consolas, "Courier New", Courier, Verdana, Arial;
+	font-size:12px;
+}
+
 .codebox
 {
+	background: url('../images/hk.jpg') no-repeat 100% 100%;
 	background-color:#fff;
 	border-bottom:1px solid #aaa;
 	border-left:1px solid #aaa;
@@ -362,7 +372,7 @@ h3
 	overflow-x:auto;
 	padding:8px 8px 24px;
 	white-space:nowrap;
-	width:99%;
+	width:97%;
 }
 
 .S0

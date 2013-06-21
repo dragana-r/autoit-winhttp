@@ -95,6 +95,7 @@ Func _CHM_UDFToHTMPages($sFileUDF, ByRef $aFunctions, $sFolder = Default)
 				"    <head>" & @CRLF & _
 				"        <title>" & $sFunctionName & "</title>" & @CR & _
 				'        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">' & @CRLF & _
+				'        <meta http-equiv="X-UA-Compatible" content="IE=9">' & @CRLF & _
 				'        <link href="../CSS/Default1.css" rel="stylesheet" type="text/css">' & @CRLF & _
 				"    </head>" & @CRLF & @CRLF & _
 				"    <body>" & @CRLF & @CRLF
@@ -147,7 +148,7 @@ Func _CHM_UDFToHTMPages($sFileUDF, ByRef $aFunctions, $sFolder = Default)
 		$sRemarks = _CHM_GetHeaderData($aHeaders[$j], "Remarks")
 		If $sRemarks Then
 			$sHTM &= "        <h2>Remarks</h2>" & @CRLF & _
-					"        <p>" & StringReplace(StringRegExpReplace(StringRegExpReplace($sRemarks, ";\h*\+", "<br>"), ";\h*", ""), "|", "<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;") & "</p>" & @CRLF & _
+					"        <p>" & StringRegExpReplace(StringReplace(StringRegExpReplace(StringRegExpReplace($sRemarks, ";\h*\+", "<br>"), ";\h*", "    "), "    |", "<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"), "\[{2}(.*?)\]{2}", '<span class="codelike">$1</span>') & "</p>" & @CRLF & _
 					"        <br>" & @CRLF & @CRLF
 		EndIf
 
@@ -191,8 +192,8 @@ Func _CHM_UDFToHTMPages($sFileUDF, ByRef $aFunctions, $sFolder = Default)
 							'onmouseout="this.style.color=&quot;#444&quot;;this.style.background=&quot;#E9E9E9&quot;; ToolTip.style.visibility=&quot;hidden&quot;"' & _
 							'onclick="clipboardData.setData(&quot;Text&quot;, au3code' & $sSuffix & '.innerText); ' & _
 							'         ToolTip.innerHTML=&quot;<table><tr><td class=tooltip>Copied!&lt;/td>&lt;/tr>&lt;/table>&quot;; ' & _
-							'         ToolTip.style.pixelLeft=(event.x+20+document.body.scrollLeft); ' & _
-							'         ToolTip.style.pixelTop=(event.y+15+document.body.scrollTop); ' & _
+							'         ToolTip.style.pixelLeft=(event.x+20+document.documentElement.scrollLeft); ' & _
+							'         ToolTip.style.pixelTop=(event.y+15+document.documentElement.scrollTop); ' & _
 							'         ToolTip.style.visibility=&quot;visible&quot;; ' & _
 							'         setTimeout(&#39;ToolTip.style.visibility=&quot;hidden&quot;&#39;, 1200);' & _
 							'">Copy to clipboard<\/a>'
@@ -201,7 +202,7 @@ Func _CHM_UDFToHTMPages($sFileUDF, ByRef $aFunctions, $sFolder = Default)
 							"document.write('" & $sInnerCode & "');" & @CRLF & _
 							'        </script>' & @CRLF
 
-					$sHTM &= _CHM_SyntaxHighlight($sAu3Code, $sSuffix) & "</p><br>" & @CRLF
+					$sHTM &= '<p class="codebox" id="au3code' & $sSuffix & '"><br> ' & @CRLF & _CHM_SyntaxHighlight($sAu3Code) & "</p><br>" & @CRLF
 				EndIf
 			EndIf
 		Next
@@ -579,7 +580,7 @@ Func _CHM_Proc($sString)
 EndFunc   ;==>_CHM_Proc
 
 
-Func _CHM_SyntaxHighlight($sAu3Code, $sSuffix = "") ; MrCreator's modified
+Func _CHM_SyntaxHighlight($sAu3Code) ; MrCreator's modified
 	$sAu3Code = StringReplace($sAu3Code & @CRLF, @TAB, "    ")
 	Local $sPattern1, $sPattern2
 	Local $sReplace1, $sReplace2
@@ -675,7 +676,7 @@ Func _CHM_SyntaxHighlight($sAu3Code, $sSuffix = "") ; MrCreator's modified
 	$sAu3Code = StringRegExpReplace($sAu3Code, ">\h+<", ">&nbsp;<")
 	$sAu3Code = StringReplace($sAu3Code, "<>", "")
 	$sAu3Code = StringReplace($sAu3Code, "&<", "&amp;<")
-	Return '<p class="codebox" id="au3code' & $sSuffix & '"><br> ' & @CRLF & $sAu3Code ; <-! no closing tag
+	Return $sAu3Code
 EndFunc   ;==>_CHM_SyntaxHighlight
 
 
