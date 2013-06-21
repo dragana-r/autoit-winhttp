@@ -86,7 +86,7 @@ DllOpen("winhttp.dll") ; making sure reference count never reaches 0
 ;                  Failure - Returns 0 and sets @error:
 ;                  |1 - DllCall failed
 ; Author ........: trancexx
-; Remarks .......: In case of multiple additions at once, must use [[@CRLF]] to separate each [[$hRequest]] and responded [[$sHeaders]] and [[$iModifiers]].
+; Remarks .......: In case of multiple additions at once use [[@CRLF]] to separate each [[$hRequest]] and responded [[$sHeaders]] and [[$iModifiers]].
 ; Related .......: _WinHttpOpenRequest, _WinHttpQueryHeaders
 ; Link ..........: http://msdn.microsoft.com/en-us/library/aa384087.aspx
 ;============================================================================================
@@ -183,8 +183,8 @@ EndFunc
 ; Author ........: ProgAndy
 ; Modified.......: trancexx
 ; Remarks .......: [[$iFlag]] is defined in WinHttpConstants.au3 and can be:
-;                  |$ICU_DECODE - Converts characters that are "escape encoded" (%xx) to their non-escaped form.
-;                  |$ICU_ESCAPE - Escapes certain characters to their escape sequences (%xx).
+;                  |[[$ICU_DECODE]] - Converts characters that are "escape encoded" (%xx) to their non-escaped form.
+;                  |[[$ICU_ESCAPE]] - Escapes certain characters to their escape sequences (%xx).
 ; Related .......: _WinHttpCreateUrl
 ; Link ..........: http://msdn.microsoft.com/en-us/library/aa384092.aspx
 ;============================================================================================
@@ -386,9 +386,9 @@ EndFunc
 ;                  |1 - DllCall failed
 ; Author ........: trancexx
 ; Remarks .......: Access types are defined in WinHttpconstants.au3:
-;                  |$WINHTTP_ACCESS_TYPE_DEFAULT_PROXY = 0
-;                  |$WINHTTP_ACCESS_TYPE_NO_PROXY = 1
-;                  |$WINHTTP_ACCESS_TYPE_NAMED_PROXY = 3
+;                  |[[$WINHTTP_ACCESS_TYPE_DEFAULT_PROXY = 0]]
+;                  |[[$WINHTTP_ACCESS_TYPE_NO_PROXY = 1]]
+;                  |[[$WINHTTP_ACCESS_TYPE_NAMED_PROXY = 3]]
 ; Related .......: _WinHttpDetectAutoProxyConfigUrl, _WinHttpGetIEProxyConfigForCurrentUser, _WinHttpSetDefaultProxyConfiguration
 ; Link ..........: http://msdn.microsoft.com/en-us/library/aa384095.aspx
 ;============================================================================================
@@ -715,10 +715,10 @@ EndFunc
 ;                  Failure - Returns empty string and sets @error:
 ;                  |1 - DllCall failed
 ; Author ........: trancexx, ProgAndy
-; Remarks .......: $iMode can have these values:
-;                  |0 - ANSI
-;                  |1 - UTF8
-;                  |2 - Binary
+; Remarks .......: [[$iMode]] can have these values:
+;                  |[[0]] - ANSI
+;                  |[[1]] - UTF8
+;                  |[[2]] - Binary
 ; Related .......: _WinHttpOpenRequest, _WinHttpWriteData
 ; Link ..........: http://msdn.microsoft.com/en-us/library/aa384104.aspx
 ;============================================================================================
@@ -1850,8 +1850,8 @@ EndFunc
 ; Author ........: trancexx, ProgAndy
 ; Remarks .......: [[$vData]] variable is either string or binary data to write.
 ;                  [[$iMode]] can have these values:
-;                  |0 - to write ANSI string
-;                  |1 - to write binary data
+;                  |[[0]] - to write ANSI string
+;                  |[[1]] - to write binary data
 ; Related .......: _WinHttpSendRequest, _WinHttpReadData
 ; Link ..........: http://msdn.microsoft.com/en-us/library/aa384120.aspx
 ;============================================================================================
