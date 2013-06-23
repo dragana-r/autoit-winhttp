@@ -208,12 +208,13 @@ Func _CHM_UDFToHTMPages($sFileUDF, ByRef $aFunctions, $sFolder = Default)
 		Next
 		If $fHasExample Then $sHTM &= '        <div id="ToolTip" class="tip"></div>' & @CRLF
 
-		$sHTM &= "        <br>" & @CRLF & _
-				"        <p>&nbsp;</p>" & @CRLF & @CRLF
+		$sHTM &= @CRLF
 
 		$sHTM &= "<!--Footer Section-->" & @CRLF
-		$sHTM &= '<hr style="height:0px">' & @CRLF & _
-				"        <p>" & $sName & "</p>" & @CRLF
+		$sHTM &= '  <div class="footer">' & @CRLF & _
+				'        <p class="name">' & $sName & '</p>' & @CRLF
+		$sHTM &= '        <ul class="copyright"><li class="cr">Copyright &copy; ' & @YEAR & ' Dragana R.</li></ul>' & @CRLF
+		$sHTM &= "  </div>" & @CRLF
 		$sHTM &= "    </body>" & @CRLF & _
 				"</html>" & @CRLF
 
@@ -411,8 +412,10 @@ Func _CHM_WriteFUNC($sFileUDF, $sWorkingFolder)
 	$sHTM &= "<br>" & @CRLF & _
 			"<p>&nbsp;</p>" & @CRLF & @CRLF
 
-	$sHTM &= '<hr style="height:0px">' & @CRLF & _
-			"<p>" & $sName & "</p>" & @CRLF
+	$sHTM &= '  <div class="footer">' & @CRLF & _
+				'        <p class="name">' & $sName & '</p>' & @CRLF
+	$sHTM &= '        <ul class="copyright"><li class="cr">Copyright &copy; ' & @YEAR & ' Dragana R.</li></ul>' & @CRLF
+	$sHTM &= "  </div>" & @CRLF
 	$sHTM &= "</body>" & @CRLF & _
 			"</html>" & @CRLF
 
@@ -449,8 +452,10 @@ Func _CHM_WriteHomePage($sHomePage, $sLogoPic, $sWorkingFolder)
 			"<!--Start passed content-->" & @CRLF & _
 			$sHomePage & @CRLF & _
 			"<!--End passed content-->" & @CRLF & _
-			'        <hr style="height:0px">' & @CRLF & _
-			"        <p>" & $sName & "</p>" & @CRLF & _
+			'  <div class="footer">' & @CRLF & _
+			'        <p class="name">' & $sName & '</p>' & @CRLF & _
+			'        <ul class="copyright"><li class="cr">Copyright &copy; ' & @YEAR & ' Dragana R.</li></ul>' & @CRLF & _
+			"  </div>" & @CRLF & _
 			"    </body>" & @CRLF & _
 			"</html>" & @CRLF
 
