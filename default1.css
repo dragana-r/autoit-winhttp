@@ -185,6 +185,38 @@ ul.cell
 	margin:0 0 0 25px;
 }
 
+.copyright
+{
+	font-size:11px;
+	border-left: 1px solid #c1c1c1;
+	margin:10px 0 0 15px;
+	float:left;
+	padding:0;
+}
+
+.name
+{
+	font-size:11px;
+	margin:10px 0 0 15px;
+	float:left;
+	padding:0;
+}
+
+.cr
+{
+	display:inline;
+	padding:0 15px;
+}
+
+.footer
+{
+	border-top: 1px solid #c1c1c1;
+	float:left;
+	margin:20px auto;
+	padding-bottom:30px;
+	width:97%;
+}
+
 div
 {
 	font-family:'Segoe UI', 'Lucida Grande', Verdana, Arial, Helvetica, sans-serif;
