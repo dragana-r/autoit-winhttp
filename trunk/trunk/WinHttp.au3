@@ -1122,7 +1122,7 @@ Func _WinHttpSimpleFormFill(ByRef $hInternet, $sActionPage = Default, $sFormId =
 	$sHTML = StringRegExpReplace($sHTML, "(?s)<!\[CDATA\[.*?\]\]>", "") ; removing CDATA
 	Local $fSend = False ; preset 'Sending flag'
 	; Find all forms on page
-	Local $aForm = StringRegExp($sHTML, "(?si)<\s*form\s*(.*?)(?:(?:<\s*/form\s*>)|\Z)", 3)
+	Local $aForm = StringRegExp($sHTML, "(?si)<\s*form(?:[^\w])\s*(.*?)(?:(?:<\s*/form\s*>)|\Z)", 3)
 	If @error Then Return SetError(1, 0, "") ; There are no forms available
 	; Process input
 	Local $fGetFormByName, $sFormName, $fGetFormByIndex, $fGetFormById, $iFormIndex
