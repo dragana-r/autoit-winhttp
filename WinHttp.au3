@@ -1109,7 +1109,7 @@ Func _WinHttpSimpleFormFill(ByRef $hInternet, $sActionPage = Default, $sFormId =
 	#forceref $sFieldId31, $sData31, $sFieldId32, $sData32, $sFieldId33, $sData33, $sFieldId34, $sData34, $sFieldId35, $sData35, $sFieldId36, $sData36, $sFieldId37, $sData37, $sFieldId38, $sData38, $sFieldId39, $sData39, $sFieldId40, $sData40
 	__WinHttpDefault($sActionPage, "")
 	; Get page source
-	Local $hOpen, $sHTML, $fVarForm
+	Local $hOpen, $sHTML, $fVarForm, $iScheme = $INTERNET_SCHEME_HTTP
 	If IsString($hInternet) Then ; $hInternet is page source
 		$sHTML = $hInternet
 		If _WinHttpQueryOption($sActionPage, $WINHTTP_OPTION_HANDLE_TYPE) <> $WINHTTP_HANDLE_TYPE_SESSION Then Return SetError(6, 0, "")
@@ -1117,6 +1117,10 @@ Func _WinHttpSimpleFormFill(ByRef $hInternet, $sActionPage = Default, $sFormId =
 		$fVarForm = True
 	Else
 		$sHTML = _WinHttpSimpleRequest($hInternet, Default, $sActionPage, Default, Default, "Accept: text/html;q=0.9,text/plain;q=0.8,*/*;q=0.5")
+		If @error Then
+			$sHTML = _WinHttpSimpleSSLRequest($hInternet, Default, $sActionPage, Default, Default, "Accept: text/html;q=0.9,text/plain;q=0.8,*/*;q=0.5")
+			$iScheme = $INTERNET_SCHEME_HTTPS
+		EndIf
 	EndIf
 	$sHTML = StringRegExpReplace($sHTML, "(?s)<!--.*?-->", "") ; removing comments
 	$sHTML = StringRegExpReplace($sHTML, "(?s)<!\[CDATA\[.*?\]\]>", "") ; removing CDATA
@@ -1147,7 +1151,7 @@ Func _WinHttpSimpleFormFill(ByRef $hInternet, $sActionPage = Default, $sFormId =
 	If Not Mod($iNumArgs, 2) Then $sAdditionalHeaders = Eval("sFieldId" & $iNumArgs / 2 - 1)
 	Local $iNumParams = Ceiling(($iNumArgs - 2) / 2) - 1
 	Local $sAddData
-	Local $aCrackURL, $sNewURL, $iScheme = $INTERNET_SCHEME_HTTP
+	Local $aCrackURL, $sNewURL
 	; Loop thru all forms on the page and find one that was specified
 	For $iFormOrdinal = 0 To UBound($aForm) - 1
 		If $fGetFormByIndex And $iFormOrdinal <> $iFormIndex Then ContinueLoop
