@@ -1140,6 +1140,9 @@ Func _WinHttpSimpleFormFill(ByRef $hInternet, $sActionPage = Default, $sFormId =
 		ElseIf $aSplitForm[0] = "index" Then
 			$iFormIndex = Number($aSplitForm[1])
 			$fGetFormByIndex = True
+		ElseIf $aSplitForm[0] = "id" Then ; like .getElementById(FormId)
+			$sFormId = $aSplitForm[1]
+			$fGetFormById = True
 		Else ; like .getElementById(FormId)
 			$sFormId = $aSplitForm[0]
 			$fGetFormById = True
@@ -1159,31 +1162,16 @@ Func _WinHttpSimpleFormFill(ByRef $hInternet, $sActionPage = Default, $sFormId =
 		; Extract form attributes
 		$sAttributes = StringRegExp($sForm, "(?s)(.*?)>", 3)
 		If Not @error Then $sAttributes = $sAttributes[0]
-		$aAttributes = StringRegExp($sAttributes, '\s*([^=]+)\h*=\h*(?:"|''|)(.*?)(?:"|''| |\Z)', 3) ; e.g. method="post" or method=post or method='post'
-		If @error Then Return SetError(2, 0, "") ; invalid form
-		If Mod(UBound($aAttributes), 2) Then ReDim $aAttributes[UBound($aAttributes) + 1]
 		Local $sAction = "", $sAccept = "", $sEnctype = "", $sMethod = "", $sName = "", $sId = ""
 		; Check set attributes
-		For $i = 0 To UBound($aAttributes) - 2 Step 2 ; array of form attributes
-			Switch $aAttributes[$i]
-				Case "action"
-					$sAction = StringReplace($aAttributes[$i + 1], "&amp;", "&")
-				Case "accept"
-					$sAccept = $aAttributes[$i + 1]
-				Case "enctype"
-					$sEnctype = $aAttributes[$i + 1]
-				Case "id"
-					$sId = $aAttributes[$i + 1]
-					If $fGetFormById And $sFormId <> Default And $aAttributes[$i + 1] <> $sFormId Then ContinueLoop 2
-				Case "method"
-					$sMethod = $aAttributes[$i + 1]
-				Case "name"
-					$sName = $aAttributes[$i + 1]
-					If $fGetFormByName And $sFormName <> $sName Then ContinueLoop 2
-			EndSwitch
-		Next
-		If $sFormId <> Default And $fGetFormById And $sFormId <> $sId Then ContinueLoop
+		$sId = __WinHttpAttribVal($sAttributes, "id")
+		If $fGetFormById And $sFormId <> Default And $sId <> $sFormId Then ContinueLoop
+		$sName = __WinHttpAttribVal($sAttributes, "name")
 		If $fGetFormByName And $sFormName <> $sName Then ContinueLoop
+		$sAction = StringReplace(__WinHttpAttribVal($sAttributes, "action"), "&amp;", "&")
+		$sAccept = __WinHttpAttribVal($sAttributes, "accept")
+		$sEnctype = __WinHttpAttribVal($sAttributes, "enctype")
+		$sMethod = __WinHttpAttribVal($sAttributes, "method")
 		If Not $sMethod Then $sMethod = "GET"
 		If $sMethod = "GET" Then $sEnctype = ""
 		$aCrackURL = _WinHttpCrackUrl($sAction)
@@ -1991,14 +1979,16 @@ Func __WinHttpTrimBounds(ByRef $sData, $sBound)
 EndFunc
 
 Func __WinHttpFormAttrib(ByRef $aAttrib, $i, $sElement)
-	Local $aArray = StringRegExp($sElement, '(?i).*?id\h*=(\h*"(.*?)"|' & "\h*'(.*?)'|" & '\h*(.*?)(?: |\Z))', 3) ; e.g. id="abc" or id='abc' or id=abc
-	If Not @error Then $aAttrib[0][$i] = $aArray[UBound($aArray) - 1] ; id
-	$aArray = StringRegExp($sElement, '(?i).*?name\h*=(\h*"(.*?)"|' & "\h*'(.*?)'|" & '\h*(.*?)(?: |\Z))', 3) ; e.g. name="abc" or name='abc' or name=abc
-	If Not @error Then $aAttrib[1][$i] = $aArray[UBound($aArray) - 1] ; name
-	$aArray = StringRegExp($sElement, '(?i).*?value\h*=(\h*"(.*?)"|' & "\h*'(.*?)|'" & '\h*(.*?)(?: |\Z))', 3) ; e.g. value="abc" or value='abc' or value=abc
-	If Not @error Then $aAttrib[2][$i] = $aArray[UBound($aArray) - 1] ; value
-	$aArray = StringRegExp($sElement, '(?i).*?type\h*=(\h*"(.*?)"|' & "\h*'(.*?)'|" & '\h*(.*?)(?: |\Z))', 3) ; e.g. type="abc" or type='abc' or type=abc
-	If Not @error Then $aAttrib[3][$i] = $aArray[UBound($aArray) - 1] ; type
+	$aAttrib[0][$i] = __WinHttpAttribVal($sElement, "id")
+	$aAttrib[1][$i] = __WinHttpAttribVal($sElement, "name")
+	$aAttrib[2][$i] = __WinHttpAttribVal($sElement, "value")
+	$aAttrib[3][$i] = __WinHttpAttribVal($sElement, "type")
+EndFunc
+
+Func __WinHttpAttribVal($sIn, $sAttrib)
+	Local $aArray = StringRegExp($sIn, '(?i).*?' & $sAttrib & '\h*=(\h*"(.*?)"|' & "\h*'(.*?)'|" & '\h*(.*?)(?: |\Z))', 3) ; e.g. id="abc" or id='abc' or id=abc
+	If @error Then Return ""
+	Return $aArray[UBound($aArray) - 1]
 EndFunc
 
 Func __WinHttpFormSend($hInternet, $sMethod, $sAction, $fMultiPart, $sBoundary, $sAddData, $fSecure = False, $sAdditionalHeaders = "")
