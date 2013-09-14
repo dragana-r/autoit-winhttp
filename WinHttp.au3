@@ -153,7 +153,13 @@ EndFunc
 ; Link ..........: http://msdn.microsoft.com/en-us/library/aa384091.aspx
 ;============================================================================================
 Func _WinHttpConnect($hSession, $sServerName, $iServerPort = Default)
-	__WinHttpDefault($iServerPort, $INTERNET_DEFAULT_PORT)
+	Local $aURL = _WinHttpCrackUrl($sServerName)
+	If @error Then
+		__WinHttpDefault($iServerPort, $INTERNET_DEFAULT_PORT)
+	Else
+		$sServerName = $aURL[2]
+		$iServerPort = $aURL[3]
+	EndIf
 	Local $aCall = DllCall($hWINHTTPDLL__WINHTTP, "handle", "WinHttpConnect", _
 			"handle", $hSession, _
 			"wstr", $sServerName, _
