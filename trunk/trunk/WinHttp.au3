@@ -1229,6 +1229,7 @@ Func _WinHttpSimpleFormFill(ByRef $hInternet, $sActionPage = Default, $sFormId =
 					$sPassedId = Eval("sFieldId" & $k)
 					$aSplit = StringSplit($sPassedId, ":", 2)
 					If @error Or $aSplit[0] <> "name" Then ; like .getElementById
+						If Not @error And $aSplit[0] = "id" Then $sPassedId = $aSplit[1]
 						For $j = 0 To UBound($aInputIds, 2) - 1
 							If $aInputIds[0][$j] = $sPassedId Then
 								If $aInputIds[3][$j] = "submit" Then
@@ -1377,6 +1378,7 @@ Func _WinHttpSimpleFormFill(ByRef $hInternet, $sActionPage = Default, $sFormId =
 						$sPassedId = Eval("sFieldId" & $k)
 						$aSplit = StringSplit($sPassedId, ":", 2)
 						If @error Or $aSplit[0] <> "name" Then ; like getElementById
+							If Not @error And $aSplit[0] = "id" Then $sPassedId = $aSplit[1]
 							For $j = 0 To UBound($aInputIds, 2) - 1
 								If $aInputIds[0][$j] = $sPassedId Then
 									If $aInputIds[3][$j] = "file" Then
