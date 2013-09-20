@@ -731,7 +731,8 @@ EndFunc
 Func _WinHttpReadData($hRequest, $iMode = Default, $iNumberOfBytesToRead = Default, $pBuffer = Default)
 	__WinHttpDefault($iMode, 0)
 	__WinHttpDefault($iNumberOfBytesToRead, 8192)
-	Local $tBuffer
+	Local $tBuffer, $vOutOnError = ""
+	If $iMode = 2 Then $vOutOnError = Binary($vOutOnError)
 	Switch $iMode
 		Case 1, 2
 			If $pBuffer And $pBuffer <> Default Then
@@ -755,7 +756,7 @@ Func _WinHttpReadData($hRequest, $iMode = Default, $iNumberOfBytesToRead = Defau
 			"dword", $iNumberOfBytesToRead, _
 			$sReadType, 0)
 	If @error Or Not $aCall[0] Then Return SetError(1, 0, "")
-	If Not $aCall[4] Then Return SetError(-1, 0, "")
+	If Not $aCall[4] Then Return SetError(-1, 0, $vOutOnError)
 	If $aCall[4] < $iNumberOfBytesToRead Then
 		Switch $iMode
 			Case 0
