@@ -142,7 +142,7 @@ EndFunc
 ; Description ...: Specifies the initial target server of an HTTP request and returns connection handle to an HTTP session for that initial target.
 ; Syntax.........: _WinHttpConnect($hSession, $sServerName [, $iServerPort = Default ])
 ; Parameters ....: $hSession - Valid WinHttp session handle returned by a previous call to _WinHttpOpen().
-;                  $sServerName - Host name of an HTTP server.
+;                  $sServerName - Host name of an HTTP server. In case URI scheme (http://, https://, ...) is specified $iServerPort is ignored.
 ;                  $iServerPort - [optional] TCP/IP port on the server to which a connection is made (default is $INTERNET_DEFAULT_PORT)
 ; Return values .: Success - Returns a valid connection handle to the HTTP session
 ;                  Failure - Returns 0 and sets @error:
