@@ -8,7 +8,7 @@ Opt("MustDeclareVars", 1)
 Global $hOpen = _WinHttpOpen()
 
 ; Get connection handle
-Global $hConnect = _WinHttpConnect($hOpen, "www.pravda.ru")
+Global $hConnect = _WinHttpConnect($hOpen, "http://www.pravda.ru")
 If @error Then
 	MsgBox(48, "Error", "Error getting connection handle." & @CRLF & "Error number is " & @error)
 Else
