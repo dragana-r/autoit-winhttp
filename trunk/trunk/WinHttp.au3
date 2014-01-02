@@ -176,14 +176,14 @@ EndFunc
 ; Parameters ....: $sURL - String. Canonical URL to separate.
 ;                  $iFlag - [optional] Flag that control the operation. Default is $ICU_ESCAPE
 ; Return values .: Success - Returns array with 8 elements:
-;                  |$array[0] - is scheme name
-;                  |$array[1] - is internet protocol scheme
-;                  |$array[2] - is host name
-;                  |$array[3] - is port number
-;                  |$array[4] - is user name
-;                  |$array[5] - is password
-;                  |$array[6] - is URL path
-;                  |$array[7] - is extra information
+;                  |$array[0] - scheme name
+;                  |$array[1] - internet protocol scheme
+;                  |$array[2] - host name
+;                  |$array[3] - port number
+;                  |$array[4] - user name
+;                  |$array[5] - password
+;                  |$array[6] - URL path
+;                  |$array[7] - extra information
 ;                  Failure - Returns 0 and sets @error:
 ;                  |1 - DllCall failed
 ; Author ........: ProgAndy
@@ -259,14 +259,14 @@ EndFunc
 ; Author ........: ProgAndy
 ; Modified.......: trancexx
 ; Remarks .......: Input is one dimensional 8 elements in size array:
-;                  |- first element [0] is scheme name
-;                  |- second element [1] is internet protocol scheme
-;                  |- third element [2] is host name
-;                  |- fourth element [3] is port number
-;                  |- fifth element [4] is user name
-;                  |- sixth element [5] is password
-;                  |- seventh element [6] is URL path
-;                  |- eighth element [7] is extra information
+;                  |- first element [0] scheme name
+;                  |- second element [1] internet protocol scheme
+;                  |- third element [2] host name
+;                  |- fourth element [3] port number
+;                  |- fifth element [4] user name
+;                  |- sixth element [5] password
+;                  |- seventh element [6] URL path
+;                  |- eighth element [7] extra information
 ; Related .......: _WinHttpCrackUrl
 ; Link ..........: http://msdn.microsoft.com/en-us/library/aa384093.aspx
 ;============================================================================================
@@ -1799,14 +1799,14 @@ EndFunc
 ; Syntax.........: _WinHttpTimeToSystemTime($sHttpTime)
 ; Parameters ....: $sHttpTime - Date/time string to convert.
 ; Return values .: Success - Returns array with 8 elements:
-;                  |$array[0] - is Year,
-;                  |$array[1] - is Month,
-;                  |$array[2] - is DayOfWeek,
-;                  |$array[3] - is Day,
-;                  |$array[4] - is Hour,
-;                  |$array[5] - is Minute,
-;                  |$array[6] - is Second.,
-;                  |$array[7] - is Milliseconds.
+;                  |$array[0] - Year,
+;                  |$array[1] - Month,
+;                  |$array[2] - DayOfWeek,
+;                  |$array[3] - Day,
+;                  |$array[4] - Hour,
+;                  |$array[5] - Minute,
+;                  |$array[6] - Second.,
+;                  |$array[7] - Milliseconds.
 ;                  Failure - Returns 0 and sets @error:
 ;                  |1 - DllCall failed
 ; Author ........: trancexx

@@ -1,0 +1,770 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<!-- Created by Charles Tio (dark627@yahoo.com)  -->
+<!-- Modified by Dragana R. (trancexx@yahoo.com)  -->
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=9">
+    <title>Tetris</title>
+    <script type="text/javascript">
+
+        var Matrix, NextMatrix, no, nextNo, ObjX, ObjY, boxes;
+        var boxes, rotateNo, isNext, isPause, isFinish, isProcess;
+        var timerID, delay, totalLns, totalPts, White, Color;
+        var Obj1, Obj2, Obj3, Obj4
+        var iSpeed = 700;
+        function InitVar()
+        {
+            Matrix = new Array(10);
+            NextMatrix = new Array(4);
+            for (count = 0; count < 10; count++) Matrix[count] = new Array(20);
+            for (count = 0; count < 4; count++) NextMatrix[count] = new Array(2);
+
+            Obj1 = new Array("0 0 1 0 2 0 2 1", "0 1 0 0 1 0 2 0", "0 1 1 1 0 0 1 0", "0 0 1 0 2 0 3 0", "0 0 1 0 1 1 2 0", "0 1 1 1 1 0 2 0", "0 0 1 0 1 1 2 1");
+            Obj2 = new Array("0 2 0 1 0 0 1 0", "1 2 0 2 0 1 0 0", "0 1 1 1 0 0 1 0", "0 0 0 1 0 2 0 3", "0 0 0 1 1 1 0 2", "1 2 1 1 0 1 0 0", "0 2 0 1 1 1 1 0");
+            Obj3 = new Array("2 1 1 1 0 1 0 0", "2 0 2 1 1 1 0 1", "0 1 1 1 0 0 1 0", "0 0 1 0 2 0 3 0", "0 1 1 1 1 0 2 1", "0 1 1 1 1 0 2 0", "0 0 1 0 1 1 2 1");
+            Obj4 = new Array("1 0 1 1 1 2 0 2", "0 0 1 0 1 1 1 2", "0 1 1 1 0 0 1 0", "0 0 0 1 0 2 0 3", "1 0 1 1 0 1 1 2", "1 2 1 1 0 1 0 0", "0 2 0 1 1 1 1 0");
+
+            no = 0;
+            nextNo = 0;
+            ObjX = 0;
+            ObjY = 0;
+            boxes;
+            rotateNo = 0;
+            isNext = true;
+            isPause = false;
+            isFinish = true;
+            isProcess = false;
+            timerID = null;
+            delay = iSpeed;
+            totalLns = 0;
+            totalPts = 0;
+            White = "cBlockWhite";
+        }
+
+        function Init()
+        {
+            var strHtml, counter
+
+            InitVar();
+            counter = 0;
+            strHtml = "<table cellspacing=\"0q\" cellpadding=\"0\" class=\"main\" onclick=\"if (!isPause && !isFinish) Rotate();\">";
+            for (i = 1; i <= 20; i++)
+            {
+                strHtml = strHtml + "<tr>";
+                for (j = 1; j <= 10; j++)
+                {
+                    counter++;
+                    strHtml = strHtml + "<td class=\"cBlockWhite\" id=Block" + counter.toString() + ">&nbsp;<\/td>";
+                }
+                strHtml = strHtml + "<\/tr>";
+            }
+            strHtml = strHtml + "<\/table>";
+            divBody.innerHTML = strHtml;
+
+            counter = 0;
+            for (i = 0; i <= 19; i++)
+            {
+                for (j = 0; j <= 9; j++)
+                {
+                    counter++;
+                    Matrix[j][i] = document.getElementById("Block" + counter.toString());
+                }
+            }
+
+            counter = 0;
+            strHtml = "<table cellspacing=\"0q\" cellpadding=\"0\" class=\"next\">";
+            for (i = 1; i <= 2; i++)
+            {
+                strHtml = strHtml + "<tr>";
+                for (j = 1; j <= 4; j++)
+                {
+                    counter++;
+                    strHtml = strHtml + "<td class=\"cBlockWhite2\" id=BlockNext" + counter.toString() + ">&nbsp;<\/td>";
+                }
+                strHtml = strHtml + "<\/tr>";
+            }
+            strHtml = strHtml + "<\/table>";
+            divNext.innerHTML = strHtml;
+
+            counter = 0
+            for (i = 0; i <= 1; i++)
+            {
+                for (j = 0; j <= 3; j++)
+                {
+                    counter++;
+                    NextMatrix[j][i] = document.getElementById("BlockNext" + counter.toString());
+                }
+            }
+            Color = new Array("cBlockSeaGreen", "cBlockRed", "cBlockGreen", "cBlockBlue", "cBlockYellow", "cBlockPurple", "cBlockGrey")
+            document.onkeydown = keyDown
+        }
+
+        function Finish(isWin)
+        {
+            isFinish = true;
+            if (isWin)
+                alert("Congratulation! You win the game");
+            else
+                alert("Game Over");
+            document.getElementById("iplay").value = "Play";
+        }
+
+        function isWhite(X, Y)
+        {
+            return (Matrix[X][Y].className == White);
+        }
+
+        function isOnGround()
+        {
+            for (count = 0; count < 4; count++)
+            {
+                toCheck = false;
+                posX = ObjX + parseInt(boxes[count * 2]);
+                posY = ObjY - parseInt(boxes[count * 2 + 1]);
+
+                if (posY == 19)
+                    return true;
+                if (posY < 0 || posX < 0 || posX > 9)
+                    continue;
+                for (count2 = 0; count2 < 4; count2++)
+                {
+                    if (count2 == count)
+                        continue;
+
+                    posX2 = ObjX + parseInt(boxes[count2 * 2]);
+                    posY2 = ObjY - parseInt(boxes[count2 * 2 + 1]);
+                    if (posX2 == posX && posY2 > posY)
+                    {
+                        toCheck = false;
+                        break;
+                    }
+                    toCheck = true;
+                }
+                if (toCheck)
+                    if (!isWhite(posX, posY + 1))
+                        return true;
+            }
+            return false;
+        }
+
+        function isOut(testX, testY, testBox)
+        {
+            for (count = 0; count < 4; count++)
+            {
+                posX = ObjX + testX + parseInt(testBox[count * 2]);
+                posY = ObjY + testY - parseInt(testBox[count * 2 + 1]);
+
+                if ((posX < 0) || (posX > 9) || (posY > 19))
+                    return true;
+                if (posY > 0)
+                    if (!isWhite(posX, posY))
+                        return true;
+            }
+            return false;
+        }
+
+        function isStuck()
+        {
+            for (count = 0; count < 4; count++)
+            {
+                toCheck = false;
+                posX = ObjX + parseInt(boxes[count * 2]);
+                posY = ObjY - parseInt(boxes[count * 2 + 1]);
+
+                for (count2 = 0; count2 < 4; count2++)
+                {
+                    if (count2 == count)
+                        continue;
+
+                    posX2 = ObjX + parseInt(boxes[count2 * 2]);
+                    posY2 = ObjY - parseInt(boxes[count2 * 2 + 1]);
+                    if (posY2 == posY && posY2 < posY)
+                    {
+                        toCheck = false;
+                        break;
+                    }
+                    toCheck = true;
+                }
+                if (toCheck)
+                    if (!isWhite(posX - 1, posY))
+                        return true;
+            }
+            return false;
+        }
+
+        function PaintObj(X, Y, clr)
+        {
+            if ((X < 0) || (X > 9) || (Y < 0) || (Y > 19))
+                return;
+            Matrix[X][Y].className = clr;
+        }
+
+        function DisplayObj(X, Y, Box, clr)
+        {
+            for (count = 0; count < 4; count++)
+            {
+                posX = X + parseInt(Box[count * 2]);
+                posY = Y - parseInt(Box[count * 2 + 1]);
+                PaintObj(posX, posY, clr);
+            }
+        }
+
+        function MoveObj(X, Y)
+        {
+            DisplayObj(ObjX, ObjY, boxes, White);
+
+            if (!isOut(X, Y, boxes))
+            {
+                ObjX += X;
+                ObjY += Y;
+            }
+            DisplayObj(ObjX, ObjY, boxes, Color[no]);
+        }
+
+        function MoveDown(Y)
+        {
+            posY = Y - 1;
+            if (posY < 0)
+                return;
+
+            while (posY >= 0)
+            {
+                isEmpty = true;
+                for (count2 = 0; count2 < 10; count2++)
+                {
+                    if (!isWhite(count2, posY))
+                    {
+                        isEmpty = false;
+                        break;
+                    }
+                }
+                if (isEmpty)
+                    break;
+
+                for (count2 = 0; count2 < 10; count2++)
+                    PaintObj(count2, posY + 1, Matrix[count2][posY].className);
+                posY--;
+            }
+            for (count2 = 0; count2 < 10; count2++) PaintObj(count2, posY + 1, White);
+        }
+
+        function UpdateLine()
+        {
+            noLine = 0;
+            pts = 0;
+
+            for (count = 0; count < 4; count++)
+            {
+                isLine = true;
+                posY = ObjY + noLine - count;
+                if (posY < 0)
+                    break;
+
+                for (count2 = 0; count2 < 10; count2++)
+                {
+                    if (isWhite(count2, posY))
+                    {
+                        isLine = false;
+                        break;
+                    }
+                }
+
+                if (isLine)
+                {
+                    for (count2 = 0; count2 < 10; count2++)
+                        PaintObj(count2, posY, White);
+
+                    MoveDown(posY);
+                    noLine++;
+                    pts += noLine * 100;
+                }
+            }
+
+            if (noLine)
+            {
+                totalLns += noLine;
+                totalPts += pts;
+                lvl = Math.floor(totalLns / 6);
+
+                delay = iSpeed - lvl * 90;
+                lvl++;
+                txtLines.value = totalLns;
+                txtPoints.innerText = totalPts;
+                txtLevel.innerText = lvl;
+
+                if (lvl > 10)
+                    Finish(true);
+            }
+        }
+
+        function Rotate()
+        {
+            var temp_box;
+
+            rotateNo++;
+            if (rotateNo > 3)
+                rotateNo = 0;
+
+            if (rotateNo == 0)
+                temp_box = Obj1[no].split(' ');
+            else if (rotateNo == 1)
+                temp_box = Obj2[no].split(' ');
+            else if (rotateNo == 2)
+                temp_box = Obj3[no].split(' ');
+            else
+                temp_box = Obj4[no].split(' ');
+
+            DisplayObj(ObjX, ObjY, boxes, White);
+
+            if (isOut(0, 0, temp_box))
+            {
+                if (isOut(-1, 0, temp_box))
+                {
+                    if (isOut(-2, 0, temp_box))
+                    {
+                        if (!isOut(-3, 0, temp_box))
+                        {
+                            (!isStuck()) ? ObjX -= 3 : temp_box = boxes;
+                        } else
+                            temp_box = boxes;
+                    } else
+                        (!isStuck()) ? ObjX -= 2 : temp_box = boxes;
+                } else
+                    (!isStuck()) ? ObjX -= 1 : temp_box = boxes;
+            }
+            DisplayObj(ObjX, ObjY, temp_box, Color[no]);
+            boxes = temp_box;
+        }
+
+        function ShowNext()
+        {
+            Box = Obj1[nextNo].split(' ');
+
+            for (X = 0; X < 4; X++)
+                for (Y = 0; Y < 2; Y++)
+                    NextMatrix[X][Y].className = White;
+
+            for (count = 0; count < 4; count++)
+            {
+                posX = parseInt(Box[count * 2]);
+                posY = 1 - parseInt(Box[count * 2 + 1]);
+                NextMatrix[posX][posY].className = Color[nextNo];
+            }
+        }
+
+        function Runtime()
+        {
+            if (isNext)
+            {
+                no = nextNo;
+                boxes = Obj1[no].split(' ');
+                nextNo = Math.round(Math.random() * 1000 % 6);
+                ShowNext();
+                ObjX = 3;
+                ObjY = 0;
+                DisplayObj(ObjX, ObjY, boxes, Color[no]);
+
+                isNext = false;
+                rotateNo = 0;
+            } else
+            {
+                isProcess = true;
+                if (isOnGround())
+                {
+                    isNext = true;
+                    for (count = 0; count < 4; count++)
+                    {
+                        posY = ObjY - parseInt(boxes[count * 2 + 1]);
+                        if (posY < 0)
+                        {
+                            Finish(false);
+                            return;
+                        }
+                    }
+                    UpdateLine();
+                    isPause = false;
+                    Runtime();
+                    return;
+                } else
+                    MoveObj(0, 1);
+                isProcess = false;
+            }
+            timerID = setTimeout(Runtime, delay);
+        }
+
+        function Restart()
+        {
+            for (boxX = 0; boxX < 10; boxX++)
+                for (boxY = 0; boxY < 20; boxY++)
+                    PaintObj(boxX, boxY, White);
+
+            nextNo = Math.round(Math.random() * 1000 % 6);
+            txtLevel.value = "1";
+            txtLines.value = "0";
+            txtPoints.value = "0";
+
+            delay = iSpeed;
+            isNext = true;
+            isFinish = false;
+            Runtime();
+        }
+
+        function keyDown(DnEvents)
+        {
+            switch (event.keyCode)
+            {
+                case 37: if (!isPause && !isFinish) MoveObj(-1, 0);
+                    break;
+                case 39: if (!isPause && !isFinish) MoveObj(1, 0);
+                    break;
+                case 40: if (!isPause && !isFinish) MoveObj(0, 1);
+                    break;
+                case 82:
+                case 114: if (!isPause && !isFinish) Rotate();
+                    break;
+            }
+        }
+
+        function Play_Pause()
+        {
+            if (isFinish)
+            {
+                Restart();
+            }
+            else
+            {
+                if (isPause)
+                {
+                    isPause = false;
+                    Runtime();
+                }
+                else
+                {
+                    clearTimeout(timerID);
+                    isPause = true;
+                }
+            }
+        }
+
+    </script>
+    <style type="text/css">
+        body
+        {
+            margin: 0;
+        }
+
+        table.main
+        {
+            width: 200px;
+            border-spacing: 0;
+        }
+
+        table.next
+        {
+            width: 80px;
+            border-spacing: 0;
+        }
+
+        td
+        {
+            padding: 0;
+            cursor: default;
+        }
+
+        .cdivBody
+        {
+            background-color: #ffffff;
+            border: 1px solid silver;
+            position: relative;
+            width: 200px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .cdivNext
+        {
+            background-color: #fff;
+            border: 0;
+            position: relative;
+            top: -400px;
+            left: 210px;
+            width: 80px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .cdivLevel
+        {
+            background-color: #ffffff;
+            border: 0;
+            position: relative;
+            top: -350px;
+            left: 210px;
+            width: 80px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .cdivLines
+        {
+            background-color: #ffffff;
+            border: 0;
+            position: relative;
+            top: -330px;
+            left: 210px;
+            width: 80px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .cdivPoints
+        {
+            background-color: #ffffff;
+            border: 0;
+            position: relative;
+            top: -310px;
+            left: 210px;
+            width: 80px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .cdivPlay
+        {
+            background-color: #ffffff;
+            border: 0;
+            position: relative;
+            top: -260px;
+            left: 210px;
+            width: 80px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+		.cdivTip
+        {
+            background-color: transparent;
+            border: 0;
+            position: relative;
+            top: -212px;
+            left: 0px;
+            width: 200px;
+			text-align: center;
+			height: 0px;
+            margin-left: auto;
+            margin-right: auto;
+			cursor: default;
+        }
+
+        .cdivAuthor
+        {
+            background-color: #ffffff;
+            border: 0;
+            position: relative;
+            top: -195px;
+            left: 205px;
+            width: 80px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .cdivControls
+        {
+            background-color: #ffffff;
+            border: 0;
+            position: relative;
+            top: -190px;
+            left: 0px;
+            width: 200px;
+            height: 15px;
+            margin-left: auto;
+            margin-right: auto;
+            padding: 0;
+        }
+
+        .cdivMoveL
+        {
+            background-color: #ffffff;
+            border: 0;
+            position: absolute;
+            left: 0px;
+            width: 30px;
+            height: 15px;
+        }
+
+        .cdivMagnet
+        {
+            background-color: #ffffff;
+            border: 0;
+            position: absolute;
+            left: 30px;
+            width: 160px;
+        }
+
+        .cdivMoveR
+        {
+            background-color: #ffffff;
+            border: 0;
+            position: absolute;
+            left: 190px;
+            width: 30px;
+            height: 15px;
+        }
+
+        .cBlockBlue
+        {
+            background-color: #0000ff;
+            border: 1px outset #0000ff;
+            height: 8px;
+            width: 8px;
+        }
+
+        .cBlockRed
+        {
+            background-color: #ff0000;
+            border: 1px outset #ff0000;
+            height: 8px;
+            width: 8px;
+        }
+
+        .cBlockGreen
+        {
+            background-color: #01df74;
+            border: 1px outset #01df74;
+            height: 8px;
+            width: 8px;
+        }
+
+        .cBlockPurple
+        {
+            background-color: #a901db;
+            border: 1px outset #a901db;
+            height: 8px;
+            width: 8px;
+        }
+
+        .cBlockYellow
+        {
+            background-color: #ffff00;
+            border: 1px outset #ffff00;
+            height: 8px;
+            width: 8px;
+        }
+
+        .cBlockGrey
+        {
+            background-color: #cccccc;
+            border: 1px outset #cccccc;
+            height: 8px;
+            width: 8px;
+        }
+
+        .cBlockSeaGreen
+        {
+            background-color: #66cccc;
+            border: 1px outset #66cccc;
+            height: 8px;
+            width: 8px;
+        }
+
+        .cBlockWhite
+        {
+            border: 1px solid #fafafa;
+            height: 8px;
+            width: 8px;
+        }
+
+        .cBlockWhite2
+        {
+            border: 1px solid #ffffff;
+            height: 8px;
+            width: 8px;
+        }
+
+        a
+        {
+            font-family: 'Segoe UI' , 'Lucida Grande' , Verdana, Arial, Helvetica, sans-serif;
+        }
+
+        a.author
+        {
+            color: gray;
+            font-style: italic;
+            font-size: 12px;
+        }
+
+        a.tip
+        {
+            color: silver;
+            font-style: italic;
+            font-size: 12px;
+			cursor: default;
+        }
+
+		input.playit
+        {
+            border: 1px solid black;
+            background-color: #f2f2f2;
+        }
+
+        input.playitM
+        {
+            border: 1px solid black;
+            background-color: #f2f2f2;
+            font-style: italic;
+            width: 141px;
+            padding-left: 5px;
+            padding-right: 5px;
+            padding-top: 0px;
+            padding-bottom: 0px;
+        }
+
+		input.playitLR
+        {
+            border: 1px solid black;
+            background-color: #f2f2f2;
+            font-style: italic;
+            width: 25px;
+            padding: 0;
+        }
+
+		input.cTextBox
+        {
+            width: 75px;
+            border: 0;
+        }
+    </style>
+</head>
+<body onload="Init();" onselectstart="return false;" scroll="no">
+    <div id="divBody" class="cdivBody">
+    </div>
+	<div id="divTip" class="cdivTip">
+		<a class="tip" onclick='if (!isPause && !isFinish) Rotate();'>Click to rotate (R)</a>
+    </div>
+    <div id="divNext" class="cdivNext">
+    </div>
+    <div class="cdivLevel">
+        <a>Level:</a>
+        <input type="text" id="txtLevel" name="txtLevel" class="cTextBox" value="1">
+    </div>
+    <div class="cdivLines">
+        <a>Lines:</a>
+        <input type="text" id="txtLines" name="txtLines" class="cTextBox" value="0">
+    </div>
+    <div class="cdivPoints">
+        <a>Points:</a>
+        <input type="text" id="txtPoints" name="txtPoints" class="cTextBox" value="0">
+    </div>
+    <div class="cdivPlay">
+        <input type="submit" id="iplay" name="iplay" class="playit" value="Play" onclick='Play_Pause();this.value=isPause?"Play":"Pause";'>
+    </div>
+    <div class="cdivAuthor">
+        <a class="author">by Charles Tio</a>
+    </div>
+    <div class="cdivControls">
+        <input type="submit" class="playitLR" title="Left (Left Arrow)" value="L" onclick="if (!isPause && !isFinish) MoveObj(-1, 0)">
+        <input type="submit" class="playitM" title="Magnet (Down Arrow)" value="------------------------" onclick="if (!isPause && !isFinish) MoveObj(0, 1)">
+        <input type="submit" class="playitLR" title="Right (Rigt Arrow)" value="R" onclick="if (!isPause && !isFinish) MoveObj(1, 0)">
+    </div>
+</body>
+</html>
