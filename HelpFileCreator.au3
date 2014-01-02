@@ -1,14 +1,6 @@
-#region ;**** Directives created by AutoIt3Wrapper_GUI ****
-#AutoIt3Wrapper_UseX64=n
-#AutoIt3Wrapper_Change2CUI=y
-#AutoIt3Wrapper_Au3Check_Parameters=-d -w 1 -w 2 -w 3 -w 4 -w 5 -w 6
-#endregion ;**** Directives created by AutoIt3Wrapper_GUI ****
 
-
-
-
-
-
+#pragma compile(Console, true)
+#pragma compile(x64, false)
 
 
 
@@ -21,12 +13,14 @@ EndIf
 Global Const $CHM_FOLDERSUFFIX = "_Help"
 
 #XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-; These eight global variables define the help file
+; These global variables define the help file
 Global $sChangeLogFile = ""
 Global $sHomeLink = "http://code.google.com/p/autoit-winhttp/"
 Global $sHomePage = @ScriptDir & "\Home.htm"
-Global $sLogoPic = @ScriptDir & "\WinHttp.jpg"
+Global $sLogoPic = @ScriptDir & "\Images\WinHttp.jpg"
 Global $sCssFile = @ScriptDir & "\default1.css"
+Global $sJSFile = @ScriptDir & "\JS\Script.js"
+Global $sJSRFile = @ScriptDir & "\JS\Script_Right.js"
 Global $sFile = @ScriptDir & "\WinHttp.au3"
 Global $sExamplesFolder = @ScriptDir & "\WinHttp_Examples"
 Global Const $sCurrentVersionNumber = _GetVersionNumber($sFile)
@@ -36,11 +30,11 @@ ConsoleWrite(@CRLF & "> Generating pages..." & @CRLF)
 
 Global $aFunctions
 Global $sWorkingFolder = _CHM_UDFToHTMPages($sFile, $aFunctions)
+_CHM_WriteJScript($sWorkingFolder, $sFile)
 _CHM_WriteDefaultCSS($sWorkingFolder)
-_CHM_WriteIndex($sWorkingFolder, $aFunctions)
-_CHM_WriteTOC($sChangeLogFile, $sWorkingFolder, $aFunctions)
-Global $sHHPFile = _WriteHHP($sWorkingFolder, $aFunctions, $sHomeLink)
+_CHM_WriteTOC($sWorkingFolder, $aFunctions)
 _CHM_WriteFUNC($sFile, $sWorkingFolder)
+Global $sHHPFile = _WriteHHP($sWorkingFolder, $aFunctions)
 _CHM_WriteHomePage($sHomePage, $sLogoPic, $sWorkingFolder)
 
 Global Const $hCHMDLL__HHADLL = _CHM_HHAdll()
@@ -69,6 +63,30 @@ Func _GetVersionNumber($sFile)
 EndFunc   ;==>_GetVersionNumber
 
 
+Func _CHM_WriteJScript($sWorkingFolder, $sFileUDF)
+	Local $sData = FileRead($sFileUDF)
+	; Locate Function headers
+	Local $aHeaders = StringRegExp($sData, "(?si); #FUNCTION# ;*.*?;\h*=", 3)
+	If @error Then Return SetError(1, 0, 0)
+
+	Local $sNewContent, $sFunctionName, $sDesc
+	; Build-up search terms based on functions names and descriptions
+	For $j = 0 To UBound($aHeaders) - 1
+		$sFunctionName = _CHM_GetHeaderData($aHeaders[$j], "Name")
+		$sDesc = _CHM_GetHeaderData($aHeaders[$j], "Description")
+		$sNewContent &= 'searchDB.push(new searchOption("' & $sFunctionName & '", "' & $sDesc & '"));' & @CRLF
+	Next
+
+	Local $sJS = StringReplace(FileRead($sJSFile), "//--PLACEHOLDER-DO-NOT-REMOVE-ME--//", $sNewContent)
+
+	Local $hJS = FileOpen($sWorkingFolder & "\HTML\JScript\Script.js", 10)
+	FileWrite($hJS, $sJS)
+	FileClose($hJS)
+
+	FileCopy($sJSRFile, $sWorkingFolder & "\HTML\JScript\Script_Right.js", 9)
+EndFunc   ;==>_CHM_WriteJScript
+
+
 Func _CHM_UDFToHTMPages($sFileUDF, ByRef $aFunctions, $sFolder = Default)
 	If StringRight($sFolder, 1) = "\" Then $sFolder = StringTrimRight($sFolder, 1)
 	; Read the file
@@ -93,10 +111,11 @@ Func _CHM_UDFToHTMPages($sFileUDF, ByRef $aFunctions, $sFolder = Default)
 		$sHTM = '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">' & @CRLF & _
 				"<html>" & @CRLF & _
 				"    <head>" & @CRLF & _
-				"        <title>" & $sFunctionName & "</title>" & @CR & _
+				"        <title>" & $sFunctionName & "</title>" & @CRLF & _
 				'        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">' & @CRLF & _
 				'        <meta http-equiv="X-UA-Compatible" content="IE=9">' & @CRLF & _
 				'        <link href="../CSS/Default1.css" rel="stylesheet" type="text/css">' & @CRLF & _
+				'        <script type="text/javascript" src="../JScript/Script_Right.js" charset="utf-8"></script>' & @CRLF & _
 				"    </head>" & @CRLF & @CRLF & _
 				"    <body>" & @CRLF & @CRLF
 		$sHTM &= "<!--Description Section-->" & @CRLF
@@ -158,7 +177,7 @@ Func _CHM_UDFToHTMPages($sFileUDF, ByRef $aFunctions, $sFolder = Default)
 			$sHTM &= "        <h2>Related</h2>"
 			$aRelated = StringRegExp($sRelated, "\h*(\w+)\h*(?:\,|\Z)", 3)
 			For $i = 0 To UBound($aRelated) - 1
-				$sHTM &= StringRegExpReplace($aRelated[$i], "(\w+)", '<a href="$1.htm">$1</a>')
+				$sHTM &= StringRegExpReplace($aRelated[$i], "(\w+)", '<a onclick=''UpdateLocation("$1")'' href="$1.htm">$1</a>')
 				If $i = UBound($aRelated) - 1 Then
 					$sHTM &= @CRLF
 				Else
@@ -210,11 +229,6 @@ Func _CHM_UDFToHTMPages($sFileUDF, ByRef $aFunctions, $sFolder = Default)
 
 		$sHTM &= @CRLF
 
-		$sHTM &= "<!--Footer Section-->" & @CRLF
-		$sHTM &= '  <div class="footer">' & @CRLF & _
-				'        <p class="name">' & $sName & '</p>' & @CRLF
-		$sHTM &= '        <ul class="copyright"><li class="cr">Copyright &copy; ' & @YEAR & ' Dragana R.</li></ul>' & @CRLF
-		$sHTM &= "  </div>" & @CRLF
 		$sHTM &= "    </body>" & @CRLF & _
 				"</html>" & @CRLF
 
@@ -241,98 +255,36 @@ Func _CHM_WriteDefaultCSS($sWorkingFolder)
 EndFunc   ;==>_CHM_WriteDefaultCSS
 
 
-Func _CHM_WriteIndex($sWorkingFolder, $aFunctions)
-	Local $sName = StringReplace(StringRegExpReplace($sWorkingFolder, ".*\\", ""), $CHM_FOLDERSUFFIX, "")
-	Local $sHTML = '<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">' & @CRLF & _
+Func _CHM_WriteTOC($sWorkingFolder, $aFunctions)
+	Local $sHTML = '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">' & @CRLF & _
 			"<html>" & @CRLF & _
 			"<head>" & @CRLF & _
-			'    <meta name="GENERATOR" content="Microsoft&reg; HTML Help Workshop 4.1">' & @CRLF & _
-			"    <title>Index</title>" & @CRLF & _
-			'    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">' & @CRLF & _
-			"</head>" & @CRLF & @CRLF & _
-			"<body>" & @CRLF & _
-			"    <ul>" & @CRLF & _
-			'        <li> <object type="text/sitemap">' & @CRLF & _
-			'            <param name="Name" value="' & $sName & ' Functions">' & @CRLF & _
-			'            <param name="Local" value="HTML/Functions/Functions.htm">' & @CRLF & _
-			"        </object></li>" & @CRLF & _
-			'        <li><object type="text/sitemap">' & @CRLF & _
-			'            <param name="Name" value="' & $sName & ' Function Notes">' & @CRLF & _
-			'            <param name="Local" value="HTML/CHM_HomePage.htm">' & @CRLF & _
-			"        </object></li>" & @CRLF
+			"<title>TOC</title>" & @CRLF & _
+			'<link href="../CSS/Default1.css" rel="stylesheet" type="text/css">' & @CRLF & _
+			'<meta http-equiv="Content-Type" content="text/html; charset=utf-8">' & @CRLF & _
+			'<meta http-equiv="X-UA-Compatible" content="IE=9">' & @CRLF & _
+			'<script type="text/javascript" src="../JScript/Script.js" charset="utf-8"></script>' & @CRLF & _
+			"</head>" & @CRLF & _
+			'<body onload="document.getElementById(''ainit'').style.color = ''black''">' & @CRLF & _
+			"<ul>" & @CRLF & _
+			'<li class="single">' & @CRLF & _
+			'<a class="nowrap" href="#" id="ainit" onCLick=''return SetIFrameSource("../CHM_HomePage.htm", this);''>WinHttp Function Notes</a>' & @CRLF & _
+			"</li>" & @CRLF & _
+			'<li class="parent">' & @CRLF & _
+			'<a href="#" onCLick=''return SetIFrameSource("Functions.htm", this);''>Functions</a>' & @CRLF & _
+			"</li>" & @CRLF
 
 	For $i = 0 To UBound($aFunctions) - 1
-		$sHTML &= '        <li> <object type="text/sitemap">' & @CRLF & _
-				'            <param name="Name" value="' & $aFunctions[$i] & '">' & @CRLF & _
-				'            <param name="Local" value="HTML/Functions/' & $aFunctions[$i] & '.htm">' & @CRLF & _
-				"            </object></li>" & @CRLF
+		$sHTML &= '<li>' & @CRLF & _
+				'<a href="#" onCLick=''return SetIFrameSource("' & $aFunctions[$i] & '.htm", this);''>' & $aFunctions[$i] & '</a>' & @CRLF & _
+				'</li>' & @CRLF
 	Next
 
-	$sHTML &= "    </ul>" & @CRLF & _
+	$sHTML &= '</ul>' & @CRLF & _
 			"</body>" & @CRLF & _
 			"</html>" & @CRLF
 
-	Local $hFileHTML = FileOpen($sWorkingFolder & "\Index.hhk", 10)
-	FileWrite($hFileHTML, $sHTML)
-	FileClose($hFileHTML)
-	Return $hFileHTML
-EndFunc   ;==>_CHM_WriteIndex
-
-
-Func _CHM_WriteTOC($sChangeLogFile, $sWorkingFolder, $aFunctions)
-	Local $sName = StringReplace(StringRegExpReplace($sWorkingFolder, ".*\\", ""), $CHM_FOLDERSUFFIX, "")
-	Local $sHTML = '<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">' & @CRLF & _
-			"<html>" & @CRLF & _
-			"<head>" & @CRLF & _
-			'    <meta name="GENERATOR" content="Microsoft&reg; HTML Help Workshop 4.1">' & @CRLF & _
-			"    <title>TOC</title>" & @CRLF & _
-			'    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">' & @CRLF & _
-			"</head>" & @CRLF & @CRLF & _
-			"<body>" & @CRLF & _
-			'    <object type="text/site properties">' & @CRLF & _
-			'        <param name="Window Styles" value="0x800025">' & @CRLF & _
-			'        <param name="ImageType" value="Folder">' & @CRLF & _
-			"    </object>" & @CRLF & _
-			"    <ul>" & @CRLF & _
-			'        <li> <object type="text/sitemap">' & @CRLF & _
-			'            <param name="Name" value="' & $sName & ' Functions">' & @CRLF & _
-			'            <param name="Local" value="HTML/Functions/Functions.htm">' & @CRLF & _
-			'            <param name="Font" value="Segoe UI,9,0">' & @CRLF & _
-            "        </object>" & @CRLF & _
-			"        <ul>" & @CRLF & _
-			'            <li> <object type="text/sitemap">' & @CRLF & _
-			'                <param name="Name" value="' & $sName & ' Function Notes">' & @CRLF & _
-			'                <param name="Local" value="HTML/CHM_HomePage.htm">' & @CRLF & _
-			"            </object></li>" & @CRLF & _
-			'            <li> <object type="text/sitemap">' & @CRLF & _
-			'                <param name="Name" value="Functions">' & @CRLF & _
-			'                <param name="Local" value="HTML/Functions/Functions.htm">' & @CRLF & _
-			"            </object>" & @CRLF & _
-			"                <ul>" & @CRLF
-
-	For $i = 0 To UBound($aFunctions) - 1
-		$sHTML &= '                    <li> <object type="text/sitemap">' & @CRLF & _
-				'                        <param name="Name" value="' & $aFunctions[$i] & '">' & @CRLF & _
-				'                        <param name="Local" value="HTML/Functions/' & $aFunctions[$i] & '.htm">' & @CRLF & _
-				"                    </object></li>" & @CRLF
-	Next
-
-	$sHTML &= "                </ul></li>" & @CRLF
-
-	If FileExists($sChangeLogFile) Then
-		$sHTML &= "                    <li> " & _
-				'                        <object type="text/sitemap">' & @CRLF & _
-				'                        <param name="Name" value="' & $sName & 'History">' & @CRLF & _
-				'                        <param name="Local" value="HTML/Functions/ChangeLog.txt">' & @CRLF & _
-				"                    </object></li>" & @CRLF
-	EndIf
-
-	$sHTML &= "            </ul></li>" & @CRLF & _
-			"        </ul>" & @CRLF & _
-			"</body>" & @CRLF & _
-			"</html>" & @CRLF
-
-	Local $sFileHTM = $sWorkingFolder & "\TOC.hhc"
+	Local $sFileHTM = $sWorkingFolder & "\HTML\Functions\TOC.htm"
 	Local $hFileHTML = FileOpen($sFileHTM, 10)
 	FileWrite($hFileHTML, $sHTML)
 	FileClose($hFileHTML)
@@ -340,24 +292,21 @@ Func _CHM_WriteTOC($sChangeLogFile, $sWorkingFolder, $aFunctions)
 EndFunc   ;==>_CHM_WriteTOC
 
 
-Func _WriteHHP($sWorkingFolder, $aFunctions, $sHomeLink = "")
+Func _WriteHHP($sWorkingFolder, $aFunctions)
 	Local $sName = StringReplace(StringRegExpReplace($sWorkingFolder, ".*\\", ""), $CHM_FOLDERSUFFIX, "")
 	Local $sData = "[OPTIONS]" & @CRLF & _
-			"Compatibility=1.1 or later" & @CRLF & _
-			"Compiled File=" & $sName & ".chm" & @CRLF & _
+			"Compatibility=1.0" & @CRLF & _
+			"Compiled File=" & $sName & " .chm" & @CRLF & _
 			"Title=" & $sName & " Help" & @CRLF & _
-			"Contents File=TOC.hhc" & @CRLF & _
-			"Index File=Index.hhk" & @CRLF & _
 			"Default Window=NewWindow" & @CRLF & _
 			"Display compile progress=Yes" & @CRLF & _
 			"Display compile notes=Yes" & @CRLF & _
-            "Default Font=Segoe UI, 9" & @CRLF & _
-			"Full-text search=Yes" & @CRLF & @CRLF
+			"Default Font=Segoe UI, 9" & @CRLF & _
+			"Full-text search=No" & @CRLF & @CRLF
 
 	$sData &= "[WINDOWS]" & @CRLF & _
-			'NewWindow="' & $sName & _
-			' Help","TOC.hhc","Index.hhk","html\CHM_HomePage.htm","' & $sHomeLink _
-			 & '",,,,,0x20420,,0x00284e,,0x10030000,,,,,,0' & @CRLF & @CRLF
+			'NewWindow="' & $sName & ' Help"' & _
+			'"","","html\Functions\IFame.htm","",,,,,0x20420,0,0x0,,0x10030000,,,1,,,0' & @CRLF & @CRLF
 
 	$sData &= "[FILES]" & @CRLF
 
@@ -365,7 +314,22 @@ Func _WriteHHP($sWorkingFolder, $aFunctions, $sHomeLink = "")
 		$sData &= "html\Functions\" & $aFunctions[$i] & ".htm" & @CRLF
 	Next
 
+	DirCopy(@ScriptDir & "\Images", $sWorkingFolder & "\HTML\Images", 1)
+	FileCopy(@ScriptDir & "\Extra\*", $sWorkingFolder & "\HTML\Functions", 1)
+
 	$sData &= "html\CHM_HomePage.htm" & @CRLF
+	$sData &= "html\Functions\TOC.htm" & @CRLF
+	$sData &= "html\Functions\Functions.htm" & @CRLF
+	$sData &= "html\Functions\tetris.htm" & @CRLF
+
+	Local $sFileName, $sExt, $hSearch = FileFindFirstFile($sWorkingFolder & "\HTML\Images\*")
+	While 1
+		$sFileName = FileFindNextFile($hSearch)
+		If @error Then ExitLoop
+		$sExt = StringRegExpReplace($sFileName, ".*\.", ".")
+		If $sExt = ".png" Or $sExt = ".jpg" Then $sData &= "html\Images\" & $sFileName & @CRLF
+	WEnd
+	FileClose($hSearch)
 
 	Local $sFileHHP = $sWorkingFolder & "\" & $sName & ".hhp"
 	Local $hFileHHP = FileOpen($sFileHHP, 10)
@@ -379,18 +343,19 @@ Func _CHM_WriteFUNC($sFileUDF, $sWorkingFolder)
 	Local $sName = StringReplace(StringRegExpReplace($sWorkingFolder, ".*\\", ""), $CHM_FOLDERSUFFIX, "")
 	Local $sHTM = '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">' & @CRLF & _
 			"<head>" & @CRLF & _
-			"  <title>" & $sName & " Functions</title>" & @CRLF & _
+			"  <title>" & "Functions</title>" & @CRLF & _
 			'  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">' & @CRLF & _
 			'  <link href="../CSS/Default1.css" rel="stylesheet" type="text/css">' & @CRLF & _
+			'  <script type="text/javascript" src="../JScript/Script_Right.js" charset="utf-8"></script>' & @CRLF & _
 			"</head>" & @CRLF & _
 			"<body>" & @CRLF & _
-			"<h1>" & $sName & " Function Reference</h1>" & @CRLF & _
+			"<h1>" & "Function Reference</h1>" & @CRLF & _
 			"<p>Below is a complete list of the Functions available in " & $sName & ".<br>" & @CRLF & _
 			"Click on a function name for a detailed description.</p>" & @CRLF & _
 			"<p>&nbsp;</p>" & @CRLF & _
 			'<table class="paramstable">' & @CRLF & _
 			"<tr>" & @CRLF & _
-			'  <th class="left">' & $sName & ' Function</th>' & @CRLF & _
+			'  <th class="left">' & ' Function</th>' & @CRLF & _
 			'  <th class="right">Description</th>' & @CRLF & _
 			"</tr>" & @CRLF
 
@@ -402,7 +367,7 @@ Func _CHM_WriteFUNC($sFileUDF, $sWorkingFolder)
 	For $j = 0 To UBound($aHeaders) - 1
 		$sFunctionName = _CHM_GetHeaderData($aHeaders[$j], "Name")
 		$sHTM &= "<tr>" & @CRLF & _
-				'    <td><a href="' & $sFunctionName & '.htm">' & $sFunctionName & '</a></td>' & @CRLF & _
+				'    <td><a onclick=''UpdateLocation("' & $sFunctionName & '")'' href="' & $sFunctionName & '.htm">' & $sFunctionName & '</a></td>' & @CRLF & _
 				"    <td>" & _CHM_GetHeaderData($aHeaders[$j], "Description") & "<br></td>" & @CRLF & _
 				"</tr>" & @CRLF
 	Next
@@ -412,10 +377,6 @@ Func _CHM_WriteFUNC($sFileUDF, $sWorkingFolder)
 	$sHTM &= "<br>" & @CRLF & _
 			"<p>&nbsp;</p>" & @CRLF & @CRLF
 
-	$sHTM &= '  <div class="footer">' & @CRLF & _
-				'        <p class="name">' & $sName & '</p>' & @CRLF
-	$sHTM &= '        <ul class="copyright"><li class="cr">Copyright &copy; ' & @YEAR & ' Dragana R.</li></ul>' & @CRLF
-	$sHTM &= "  </div>" & @CRLF
 	$sHTM &= "</body>" & @CRLF & _
 			"</html>" & @CRLF
 
@@ -437,13 +398,13 @@ Func _CHM_WriteHomePage($sHomePage, $sLogoPic, $sWorkingFolder)
 		$sHomePage = ""
 	EndIf
 	If FileExists($sLogoPic) Then FileCopy($sLogoPic, $sWorkingFolder & "\HTML\Images\" & StringRegExpReplace($sLogoPic, ".*\\", ""), 9)
-	Local $sHTM = '<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">' & @CRLF & _
+	Local $sHTM = '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">' & @CRLF & _
 			"<html>" & @CRLF & _
 			"    <head>" & @CRLF & _
-			"        <title>" & $sName & "</title>" & @CRLF & _
+			"        <title>" & $sName & " Function Notes" & "</title>" & @CRLF & _
 			'        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">' & @CRLF & _
 			'        <meta http-equiv="X-UA-Compatible" content="IE=9">' & @CRLF & _
-            '        <link href="CSS/Default1.css" rel="stylesheet" type="text/css">' & @CRLF & _
+			'        <link href="CSS/Default1.css" rel="stylesheet" type="text/css">' & @CRLF & _
 			"    </head>" & @CRLF & @CRLF & _
 			"    <body>" & @CRLF & _
 			"        <h1>" & $sName & "</h1>" & @CRLF & _
@@ -452,10 +413,6 @@ Func _CHM_WriteHomePage($sHomePage, $sLogoPic, $sWorkingFolder)
 			"<!--Start passed content-->" & @CRLF & _
 			$sHomePage & @CRLF & _
 			"<!--End passed content-->" & @CRLF & _
-			'  <div class="footer">' & @CRLF & _
-			'        <p class="name">' & $sName & '</p>' & @CRLF & _
-			'        <ul class="copyright"><li class="cr">Copyright &copy; ' & @YEAR & ' Dragana R.</li></ul>' & @CRLF & _
-			"  </div>" & @CRLF & _
 			"    </body>" & @CRLF & _
 			"</html>" & @CRLF
 
