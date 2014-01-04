@@ -1547,7 +1547,7 @@ EndFunc
 ; Description ...: Reads data from a request
 ; Syntax.........: _WinHttpSimpleReadData($hRequest [, $iMode = Default ])
 ; Parameters ....: $hRequest - request handle after _WinHttpReceiveResponse
-;                  $iMode         - [optional] type of data returned (default: 0)
+;                  $iMode         - [optional] type of data returned
 ;                  |0 - ASCII-String
 ;                  |1 - UTF-8-String
 ;                  |2 - binary data
