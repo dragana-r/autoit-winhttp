@@ -1620,7 +1620,7 @@ EndFunc
 ;                  $sData       - [optional] POST-Data (default: $WINHTTP_NO_REQUEST_DATA)
 ;                  $sHeader     - [optional] additional Headers (default: $WINHTTP_NO_ADDITIONAL_HEADERS)
 ;                  $fGetHeaders - [optional] return response headers (default: False)
-;                  $iMode       - [optional] reading mode of result (default: 0)
+;                  $iMode       - [optional] reading mode of result
 ;                  |0 - ASCII-text
 ;                  |1 - UTF-8 text
 ;                  |2 - binary data
@@ -1645,7 +1645,7 @@ Func _WinHttpSimpleRequest($hConnect, $sType = Default, $sPath = Default, $sRefe
 	__WinHttpDefault($sData, $WINHTTP_NO_REQUEST_DATA)
 	__WinHttpDefault($sHeader, $WINHTTP_NO_ADDITIONAL_HEADERS)
 	__WinHttpDefault($fGetHeaders, False)
-	__WinHttpDefault($iMode, 0)
+	__WinHttpDefault($iMode, Default)
 	__WinHttpDefault($sCredName, "")
 	__WinHttpDefault($sCredPass, "")
 	If $iMode > 2 Or $iMode < 0 Then Return SetError(4, 0, 0)
@@ -1743,7 +1743,7 @@ EndFunc
 ;                  $sData       - [optional] POST-Data (default: $WINHTTP_NO_REQUEST_DATA)
 ;                  $sHeader     - [optional] additional Headers (default: $WINHTTP_NO_ADDITIONAL_HEADERS)
 ;                  $fGetHeaders - [optional] return response headers (default: False)
-;                  $iMode       - [optional] reading mode of result (default: 0)
+;                  $iMode       - [optional] reading mode of result
 ;                  |0 - ASCII-text
 ;                  |1 - UTF-8 text
 ;                  |2 - binary data
@@ -1768,7 +1768,7 @@ Func _WinHttpSimpleSSLRequest($hConnect, $sType = Default, $sPath = Default, $sR
 	__WinHttpDefault($sData, $WINHTTP_NO_REQUEST_DATA)
 	__WinHttpDefault($sHeader, $WINHTTP_NO_ADDITIONAL_HEADERS)
 	__WinHttpDefault($fGetHeaders, False)
-	__WinHttpDefault($iMode, 0)
+	__WinHttpDefault($iMode, Default)
 	__WinHttpDefault($sCredName, "")
 	__WinHttpDefault($sCredPass, "")
 	If $iMode > 2 Or $iMode < 0 Then Return SetError(4, 0, 0)
