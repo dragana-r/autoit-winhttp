@@ -319,7 +319,7 @@ function DoSearch()
         try // access may be denied
         {
             var windowX = myframe.contentWindow
-            var docX = windowX.document;
+            var doc = windowX.document;
         }
         catch (e)
         {
@@ -328,7 +328,7 @@ function DoSearch()
             return false;
         }
 
-        if (docX)
+        if (doc)
         {
             // Do the search
             var sTerm = document.getElementById("in").value;
