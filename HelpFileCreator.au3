@@ -192,7 +192,7 @@ Func _CHM_UDFToHTMPages($sFileUDF, ByRef $aFunctions, $sFolder = Default)
 		$sLink = _CHM_GetHeaderData($aHeaders[$j], "Link")
 		If $sLink Then
 			$sHTM &= "        <h2>See Also</h2>" & @CRLF
-			$sHTM &= '        <a title="External link" href="' & $sLink & '" onclick=''parent.SetIFrameSource("' & $sLink & '");return false;''>MSDN</a>' & @CRLF & @CRLF ; MSDN as visible text
+			$sHTM &= '        <a title="External link" href="' & $sLink & '" onclick=''window.open("' & $sLink & '");return false;''>MSDN</a>' & @CRLF & @CRLF ; MSDN as visible text
 			$sHTM &= "        <br>" & @CRLF & @CRLF
 		EndIf
 
@@ -395,6 +395,7 @@ Func _CHM_WriteHomePage($sHomePage, $sLogoPic, $sWorkingFolder)
 		$sHomePage = FileRead($sHomePage)
 		$sHomePage = StringRegExpReplace($sHomePage, "\QCurrent version is \E\d+\.\d+\.(\d+\.)?(\d+?\.)?", 'Current version is <span class="mark_v">' & $sCurrentVersionNumber & "</span>")
 		$sHomePage = StringRegExpReplace($sHomePage, "(?si)(<\s*/*\Qbody\E.*?>|<\s*/*\Qhtml\E.*?>|<\s*head\s*>.*?<\s*/head\s*>|<\s*\Q!DOCTYPE\E.*?>)", "")
+		$sHomePage = StringRegExpReplace($sHomePage, '(\Qhref=\E(".*"))', '$1 onclick=''window.open($2);return false;''')
 	Else
 		$sHomePage = ""
 	EndIf
