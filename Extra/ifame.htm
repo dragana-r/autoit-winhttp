@@ -39,10 +39,10 @@
 					<iframe id="leftframe" name="leftframe" src="TOC.htm" width="100%" height="100%" frameborder="0"></iframe>
 				</td>
 
-				<td class="resize"
+				<td id="rsz" class="resize"
 					onmousemove="ResizeX(idFrame, idFramex)"
-					onmouseup="this.releaseCapture();iStartX=0"
-					onmousedown="this.setCapture();iStartX=event.x;iStartW=idFrame.offsetWidth">
+					onmouseup="ExitResizeX(this)"
+					onmousedown="EnterResizeX(this, idFrame)">
 					<img src="../images/ex.png" class="main" alt="">
 				</td>
 
