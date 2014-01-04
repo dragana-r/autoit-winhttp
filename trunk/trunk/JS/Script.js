@@ -1,6 +1,6 @@
 var iDBindex = -1;
 var bFirstRun = true;
-var hTimeout;
+
 window.onload = init;
 window.onresize = init
 
@@ -15,17 +15,6 @@ searchDB[0] = new searchOption("WinHttp Function Notes", "", "WinHttp-UDFs for A
 
 function init()
 {
-    if (document.getElementById('rightframe'))
-    {
-        var reflink = document.getElementById('rightframe').src
-        if (reflink.substring(0, 4) == "http") // external page loaded into the frame (security issue)
-        {
-            document.getElementById('rightframe').src = "about:blank";
-            clearTimeout(hTimeout);
-            hTimeout = setTimeout(function () { document.getElementById('rightframe').src = reflink; }, 100)
-        }
-    }
-
     var window_height;
     var window_width
 
