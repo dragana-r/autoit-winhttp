@@ -1,21 +1,31 @@
 var iDBindex = -1;
 var bFirstRun = true;
-
+var hTimeout;
 window.onload = init;
 window.onresize = init
 
 var iStartX = 0;
 var iStartW = 0;
 
-// DON'T REMOVE THIS LINE!
 var searchDB = new Array();
 // DEFINE NEW SEARCHABLE ITEMS HERE, FOLLOWING THE FORMAT AS BELOW;
 // searchDB[nextnumber] = new searchOption("TitleOfResult", "Description", "ShortDescription", "AltLink");
 searchDB[0] = new searchOption("WinHttp Function Notes", "", "WinHttp-UDFs for AutoIt and this helpfile are...", "../CHM_HomePage");
-//--PLACEHOLDER-DO-NOT-REMOVE-ME--//
+//--PLACEHOLDER-I-DO-NOT-REMOVE-ME--//
 
 function init()
 {
+    if (document.getElementById('rightframe'))
+    {
+        var reflink = document.getElementById('rightframe').src
+        if (reflink.substring(0, 4) == "http") // external page loaded into the frame (security issue)
+        {
+            document.getElementById('rightframe').src = "about:blank";
+            clearTimeout(hTimeout);
+            hTimeout = setTimeout(function () { document.getElementById('rightframe').src = reflink; }, 100)
+        }
+    }
+
     var window_height;
     var window_width
 
@@ -37,8 +47,8 @@ function init()
     {
         if (window_height > 120)
         {
-            iFramex.height = window_height - 120;
             iFrame.height = window_height - 120;
+            iFramex.height = window_height - 120;
         }
         if (bFirstRun)
         {
@@ -47,7 +57,7 @@ function init()
         }
     }
 
-    //bFirstRun = false;
+    // bFirstRun = false;
 
     var iInput = document.getElementById('in')
     if (iInput)
@@ -57,8 +67,8 @@ function init()
     }
 
     setTimeout(LoadSearchKeywords, 100); // give it time to load
-}
 
+}
 
 function ResizeX(oItem, oItem2)
 {
@@ -89,6 +99,27 @@ function ResizeX(oItem, oItem2)
             oItem2.width = window_width - iWidth;
         }
 
+    }
+}
+
+function ExitResizeX(oItem)
+{
+    if (oItem == null)
+    {
+        oItem = document.getElementById('rsz');
+    }
+    oItem.releaseCapture();
+    iStartX = 0;
+}
+
+function EnterResizeX(oItem, oItem2)
+{
+    oItem.setCapture();
+    iStartX = event.x;
+    iStartW = oItem2.offsetWidth;
+    if (document.getElementById('rightframe').src.substring(0, 4) == "http") // external page loaded into the frame
+    {
+        setTimeout(ExitResizeX, 500);
     }
 }
 
@@ -240,6 +271,7 @@ function GoBack()
     return false;
 }
 
+
 function GoForward()
 {
     history.forward();
@@ -249,9 +281,8 @@ function GoForward()
 
 function GoHome()
 {
-    window.open("http://code.google.com/p/autoit-winhttp/");
+    window.open("//--PLACEHOLDER-II-DO-NOT-REMOVE-ME--//");
 }
-
 
 
 function LoadSearchKeywords(index)
@@ -283,42 +314,39 @@ function LoadSearchKeywords(index)
 function DoSearch()
 {
     var myframe = document.getElementsByTagName('iframe')[1];
-
     if (myframe)
     {
-
         try // access may be denied
         {
             var windowX = myframe.contentWindow
-            var doc = windowX.document;
+            var docX = windowX.document;
         }
         catch (e)
         {
-            //~ history.back();
             SetIFrameSource("_WinHttpCheckPlatform.htm");
             setTimeout(DoSearch, 100);
             return false;
         }
 
-
-        if (doc)
+        if (docX)
         {
-			// Do the search
+            // Do the search
             var sTerm = document.getElementById("in").value;
 
-			if (sTerm.toLowerCase() == "tetris")
-			{
-				SetIFrameSource("tetris.htm");
-				return false;
-			}
-			else if (doc.title == "Tetris")
-			{
-				history.back();
-				setTimeout(DoSearch, 100);
-				return false;
-			}
+            if (sTerm.toLowerCase() == "tetris")
+            {
+                SetIFrameSource("tetris.htm");
+                setTimeout(UpdateLocationByRightTitle, 50); // give it time to load
+                return false;
+            }
+            else if (doc.title == "Tetris")
+            {
+                history.back();
+                setTimeout(DoSearch, 100);
+                return false;
+            }
 
-			results = performSearch(sTerm);
+            results = performSearch(sTerm);
             var regex = new RegExp(sTerm, "ig");
             var sResult = "";
 

@@ -30,7 +30,7 @@ ConsoleWrite(@CRLF & "> Generating pages..." & @CRLF)
 
 Global $aFunctions
 Global $sWorkingFolder = _CHM_UDFToHTMPages($sFile, $aFunctions)
-_CHM_WriteJScript($sWorkingFolder, $sFile)
+_CHM_WriteJScript($sWorkingFolder, $sFile, $sHomeLink)
 _CHM_WriteDefaultCSS($sWorkingFolder)
 _CHM_WriteTOC($sWorkingFolder, $aFunctions)
 _CHM_WriteFUNC($sFile, $sWorkingFolder)
@@ -63,7 +63,7 @@ Func _GetVersionNumber($sFile)
 EndFunc   ;==>_GetVersionNumber
 
 
-Func _CHM_WriteJScript($sWorkingFolder, $sFileUDF)
+Func _CHM_WriteJScript($sWorkingFolder, $sFileUDF, $sHomeLink)
 	Local $sData = FileRead($sFileUDF)
 	; Locate Function headers
 	Local $aHeaders = StringRegExp($sData, "(?si); #FUNCTION# ;*.*?;\h*=", 3)
@@ -77,7 +77,8 @@ Func _CHM_WriteJScript($sWorkingFolder, $sFileUDF)
 		$sNewContent &= 'searchDB.push(new searchOption("' & $sFunctionName & '", "' & $sDesc & '"));' & @CRLF
 	Next
 
-	Local $sJS = StringReplace(FileRead($sJSFile), "//--PLACEHOLDER-DO-NOT-REMOVE-ME--//", $sNewContent)
+	Local $sJS = StringReplace(FileRead($sJSFile), "//--PLACEHOLDER-I-DO-NOT-REMOVE-ME--//", $sNewContent)
+	$sJS = StringReplace($sJS, "//--PLACEHOLDER-II-DO-NOT-REMOVE-ME--//", $sHomeLink)
 
 	Local $hJS = FileOpen($sWorkingFolder & "\HTML\JScript\Script.js", 10)
 	FileWrite($hJS, $sJS)
@@ -191,7 +192,7 @@ Func _CHM_UDFToHTMPages($sFileUDF, ByRef $aFunctions, $sFolder = Default)
 		$sLink = _CHM_GetHeaderData($aHeaders[$j], "Link")
 		If $sLink Then
 			$sHTM &= "        <h2>See Also</h2>" & @CRLF
-			$sHTM &= '        <a title="External link" href="' & $sLink & '">MSDN</a>' & @CRLF & @CRLF ; MSDN as visible text
+			$sHTM &= '        <a title="External link" href="' & $sLink & '" onclick=''parent.SetIFrameSource("' & $sLink & '");return false;''>MSDN</a>' & @CRLF & @CRLF ; MSDN as visible text
 			$sHTM &= "        <br>" & @CRLF & @CRLF
 		EndIf
 
