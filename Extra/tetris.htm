@@ -47,7 +47,7 @@
 
             InitVar();
             counter = 0;
-            strHtml = "<table cellspacing=\"0q\" cellpadding=\"0\" class=\"main\" onclick=\"if (!isPause && !isFinish) Rotate();\">";
+            strHtml = "<table id=\"maint\" name=\"maint\" cellspacing=\"0q\" cellpadding=\"0\" class=\"main\" onclick=\"if (!isPause && !isFinish) Rotate();\">";
             for (i = 1; i <= 20; i++)
             {
                 strHtml = strHtml + "<tr>";
@@ -102,11 +102,26 @@
         function Finish(isWin)
         {
             isFinish = true;
+            Bounce();
             if (isWin)
-                alert("Congratulation! You win the game");
+                ShowPopUp("YOU WIN!");
             else
-                alert("Game Over");
+                ShowPopUp("GAME OVER");
             document.getElementById("iplay").value = "Play";
+            document.getElementById("maint").style.background = "#fafafa";
+        }
+
+        function ShowPopUp(sText)
+        {
+            var elem = document.getElementById('divTip')
+            elem.innerHTML = '<a class="popup">' + sText + '</a>';
+        }
+
+        function RemovePopUp()
+        {
+            var elem = document.getElementById('divTip')
+            if (elem)
+                elem.innerHTML = '<a class="tip" onclick="Rotate();">Click to rotate (R)</a>';
         }
 
         function isWhite(X, Y)
@@ -211,6 +226,8 @@
 
         function MoveObj(X, Y)
         {
+            if (isPause || isFinish) return;
+
             DisplayObj(ObjX, ObjY, boxes, White);
 
             if (!isOut(X, Y, boxes))
@@ -299,6 +316,8 @@
 
         function Rotate()
         {
+            if (isPause || isFinish) return;
+
             var temp_box;
 
             rotateNo++;
@@ -406,6 +425,7 @@
             delay = iSpeed;
             isNext = true;
             isFinish = false;
+            document.getElementById("maint").style.background = "white";
             Runtime();
         }
 
@@ -413,14 +433,15 @@
         {
             switch (event.keyCode)
             {
-                case 37: if (!isPause && !isFinish) MoveObj(-1, 0);
+                case 37: MoveObj(-1, 0);
                     break;
-                case 39: if (!isPause && !isFinish) MoveObj(1, 0);
+                case 39: MoveObj(1, 0);
                     break;
-                case 40: if (!isPause && !isFinish) MoveObj(0, 1);
+                case 40: MoveObj(0, 1);
                     break;
-                case 82:
-                case 114: if (!isPause && !isFinish) Rotate();
+                case 80: Play_Pause();
+                    break;
+                case 82: Rotate();
                     break;
             }
         }
@@ -429,6 +450,7 @@
         {
             if (isFinish)
             {
+                RemovePopUp();
                 Restart();
             }
             else
@@ -443,6 +465,66 @@
                     clearTimeout(timerID);
                     isPause = true;
                 }
+            }
+            document.getElementById("iplay").value = isPause ? "Play" : "Pause";
+        }
+
+
+        var iter = 0;
+        var setId = 0;
+        var down = true;
+
+        function Bounce()
+        {
+            bouncingBall = document.getElementById("divTip").style
+
+            winH = -212
+
+            if (setId != 0) clearInterval(setId);
+
+            bouncingBall.visibility = "visible";
+            bouncingBall.top = "-400px";
+            iter = 0;
+
+            setId = setInterval(generateGravity, 20);
+
+            return true;
+        }
+
+        function generateGravity()
+        {
+
+            if ((parseInt(bouncingBall.top) + iter < winH) && down)
+            {
+                bouncingBall.top = parseInt(bouncingBall.top) + iter + "px";
+                iter++;
+                return;
+            }
+            else
+            {
+                if ((parseInt(bouncingBall.top) < winH) && down)
+                {
+                    bouncingBall.top = winH + 5 + "px";
+                    return;
+                }
+
+                down = false;
+
+                if (iter < 0 && parseInt(bouncingBall.top) > winH)
+                {
+                    clearInterval(setId);
+                    setId = 0;
+                }
+
+                if (parseInt(bouncingBall.top) > -400 && !down && iter >= 0)
+                {
+                    bouncingBall.top = parseInt(bouncingBall.top) - iter + "px";
+                    iter--;
+                    if (iter % 3 == 0) iter--;
+                    return;
+                }
+
+                down = true;
             }
         }
 
@@ -473,7 +555,7 @@
 
         .cdivBody
         {
-            background-color: #ffffff;
+            background-color: #fff;
             border: 1px solid silver;
             position: relative;
             width: 200px;
@@ -495,7 +577,7 @@
 
         .cdivLevel
         {
-            background-color: #ffffff;
+            background-color: #fff;
             border: 0;
             position: relative;
             top: -350px;
@@ -507,7 +589,7 @@
 
         .cdivLines
         {
-            background-color: #ffffff;
+            background-color: #fff;
             border: 0;
             position: relative;
             top: -330px;
@@ -519,7 +601,7 @@
 
         .cdivPoints
         {
-            background-color: #ffffff;
+            background-color: #fff;
             border: 0;
             position: relative;
             top: -310px;
@@ -531,7 +613,7 @@
 
         .cdivPlay
         {
-            background-color: #ffffff;
+            background-color: #fff;
             border: 0;
             position: relative;
             top: -260px;
@@ -541,7 +623,7 @@
             margin-right: auto;
         }
 
-		.cdivTip
+        .cdivTip
         {
             background-color: transparent;
             border: 0;
@@ -549,16 +631,16 @@
             top: -212px;
             left: 0px;
             width: 200px;
-			text-align: center;
-			height: 0px;
+            text-align: center;
+            height: 0px;
             margin-left: auto;
             margin-right: auto;
-			cursor: default;
+            cursor: default;
         }
 
         .cdivAuthor
         {
-            background-color: #ffffff;
+            background-color: #fff;
             border: 0;
             position: relative;
             top: -195px;
@@ -570,7 +652,7 @@
 
         .cdivControls
         {
-            background-color: #ffffff;
+            background-color: #fff;
             border: 0;
             position: relative;
             top: -190px;
@@ -584,7 +666,7 @@
 
         .cdivMoveL
         {
-            background-color: #ffffff;
+            background-color: #fff;
             border: 0;
             position: absolute;
             left: 0px;
@@ -594,7 +676,7 @@
 
         .cdivMagnet
         {
-            background-color: #ffffff;
+            background-color: #fff;
             border: 0;
             position: absolute;
             left: 30px;
@@ -603,7 +685,7 @@
 
         .cdivMoveR
         {
-            background-color: #ffffff;
+            background-color: #fff;
             border: 0;
             position: absolute;
             left: 190px;
@@ -613,16 +695,16 @@
 
         .cBlockBlue
         {
-            background-color: #0000ff;
-            border: 1px outset #0000ff;
+            background-color: #00f;
+            border: 1px outset #00f;
             height: 8px;
             width: 8px;
         }
 
         .cBlockRed
         {
-            background-color: #ff0000;
-            border: 1px outset #ff0000;
+            background-color: #f00;
+            border: 1px outset #f00;
             height: 8px;
             width: 8px;
         }
@@ -645,24 +727,24 @@
 
         .cBlockYellow
         {
-            background-color: #ffff00;
-            border: 1px outset #ffff00;
+            background-color: #ff0;
+            border: 1px outset #ff0;
             height: 8px;
             width: 8px;
         }
 
         .cBlockGrey
         {
-            background-color: #cccccc;
-            border: 1px outset #cccccc;
+            background-color: #ccc;
+            border: 1px outset #ccc;
             height: 8px;
             width: 8px;
         }
 
         .cBlockSeaGreen
         {
-            background-color: #66cccc;
-            border: 1px outset #66cccc;
+            background-color: #6cc;
+            border: 1px outset #6cc;
             height: 8px;
             width: 8px;
         }
@@ -676,32 +758,44 @@
 
         .cBlockWhite2
         {
-            border: 1px solid #ffffff;
+            border: 1px solid #fff;
             height: 8px;
             width: 8px;
         }
 
         a
         {
-            font-family: 'Segoe UI' , 'Lucida Grande' , Verdana, Arial, Helvetica, sans-serif;
+            font-family: 'Segoe UI', 'Lucida Grande', Verdana, Arial, Helvetica, sans-serif;
         }
 
-        a.author
-        {
-            color: gray;
-            font-style: italic;
-            font-size: 12px;
-        }
+            a.author
+            {
+                color: gray;
+                font-style: italic;
+                font-size: 12px;
+            }
 
-        a.tip
-        {
-            color: silver;
-            font-style: italic;
-            font-size: 12px;
-			cursor: default;
-        }
+            a.popup
+            {
+                color: black;
+                border: 1px solid black;
+                background-color: #fff;
+                padding-top: 5px;
+                padding-bottom: 5px;
+                padding-left: 5px;
+                padding-right: 5px;
+                cursor: default;
+            }
 
-		input.playit
+            a.tip
+            {
+                color: silver;
+                font-style: italic;
+                font-size: 12px;
+                cursor: default;
+            }
+
+        input.playit
         {
             border: 1px solid black;
             background-color: #f2f2f2;
@@ -719,7 +813,7 @@
             padding-bottom: 0px;
         }
 
-		input.playitLR
+        input.playitLR
         {
             border: 1px solid black;
             background-color: #f2f2f2;
@@ -728,7 +822,7 @@
             padding: 0;
         }
 
-		input.cTextBox
+        input.cTextBox
         {
             width: 75px;
             border: 0;
@@ -738,8 +832,8 @@
 <body onload="Init();" onselectstart="return false;" scroll="no">
     <div id="divBody" class="cdivBody">
     </div>
-	<div id="divTip" class="cdivTip">
-		<a class="tip" onclick='if (!isPause && !isFinish) Rotate();'>Click to rotate (R)</a>
+    <div id="divTip" class="cdivTip">
+        <a class="tip" onclick='Rotate();'>Click to rotate (R)</a>
     </div>
     <div id="divNext" class="cdivNext">
     </div>
@@ -756,15 +850,15 @@
         <input type="text" id="txtPoints" name="txtPoints" class="cTextBox" value="0">
     </div>
     <div class="cdivPlay">
-        <input type="submit" id="iplay" name="iplay" class="playit" value="Play" onclick='Play_Pause();this.value=isPause?"Play":"Pause";'>
+        <input type="submit" id="iplay" name="iplay" class="playit" value="Play" onclick='Play_Pause();'>
     </div>
     <div class="cdivAuthor">
         <a class="author">by Charles Tio</a>
     </div>
     <div class="cdivControls">
-        <input type="submit" class="playitLR" title="Left (Left Arrow)" value="L" onclick="if (!isPause && !isFinish) MoveObj(-1, 0)">
-        <input type="submit" class="playitM" title="Magnet (Down Arrow)" value="------------------------" onclick="if (!isPause && !isFinish) MoveObj(0, 1)">
-        <input type="submit" class="playitLR" title="Right (Rigt Arrow)" value="R" onclick="if (!isPause && !isFinish) MoveObj(1, 0)">
+        <input type="submit" class="playitLR" title="Left (Left Arrow)" value="L" onclick="MoveObj(-1, 0)">
+        <input type="submit" class="playitM" title="Magnet (Down Arrow)" value="------------------------" onclick="MoveObj(0, 1)">
+        <input type="submit" class="playitLR" title="Right (Rigt Arrow)" value="R" onclick="MoveObj(1, 0)">
     </div>
 </body>
 </html>
