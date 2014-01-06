@@ -39,3 +39,40 @@ function UpdateLocation(sTheURL) {
     }
     return false;
 }
+
+function BTN_OnClick(sIdCode, sTooltip)
+{
+	if (clipboardData && clipboardData.setData)
+	{
+		clipboardData.setData("Text", document.getElementById(sIdCode).innerText);
+
+		var oToolTip = document.getElementById(sTooltip);
+		if (oToolTip != null)
+		{
+			oToolTip.innerHTML = "<table><tr><td class=tooltip>Copied</td></tr></table>";
+			oToolTip.style.pixelLeft = (event.x+20+document.documentElement.scrollLeft);
+			oToolTip.style.pixelTop = (event.y+15+document.documentElement.scrollTop);
+			oToolTip.style.visibility = "visible";
+			setTimeout(function(){oToolTip.style.visibility="hidden";}, 1200)
+		}
+	}
+}
+
+function Btn_OnMouseOver(oItem)
+{
+	oItem.style.color="#fff";
+	oItem.style.background="#999";
+
+}
+
+function Btn_OnMouseOut(oItem, sTooltip)
+{
+	oItem.style.color = "#444";
+	oItem.style.background = "#E9E9E9";
+
+	var oToolTip = document.getElementById(sTooltip);
+	if (oToolTip != null)
+	{
+		oToolTip.style.visibility = "hidden";
+	}
+}
