@@ -207,26 +207,12 @@ Func _CHM_UDFToHTMPages($sFileUDF, ByRef $aFunctions, $sFolder = Default)
 				$fHasExample = True
 				$sAu3Code = FileRead($sAu3File)
 				If StringStripWS($sAu3Code, 8) Then
-					$sInnerCode = '<a class="button" ' & _
-							'onmouseover="this.style.color=&quot;#fff&quot;;this.style.background=&quot;#999&quot;; "' & _
-							'onmouseout="this.style.color=&quot;#444&quot;;this.style.background=&quot;#E9E9E9&quot;; ToolTip.style.visibility=&quot;hidden&quot;"' & _
-							'onclick="clipboardData.setData(&quot;Text&quot;, au3code' & $sSuffix & '.innerText); ' & _
-							'         ToolTip.innerHTML=&quot;<table><tr><td class=tooltip>Copied!&lt;/td>&lt;/tr>&lt;/table>&quot;; ' & _
-							'         ToolTip.style.pixelLeft=(event.x+20+document.documentElement.scrollLeft); ' & _
-							'         ToolTip.style.pixelTop=(event.y+15+document.documentElement.scrollTop); ' & _
-							'         ToolTip.style.visibility=&quot;visible&quot;; ' & _
-							'         setTimeout(&#39;ToolTip.style.visibility=&quot;hidden&quot;&#39;, 1200);' & _
-							'">Copy to clipboard<\/a>'
-					$sHTM &= '        <script type="text/javascript">' & @CRLF & _
-							'            if (clipboardData && clipboardData.setData) ' & _ ; checking if possible to copy
-							"document.write('" & $sInnerCode & "');" & @CRLF & _
-							'        </script>' & @CRLF
-
+					$sHTM &=  '<a class="button" onmouseover="Btn_OnMouseOver(this)" onmouseout=''Btn_OnMouseOut(this, "divtip")'' onclick=''BTN_OnClick("au3code' & $sSuffix & '", "divtip")''>Copy to clipboard</a>'
 					$sHTM &= '<p class="codebox" id="au3code' & $sSuffix & '"><br> ' & @CRLF & _CHM_SyntaxHighlight($sAu3Code) & "</p><br>" & @CRLF
 				EndIf
 			EndIf
 		Next
-		If $fHasExample Then $sHTM &= '        <div id="ToolTip" class="tip"></div>' & @CRLF
+		If $fHasExample Then $sHTM &= '        <div id="divtip" name="divtip" class="tip"></div>' & @CRLF
 
 		$sHTM &= @CRLF
 
