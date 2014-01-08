@@ -76,3 +76,50 @@ function Btn_OnMouseOut(oItem, sTooltip)
 		oToolTip.style.visibility = "hidden";
 	}
 }
+
+function MSDN_Nav(sTheURL, sFunc)
+{
+	if (window.XMLHttpRequest)
+	{
+		var xmlhttp = new XMLHttpRequest();
+	}
+	else
+	{
+		var xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+	}
+
+	if (sFunc.charAt(0) == "_") sFunc = sFunc.slice(1)
+	sTheURL_Search = "http://social.msdn.microsoft.com/search/en-US?query="
+
+	xmlhttp.open("GET", sTheURL, true);
+
+	xmlhttp.onreadystatechange = function()
+	{
+		if (xmlhttp.readyState == 4)
+		{
+			var regex = new RegExp("<title[^>]*>([^<]+)<\/title>", "i");
+			var arr = xmlhttp.responseText.match(regex)
+			var title = "";
+			try
+			{
+				title = arr[1];
+			}
+			catch(e)
+			{
+			}
+
+			regex = new RegExp(sFunc, "ig");
+
+			if (title.search(regex) == -1)
+			{
+				window.open(sTheURL_Search + sFunc)
+			}
+			else
+			{
+				window.open(sTheURL)
+			}
+		}
+	}
+
+	xmlhttp.send()
+}
