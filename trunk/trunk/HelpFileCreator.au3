@@ -16,9 +16,9 @@ Global Const $CHM_FOLDERSUFFIX = "_Help"
 ; These global variables define the help file
 Global $sChangeLogFile = ""
 Global $sHomeLink = "http://code.google.com/p/autoit-winhttp/"
-Global $sHomePage = @ScriptDir & "\Home.htm"
+Global $sHomePage = @ScriptDir & "\Extra\Home.htm"
 Global $sLogoPic = @ScriptDir & "\Images\WinHttp.jpg"
-Global $sCssFile = @ScriptDir & "\default1.css"
+Global $sCssFile = @ScriptDir & "\Extra\default1.css"
 Global $sJSFile = @ScriptDir & "\JS\Script.js"
 Global $sJSRFile = @ScriptDir & "\JS\Script_Right.js"
 Global $sFile = @ScriptDir & "\WinHttp.au3"
@@ -192,7 +192,7 @@ Func _CHM_UDFToHTMPages($sFileUDF, ByRef $aFunctions, $sFolder = Default)
 		$sLink = _CHM_GetHeaderData($aHeaders[$j], "Link")
 		If $sLink Then
 			$sHTM &= "        <h2>See Also</h2>" & @CRLF
-			$sHTM &= '        <a title="External link" href="' & $sLink & '" onclick=''window.open("' & $sLink & '");return false;''>MSDN</a>' & @CRLF & @CRLF ; MSDN as visible text
+			$sHTM &= '        <a title="External link" href="' & $sLink & '" onclick=''MSDN_Nav("' & $sLink & '", "' & $sFunctionName & '");return false;''>MSDN</a>' & @CRLF & @CRLF ; MSDN as visible text
 			$sHTM &= "        <br>" & @CRLF & @CRLF
 		EndIf
 
