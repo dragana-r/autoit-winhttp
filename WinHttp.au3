@@ -1561,6 +1561,7 @@ EndFunc
 ; ===============================================================================================================================
 Func _WinHttpSimpleReadData($hRequest, $iMode = Default)
 	If $iMode = Default Then
+		$iMode = 0
 		If __WinHttpCharSet(_WinHttpQueryHeaders($hRequest, $WINHTTP_QUERY_CONTENT_TYPE)) = 65001 Then $iMode = 1 ; header suggest utf-8
 	Else
 		__WinHttpDefault($iMode, 0)
