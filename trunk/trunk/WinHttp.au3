@@ -1068,13 +1068,14 @@ EndFunc
 ; #FUNCTION# ;===============================================================================
 ; Name...........: _WinHttpSimpleFormFill
 ; Description ...: Fills web form.
-; Syntax.........: _WinHttpSimpleFormFill(ByRef $hInternet [, $sActionPage = Default [, $sFormId = Default [, $sFieldId1 = Default [, $sData1 = Default [, (...)]]]]])
+; Syntax.........: _WinHttpSimpleFormFill(ByRef $hInternet [, $sActionPage = Default [, $sFormId = Default [, $sFieldId1 = Default [, $sData1 = Default [, (...) [, $sAdditionalData]]]]]])
 ; Parameters ....: $hInternet - Handle returned by _WinHttpConnect() or string variable with form.
 ;                  $sActionPage -  [optional] path to the page with form or session handle if $hInternet is string (default: "" - empty string; meaning 'default' page on the server in former).
 ;                  $sFormId - [optional] Id of the form. Can be name or zero-based index too (read Remarks section).
 ;                  $sFieldId1 - [optional] Id of the input.
 ;                  $sData1 - [optional] Data to set to coresponding field.
 ;                  (...) - [optional] Other pairs of Id/Data. Overall number of fields is 40.
+;                  $sAdditionalData - [optional] Additional data (read Remarks section).
 ; Return values .: Success - Returns HTML source of the page returned by the server on submited form.
 ;                  Failure - Returns empty string and sets @error:
 ;                  |1 - No forms on the page
@@ -1097,7 +1098,7 @@ EndFunc
 ;                  and the other removed from the submited form. "Checkbox" and "Button" input types are removed from the submitted form unless explicitly set. Same goes for "Radio" with exception that
 ;                  only one such control can be set, the rest are removed. These controls are set by their values. Wrong value makes them invalid and therefore not part of the submited data.
 ;                  +All other non-set fields are left default.
-;                  +Last (superfluous) argument will be treated as HTTP request header data to add. Additionally you can use it to pass authorization credentials in form [["[CRED:username,password]"]].
+;                  +Last (superfluous) [[$sAdditionalData]] argument can be used to pass authorization credentials in form [["[CRED:username,password]"]] and/or HTTP request header data to add.
 ;                  +
 ;                  +If this function is used to upload multiple files then there are two available ways. Default would be to submit the form following RFC2388 specification.
 ;                  In that case every file is represented as multipart/mixed part embedded within the multipart/form-data.
