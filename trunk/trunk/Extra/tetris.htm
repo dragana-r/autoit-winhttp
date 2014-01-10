@@ -7,7 +7,8 @@
     <title>Tetris</title>
     <script type="text/javascript">
 
-        var Matrix, NextMatrix, no, nextNo, ObjX, ObjY, boxes;
+        var setId = 0;
+		var Matrix, NextMatrix, no, nextNo, ObjX, ObjY, boxes;
         var boxes, rotateNo, isNext, isPause, isFinish, isProcess;
         var timerID, delay, totalLns, totalPts, White, Color;
         var Obj1, Obj2, Obj3, Obj4
@@ -121,7 +122,11 @@
         {
             var elem = document.getElementById('divTip')
             if (elem)
-                elem.innerHTML = '<a class="tip" onclick="Rotate();">Click to rotate (R)</a>';
+			{
+                clearInterval(setId);
+				elem.innerHTML = '<a class="tip" onclick="Rotate();">Click to rotate (R)</a>';
+				elem.style.top = "-212px";
+			}
         }
 
         function isWhite(X, Y)
@@ -471,14 +476,13 @@
 
 
         var iter = 0;
-        var setId = 0;
         var down = true;
 
         function Bounce()
         {
             bouncingBall = document.getElementById("divTip").style
 
-            winH = -212
+            winH = -30
 
             if (setId != 0) clearInterval(setId);
 
