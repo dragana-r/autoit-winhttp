@@ -1097,7 +1097,7 @@ EndFunc
 ;                  and the other removed from the submited form. "Checkbox" and "Button" input types are removed from the submitted form unless explicitly set. Same goes for "Radio" with exception that
 ;                  only one such control can be set, the rest are removed. These controls are set by their values. Wrong value makes them invalid and therefore not part of the submited data.
 ;                  +All other non-set fields are left default.
-;                  +Last (superfluous) argument will be treated as HTTP request header data to add.
+;                  +Last (superfluous) argument will be treated as HTTP request header data to add. Additionally you can use it to pass authorization credentials in form [["[CRED:username,password]"]].
 ;                  +
 ;                  +If this function is used to upload multiple files then there are two available ways. Default would be to submit the form following RFC2388 specification.
 ;                  In that case every file is represented as multipart/mixed part embedded within the multipart/form-data.
