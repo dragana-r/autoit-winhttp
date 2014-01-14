@@ -1557,6 +1557,7 @@ EndFunc
 ;                  |1 - invalid mode
 ;                  |2 - no data available
 ; Author ........: ProgAndy
+; Modified.......: trancexx
 ; Remarks .......: In case of default reading mode, if the server specifies utf-8 content type, function will force UTF-8 string.
 ; Related .......: _WinHttpReadData, _WinHttpSimpleRequest, _WinHttpSimpleSSLRequest
 ; ===============================================================================================================================
@@ -1568,22 +1569,19 @@ Func _WinHttpSimpleReadData($hRequest, $iMode = Default)
 		__WinHttpDefault($iMode, 0)
 	EndIf
 	If $iMode > 2 Or $iMode < 0 Then Return SetError(1, 0, '')
-	Local $vData = ''
-	If $iMode = 2 Then $vData = Binary('')
+	Local $vData = Binary('')
 	If _WinHttpQueryDataAvailable($hRequest) Then
-		If $iMode = 0 Then
-			Do
-				$vData &= _WinHttpReadData($hRequest, 0)
-			Until @error
-			Return $vData
-		Else
-			$vData = Binary('')
-			Do
-				$vData &= _WinHttpReadData($hRequest, 2)
-			Until @error
-			If $iMode = 1 Then Return BinaryToString($vData, 4)
-			Return $vData
-		EndIf
+		Do
+			$vData &= _WinHttpReadData($hRequest, 2)
+		Until @error
+		Switch $iMode
+			Case 0
+				Return BinaryToString($vData)
+			Case 1
+				Return BinaryToString($vData, 4)
+			Case Else
+				Return $vData
+		EndSwitch
 	EndIf
 	Return SetError(2, 0, $vData)
 EndFunc
