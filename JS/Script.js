@@ -53,6 +53,7 @@ function init()
     {
         iInput.style.color = "gray";
         iInput.value = "Search";
+		iInput.disabled = false;
     }
 
     setTimeout(LoadSearchKeywords, 100); // give it time to load
@@ -312,9 +313,8 @@ function DoSearch()
         }
         catch (e)
         {
-            SetIFrameSource("_WinHttpCheckPlatform.htm");
-            setTimeout(DoSearch, 100);
-            return false;
+            document.getElementById("in").disabled = true;
+			return false;
         }
 
         if (doc)
