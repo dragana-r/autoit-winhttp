@@ -2043,7 +2043,7 @@ Func __WinHttpFormSend($hInternet, $sMethod, $sAction, $fMultiPart, $sBoundary, 
 	EndIf
 	_WinHttpAddRequestHeaders($hRequest, "Accept: application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,*/*;q=0.5")
 	_WinHttpAddRequestHeaders($hRequest, "Accept-Charset: utf-8;q=0.7")
-	If $sAdditionalHeaders Then _WinHttpAddRequestHeaders($hRequest, $sAdditionalHeaders)
+	If $sAdditionalHeaders Then _WinHttpAddRequestHeaders($hRequest, $sAdditionalHeaders, BitOR($WINHTTP_ADDREQ_FLAG_REPLACE, $WINHTTP_ADDREQ_FLAG_ADD))
 	_WinHttpSendRequest($hRequest, Default, $sAddData)
 	_WinHttpReceiveResponse($hRequest)
 	__WinHttpSetCredentials($hRequest, "", $sAddData, $sCredName, $sCredPass)
