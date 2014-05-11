@@ -626,6 +626,7 @@ Func _CHM_SyntaxHighlight($sAu3Code) ; MrCreator's modified
 	$sAu3Code = StringRegExpReplace($sAu3Code, ">\h+<", ">&nbsp;<")
 	$sAu3Code = StringReplace($sAu3Code, "<>", "")
 	$sAu3Code = StringReplace($sAu3Code, "&<", "&amp;<")
+	$sAu3Code = StringReplace($sAu3Code, @CRLF, "<br>")
 	Return $sAu3Code
 EndFunc   ;==>_CHM_SyntaxHighlight
 
