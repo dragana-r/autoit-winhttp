@@ -6,13 +6,13 @@
 
 #comments-start
 	Copyright 2013 Dragana R. <trancexx at yahoo dot com>
-	
+
 	Licensed under the Apache License, Version 2.0 (the "License");
 	you may not use this file except in compliance with the License.
 	You may obtain a copy of the License at
-	
+
 	http://www.apache.org/licenses/LICENSE-2.0
-	
+
 	Unless required by applicable law or agreed to in writing, software
 	distributed under the License is distributed on an "AS IS" BASIS,
 	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -128,13 +128,21 @@ Global Const $WINHTTP_OPTION_IS_PROXY_CONNECT_RESPONSE = 104
 Global Const $WINHTTP_OPTION_SERVER_SPN_USED = 106
 Global Const $WINHTTP_OPTION_PROXY_SPN_USED = 107
 Global Const $WINHTTP_OPTION_SERVER_CBT = 108
-Global Const $WINHTTP_LAST_OPTION = $WINHTTP_OPTION_SERVER_CBT
+Global Const $WINHTTP_OPTION_UNSAFE_HEADER_PARSING = 110
+Global Const $WINHTTP_OPTION_DECOMPRESSION = 118
+Global Const $WINHTTP_LAST_OPTION = $WINHTTP_OPTION_DECOMPRESSION
+
 Global Const $WINHTTP_OPTION_USERNAME = 0x1000
 Global Const $WINHTTP_OPTION_PASSWORD = 0x1001
 Global Const $WINHTTP_OPTION_PROXY_USERNAME = 0x1002
 Global Const $WINHTTP_OPTION_PROXY_PASSWORD = 0x1003
 
 Global Const $WINHTTP_CONNS_PER_SERVER_UNLIMITED = 0xFFFFFFFF
+
+; For WINHTTP_OPTION_DECOMPRESSION
+Global Const $WINHTTP_DECOMPRESSION_FLAG_GZIP = 0x00000001
+Global Const $WINHTTP_DECOMPRESSION_FLAG_DEFLATE = 0x00000002
+Global Const $WINHTTP_DECOMPRESSION_FLAG_ALL = 0x00000003
 
 Global Const $WINHTTP_AUTOLOGON_SECURITY_LEVEL_MEDIUM = 0
 Global Const $WINHTTP_AUTOLOGON_SECURITY_LEVEL_LOW = 1
