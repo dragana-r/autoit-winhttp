@@ -1121,10 +1121,10 @@ Func _WinHttpSimpleFormFill(ByRef $hInternet, $sActionPage = Default, $sFormId =
 		$sAdditionalHeaders = Eval("sFieldId" & $iNumArgs / 2 - 1)
 		Local $aCred = StringRegExp($sAdditionalHeaders, "\[CRED:(.*?)\]", 2)
 		If Not @error Then
-			Local $aSplit = StringSplit($aCred[1], ",", 3)
+			Local $aStrSplit = StringSplit($aCred[1], ",", 3)
 			If Not @error Then
-				$sCredName = $aSplit[0]
-				$sCredPass = $aSplit[1]
+				$sCredName = $aStrSplit[0]
+				$sCredPass = $aStrSplit[1]
 			EndIf
 			$sAdditionalHeaders = StringReplace($sAdditionalHeaders, $aCred[0], "", 1)
 		EndIf
@@ -1170,7 +1170,7 @@ Func _WinHttpSimpleFormFill(ByRef $hInternet, $sActionPage = Default, $sFormId =
 		EndIf
 	EndIf
 	; Variables
-	Local $sForm, $sAttributes, $aAttributes, $aInput
+	Local $sForm, $sAttributes, $aInput
 	Local $iNumParams = Ceiling(($iNumArgs - 2) / 2) - 1
 	Local $sAddData
 	Local $aCrackURL, $sNewURL
