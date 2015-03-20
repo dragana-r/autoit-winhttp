@@ -15,7 +15,7 @@ Global Const $CHM_FOLDERSUFFIX = "_Help"
 #XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 ; These global variables define the help file
 Global $sChangeLogFile = ""
-Global $sHomeLink = "http://code.google.com/p/autoit-winhttp/"
+Global $sHomeLink = "https://github.com/dragana-r/autoit-winhttp/releases"
 Global $sHomePage = @ScriptDir & "\Extra\Home.htm"
 Global $sLogoPic = @ScriptDir & "\Images\WinHttp.jpg"
 Global $sCssFile = @ScriptDir & "\Extra\default1.css"
