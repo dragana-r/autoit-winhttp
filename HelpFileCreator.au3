@@ -600,6 +600,8 @@ Func _CHM_SyntaxHighlight($sAu3Code) ; MrCreator's modified
 	; Replace back the unique marks with the original one and wrap them with "string" tags
 	For $i = 0 To UBound($aQuote_Strings) - 1 Step 2
 		$aQuote_Strings[$i] = StringReplace($aQuote_Strings[$i], "&", "&amp;")
+		$aQuote_Strings[$i] = StringReplace($aQuote_Strings[$i], '<', '&lt;')
+		$aQuote_Strings[$i] = StringReplace($aQuote_Strings[$i], '>', '&gt;')
 		$sAu3Code = StringReplace($sAu3Code, $sUnique_Str_Quote, '<span class="S7">' & $aQuote_Strings[$i] & '</span>', 1)
 	Next
 	For $i = 0 To UBound($aInclude_Strings) - 1
