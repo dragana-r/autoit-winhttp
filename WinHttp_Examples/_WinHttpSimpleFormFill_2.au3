@@ -1,10 +1,10 @@
 
-#include "WinHttp.au3"
+#include "..\WinHttp.au3"
 
 Opt("MustDeclareVars", 1)
 
-Global $hOpen, $hConnect
-Global $sRead, $hFileHTM, $sFileHTM = @ScriptDir & "\Form.htm"
+Dim $hOpen, $hConnect
+Dim $sRead
 
 ; Example 3:
 ; 1. Open cs.tut.fi forms page (http://www.cs.tut.fi/~jkorpela/forms/testing.html)
@@ -20,17 +20,18 @@ $hOpen = _WinHttpOpen()
 ; Get connection handle
 $hConnect = _WinHttpConnect($hOpen, "www.cs.tut.fi")
 ; Fill form on this page
-$sRead = _WinHttpSimpleFormFill($hConnect, "~jkorpela/forms/testing.html", "index:0", "name:Comments", "Johnny B. Goode", "name:box", "yes", "name:hidden field", "This is hidden, so what?")
+$sRead = _WinHttpSimpleFormFill($hConnect, _ ; connection handle
+		"~jkorpela/forms/testing.html", _ ; target page
+		"index:0", _ ; form identifier
+		"name:Comments", "Johnny B. Goode", _ ; first field identifier paired with field data
+		"name:box", "yes", _ ; second field identifier paired with data
+		"name:hidden field", "This is hidden, so what?") ; third field identifier paired with data
 ; Close connection handle
 _WinHttpCloseHandle($hConnect)
 ; Close session handle now that's no longer needed
 _WinHttpCloseHandle($hOpen)
 
 If $sRead Then
-    MsgBox(64 + 262144, "Done!", "Will open returned page in your default browser now." & @CRLF & _
-            "It should show sent data.")
-    $hFileHTM = FileOpen($sFileHTM, 2)
-    FileWrite($hFileHTM, $sRead)
-    FileClose($hFileHTM)
-    ShellExecuteWait($sFileHTM)
+	ConsoleWrite($sRead & @CRLF)
+	MsgBox(64 + 262144, "Web Page says", $sRead)
 EndIf
