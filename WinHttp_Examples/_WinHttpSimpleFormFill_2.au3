@@ -1,5 +1,5 @@
 
-#include "..\WinHttp.au3"
+#include "WinHttp.au3"
 
 Opt("MustDeclareVars", 1)
 
