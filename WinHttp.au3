@@ -492,7 +492,7 @@ EndFunc
 ; Name...........: _WinHttpOpen
 ; Description ...: Initializes the use of WinHttp functions and returns a WinHttp-session handle.
 ; Syntax.........: _WinHttpOpen([$sUserAgent = Default [, $iAccessType = Default [, $sProxyName = Default [, $sProxyBypass = Default [, $iFlag = Default ]]]]])
-; Parameters ....: $sUserAgent - [optional] The name of the application or entity calling the WinHttp functions. Default is "AutoIt/3.3 WinHTTP/5.1".
+; Parameters ....: $sUserAgent - [optional] The name of the application or entity calling the WinHttp functions.
 ;                  $iAccessType - [optional] Type of access required. Default is $WINHTTP_ACCESS_TYPE_NO_PROXY.
 ;                  $sProxyName - [optional] The name of the proxy server to use when proxy access is specified by setting $iAccessType to $WINHTTP_ACCESS_TYPE_NAMED_PROXY. Default is $WINHTTP_NO_PROXY_NAME.
 ;                  $sProxyBypass - [optional] An optional list of host names or IP addresses, or both, that should not be routed through the proxy when $iAccessType is set to $WINHTTP_ACCESS_TYPE_NAMED_PROXY. Default is $WINHTTP_NO_PROXY_BYPASS.
@@ -507,7 +507,7 @@ EndFunc
 ; Link ..........: http://msdn.microsoft.com/en-us/library/aa384098.aspx
 ;============================================================================================
 Func _WinHttpOpen($sUserAgent = Default, $iAccessType = Default, $sProxyName = Default, $sProxyBypass = Default, $iFlag = Default)
-	__WinHttpDefault($sUserAgent, "AutoIt/3.3 WinHTTP/5.1")
+	__WinHttpDefault($sUserAgent, __WinHttpUA())
 	__WinHttpDefault($iAccessType, $WINHTTP_ACCESS_TYPE_NO_PROXY)
 	__WinHttpDefault($sProxyName, $WINHTTP_NO_PROXY_NAME)
 	__WinHttpDefault($sProxyBypass, $WINHTTP_NO_PROXY_BYPASS)
@@ -2096,6 +2096,23 @@ Func __WinHttpPtrStringLenW($pString)
 	Local $aCall = DllCall("kernel32.dll", "dword", "lstrlenW", "ptr", $pString)
 	If @error Then Return SetError(1, 0, 0)
 	Return $aCall[0]
+EndFunc
+
+Func __WinHttpUA()
+	Local Static $sUA = "Mozilla/5.0 " & __WinHttpSysInfo() & " WinHttp/" & __WinHttpVer() & " (WinHTTP/5.1) like Gecko"
+	Return $sUA
+EndFunc
+
+Func __WinHttpSysInfo()
+	Local $sData = FileGetVersion("kernel32.dll")
+	$sData = "(Windows NT " & StringLeft($sData, StringInStr($sData, ".", 1, 2) - 1)
+	If StringInStr(@OSArch, "64") And Not @AutoItX64 Then $sData &= "; WOW64"
+	$sData &= ")"
+	Return $sData
+EndFunc
+
+Func __WinHttpVer()
+	Return "1.6.3.8"
 EndFunc
 
 Func _WinHttpBinaryConcat(ByRef $bBinary1, ByRef $bBinary2)
