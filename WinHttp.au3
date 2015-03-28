@@ -1920,10 +1920,12 @@ Func __WinHttpFileContent($sAccept, $sName, $sFileString, $sBoundaryMain = "")
 	If Not $sFileString Then Return $sOut & '; filename=""' & @CRLF & @CRLF & @CRLF
 	; Check $sFileString string
 	If StringRight($sFileString, 1) = "|" Then $sFileString = StringTrimRight($sFileString, 1)
-	Local $aFiles = StringSplit($sFileString, "|", 2)
+	Local $aFiles = StringSplit($sFileString, "|", 2), $hFile
 	If UBound($aFiles) = 1 Then
+		$hFile = FileOpen($aFiles[0], 16)
 		$sOut &= '; filename="' & StringRegExpReplace($aFiles[0], ".*\\", "") & '"' & @CRLF & _
-				"Content-Type: " & __WinHttpMIMEType($aFiles[0]) & @CRLF & @CRLF & FileRead($aFiles[0]) & @CRLF
+				"Content-Type: " & __WinHttpMIMEType($aFiles[0]) & @CRLF & @CRLF & BinaryToString(FileRead($hFile), 1) & @CRLF
+		FileClose($hFile)
 		Return $sOut ; That's it
 	EndIf
 	; Multiple files specified, separated by "|". Support on server side required!
@@ -1932,9 +1934,11 @@ Func __WinHttpFileContent($sAccept, $sName, $sFileString, $sBoundaryMain = "")
 		$sOut = "" ; discharge
 		Local $iFiles = UBound($aFiles)
 		For $i = 0 To $iFiles - 1
+			$hFile = FileOpen($aFiles[$i], 16)
 			$sOut &= 'Content-Disposition: form-data; name="' & $sName & '"' & _
 					'; filename="' & StringRegExpReplace($aFiles[$i], ".*\\", "") & '"' & @CRLF & _
-					"Content-Type: " & __WinHttpMIMEType($aFiles[$i]) & @CRLF & @CRLF & FileRead($aFiles[$i]) & @CRLF
+					"Content-Type: " & __WinHttpMIMEType($aFiles[$i]) & @CRLF & @CRLF & BinaryToString(FileRead($hFile), 1) & @CRLF
+			FileClose($hFile)
 			If $i < $iFiles - 1 Then $sOut &= "--" & $sBoundaryMain & @CRLF
 		Next
 	Else
@@ -1942,9 +1946,11 @@ Func __WinHttpFileContent($sAccept, $sName, $sFileString, $sBoundaryMain = "")
 		Local $sBoundary = StringFormat("%s%.5f", "----WinHttpSubBoundaryLine_", Random(10000, 99999))
 		$sOut &= @CRLF & "Content-Type: multipart/mixed; boundary=" & $sBoundary & @CRLF & @CRLF
 		For $i = 0 To UBound($aFiles) - 1
+			$hFile = FileOpen($aFiles[$i], 16)
 			$sOut &= "--" & $sBoundary & @CRLF & _
 					'Content-Disposition: file; filename="' & StringRegExpReplace($aFiles[$i], ".*\\", "") & '"' & @CRLF & _
-					"Content-Type: " & __WinHttpMIMEType($aFiles[$i]) & @CRLF & @CRLF & FileRead($aFiles[$i]) & @CRLF
+					"Content-Type: " & __WinHttpMIMEType($aFiles[$i]) & @CRLF & @CRLF & BinaryToString(FileRead($hFile), 1) & @CRLF
+			FileClose($hFile)
 		Next
 		$sOut &= "--" & $sBoundary & "--" & @CRLF
 	EndIf
