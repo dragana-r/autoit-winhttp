@@ -1104,7 +1104,7 @@ EndFunc
 ;                  and the other removed from the submited form. "Checkbox" and "Button" input types are removed from the submitted form unless explicitly set. Same goes for "Radio" with exception that
 ;                  only one such control can be set, the rest are removed. These controls are set by their values. Wrong value makes them invalid and therefore not part of the submited data.
 ;                  +All other non-set fields are left default.
-;                  +Last (superfluous) [[$sAdditionalData]] argument can be used to pass authorization credentials in form [["[CRED:username,password]"]] and/or HTTP request header data to add.
+;                  +Last (superfluous) [[$sAdditionalData]] argument can be used to pass authorization credentials in form [["[CRED:username,password]"]], magic string to ignore cerificate errors in form [["[IGNORE_CERT_ERRORS]"]] and/or HTTP request header data to add.
 ;                  +
 ;                  +If this function is used to upload multiple files then there are two available ways. Default would be to submit the form following RFC2388 specification.
 ;                  In that case every file is represented as multipart/mixed part embedded within the multipart/form-data.
@@ -1122,9 +1122,11 @@ Func _WinHttpSimpleFormFill(ByRef $hInternet, $sActionPage = Default, $sFormId =
 	#forceref $sFieldId21, $sData21, $sFieldId22, $sData22, $sFieldId23, $sData23, $sFieldId24, $sData24, $sFieldId25, $sData25, $sFieldId26, $sData26, $sFieldId27, $sData27, $sFieldId28, $sData28, $sFieldId29, $sData29, $sFieldId30, $sData30
 	#forceref $sFieldId31, $sData31, $sFieldId32, $sData32, $sFieldId33, $sData33, $sFieldId34, $sData34, $sFieldId35, $sData35, $sFieldId36, $sData36, $sFieldId37, $sData37, $sFieldId38, $sData38, $sFieldId39, $sData39, $sFieldId40, $sData40
 	__WinHttpDefault($sActionPage, "")
-	Local $iNumArgs = @NumParams, $sAdditionalHeaders, $sCredName, $sCredPass
+	Local $iNumArgs = @NumParams, $sAdditionalHeaders, $sCredName, $sCredPass, $iIgnoreCertErr
 	If Not Mod($iNumArgs, 2) Then
 		$sAdditionalHeaders = Eval("sFieldId" & $iNumArgs / 2 - 1)
+		$iIgnoreCertErr = StringInStr($sAdditionalHeaders, "[IGNORE_CERT_ERRORS]")
+		If $iIgnoreCertErr Then $sAdditionalHeaders = StringReplace($sAdditionalHeaders, "[IGNORE_CERT_ERRORS]", "", 1)
 		Local $aCred = StringRegExp($sAdditionalHeaders, "\[CRED:(.*?)\]", 2)
 		If Not @error Then
 			Local $aStrSplit = StringSplit($aCred[1], ",", 3)
@@ -1146,14 +1148,14 @@ Func _WinHttpSimpleFormFill(ByRef $hInternet, $sActionPage = Default, $sFormId =
 		$iScheme = _WinHttpQueryOption($hInternet, $WINHTTP_OPTION_CONTEXT_VALUE); read internet scheme from the connection handle
 		Local $sAccpt = "Accept: text/html;q=0.9,text/plain;q=0.8,*/*;q=0.5"
 		If $iScheme = $INTERNET_SCHEME_HTTPS Then
-			$sHTML = _WinHttpSimpleSSLRequest($hInternet, Default, $sActionPage, Default, Default, $sAccpt, Default, Default, $sCredName, $sCredPass)
+			$sHTML = _WinHttpSimpleSSLRequest($hInternet, Default, $sActionPage, Default, Default, $sAccpt, Default, Default, $sCredName, $sCredPass, $iIgnoreCertErr)
 		ElseIf $iScheme = $INTERNET_SCHEME_HTTP Then
 			$sHTML = _WinHttpSimpleRequest($hInternet, Default, $sActionPage, Default, Default, $sAccpt, Default, Default, $sCredName, $sCredPass)
 		Else
 			; Try both http and https scheme and deduct the right one besed on response
 			$sHTML = _WinHttpSimpleRequest($hInternet, Default, $sActionPage, Default, Default, $sAccpt, Default, Default, $sCredName, $sCredPass)
 			If @error Or @extended >= $HTTP_STATUS_BAD_REQUEST Then
-				$sHTML = _WinHttpSimpleSSLRequest($hInternet, Default, $sActionPage, Default, Default, $sAccpt, Default, Default, $sCredName, $sCredPass)
+				$sHTML = _WinHttpSimpleSSLRequest($hInternet, Default, $sActionPage, Default, Default, $sAccpt, Default, Default, $sCredName, $sCredPass, $iIgnoreCertErr)
 				$iScheme = $INTERNET_SCHEME_HTTPS
 			Else
 				$iScheme = $INTERNET_SCHEME_HTTP
@@ -1540,12 +1542,12 @@ Func _WinHttpSimpleFormFill(ByRef $hInternet, $sActionPage = Default, $sFormId =
 		EndIf
 		Local $hRequest
 		If $iScheme = $INTERNET_SCHEME_HTTPS Then
-			$hRequest = __WinHttpFormSend($hInternet, $sMethod, $sAction, $fMultiPart, $sBoundary, $sAddData, True, $sAdditionalHeaders, $sCredName, $sCredPass)
+			$hRequest = __WinHttpFormSend($hInternet, $sMethod, $sAction, $fMultiPart, $sBoundary, $sAddData, True, $sAdditionalHeaders, $sCredName, $sCredPass, $iIgnoreCertErr)
 		Else
 			$hRequest = __WinHttpFormSend($hInternet, $sMethod, $sAction, $fMultiPart, $sBoundary, $sAddData, False, $sAdditionalHeaders, $sCredName, $sCredPass)
 			If _WinHttpQueryHeaders($hRequest, $WINHTTP_QUERY_STATUS_CODE) >= $HTTP_STATUS_BAD_REQUEST Then
 				_WinHttpCloseHandle($hRequest)
-				$hRequest = __WinHttpFormSend($hInternet, $sMethod, $sAction, $fMultiPart, $sBoundary, $sAddData, True, $sAdditionalHeaders, $sCredName, $sCredPass) ; try adding $WINHTTP_FLAG_SECURE
+				$hRequest = __WinHttpFormSend($hInternet, $sMethod, $sAction, $fMultiPart, $sBoundary, $sAddData, True, $sAdditionalHeaders, $sCredName, $sCredPass, $iIgnoreCertErr) ; try adding $WINHTTP_FLAG_SECURE
 			EndIf
 		EndIf
 		Local $sReturned = _WinHttpSimpleReadData($hRequest)
@@ -1735,7 +1737,7 @@ EndFunc
 ; Author ........: ProgAndy
 ; Related .......: _WinHttpSimpleSSLRequest, _WinHttpSimpleSendRequest, _WinHttpSimpleReadData
 ; ===============================================================================================================================
-Func _WinHttpSimpleSendSSLRequest($hConnect, $sType = Default, $sPath = Default, $sReferrer = Default, $sData = Default, $sHeader = Default)
+Func _WinHttpSimpleSendSSLRequest($hConnect, $sType = Default, $sPath = Default, $sReferrer = Default, $sData = Default, $sHeader = Default, $iIgnoreAllCertErrors = 0)
 	; Author: ProgAndy
 	__WinHttpDefault($sType, "GET")
 	__WinHttpDefault($sPath, "")
@@ -1744,6 +1746,7 @@ Func _WinHttpSimpleSendSSLRequest($hConnect, $sType = Default, $sPath = Default,
 	__WinHttpDefault($sHeader, $WINHTTP_NO_ADDITIONAL_HEADERS)
 	Local $hRequest = _WinHttpOpenRequest($hConnect, $sType, $sPath, Default, $sReferrer, Default, BitOR($WINHTTP_FLAG_SECURE, $WINHTTP_FLAG_ESCAPE_DISABLE))
 	If Not $hRequest Then Return SetError(1, @error, 0)
+	If $iIgnoreAllCertErrors Then _WinHttpSetOption($hRequest, $WINHTTP_OPTION_SECURITY_FLAGS, BitOR($SECURITY_FLAG_IGNORE_UNKNOWN_CA, $SECURITY_FLAG_IGNORE_CERT_DATE_INVALID, $SECURITY_FLAG_IGNORE_CERT_CN_INVALID, $SECURITY_FLAG_IGNORE_CERT_WRONG_USAGE))
 	If $sType = "POST" And $sHeader = $WINHTTP_NO_ADDITIONAL_HEADERS Then $sHeader = "Content-Type: application/x-www-form-urlencoded" & @CRLF
 	_WinHttpSetOption($hRequest, $WINHTTP_OPTION_DECOMPRESSION, $WINHTTP_DECOMPRESSION_FLAG_ALL)
 	_WinHttpSetOption($hRequest, $WINHTTP_OPTION_UNSAFE_HEADER_PARSING, 1)
@@ -1782,7 +1785,7 @@ EndFunc
 ; Modified.......: trancexx
 ; Related .......: _WinHttpSimpleRequest, _WinHttpSimpleSendSSLRequest, _WinHttpSimpleSendRequest, _WinHttpQueryHeaders, _WinHttpSimpleReadData
 ; ===============================================================================================================================
-Func _WinHttpSimpleSSLRequest($hConnect, $sType = Default, $sPath = Default, $sReferrer = Default, $sData = Default, $sHeader = Default, $fGetHeaders = Default, $iMode = Default, $sCredName = Default, $sCredPass = Default)
+Func _WinHttpSimpleSSLRequest($hConnect, $sType = Default, $sPath = Default, $sReferrer = Default, $sData = Default, $sHeader = Default, $fGetHeaders = Default, $iMode = Default, $sCredName = Default, $sCredPass = Default, $iIgnoreCertErrors = 0)
 	; Author: ProgAndy
 	__WinHttpDefault($sType, "GET")
 	__WinHttpDefault($sPath, "")
@@ -1794,7 +1797,7 @@ Func _WinHttpSimpleSSLRequest($hConnect, $sType = Default, $sPath = Default, $sR
 	__WinHttpDefault($sCredName, "")
 	__WinHttpDefault($sCredPass, "")
 	If $iMode > 2 Or $iMode < 0 Then Return SetError(4, 0, 0)
-	Local $hRequest = _WinHttpSimpleSendSSLRequest($hConnect, $sType, $sPath, $sReferrer, $sData, $sHeader)
+	Local $hRequest = _WinHttpSimpleSendSSLRequest($hConnect, $sType, $sPath, $sReferrer, $sData, $sHeader, $iIgnoreCertErrors)
 	If @error Then Return SetError(@error, 0, 0)
 	__WinHttpSetCredentials($hRequest, $sHeader, $sData, $sCredName, $sCredPass)
 	If $fGetHeaders Then
@@ -2057,10 +2060,11 @@ Func __WinHttpAttribVal($sIn, $sAttrib)
 	Return $aArray[UBound($aArray) - 1]
 EndFunc
 
-Func __WinHttpFormSend($hInternet, $sMethod, $sAction, $fMultiPart, $sBoundary, $sAddData, $fSecure = False, $sAdditionalHeaders = "", $sCredName = "", $sCredPass = "")
+Func __WinHttpFormSend($hInternet, $sMethod, $sAction, $fMultiPart, $sBoundary, $sAddData, $fSecure = False, $sAdditionalHeaders = "", $sCredName = "", $sCredPass = "", $iIgnoreAllCertErrors = 0)
 	Local $hRequest
 	If $fSecure Then
 		$hRequest = _WinHttpOpenRequest($hInternet, $sMethod, $sAction, Default, Default, Default, $WINHTTP_FLAG_SECURE)
+		If $iIgnoreAllCertErrors Then _WinHttpSetOption($hRequest, $WINHTTP_OPTION_SECURITY_FLAGS, BitOR($SECURITY_FLAG_IGNORE_UNKNOWN_CA, $SECURITY_FLAG_IGNORE_CERT_DATE_INVALID, $SECURITY_FLAG_IGNORE_CERT_CN_INVALID, $SECURITY_FLAG_IGNORE_CERT_WRONG_USAGE))
 	Else
 		$hRequest = _WinHttpOpenRequest($hInternet, $sMethod, $sAction)
 	EndIf
