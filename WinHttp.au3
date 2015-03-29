@@ -159,11 +159,7 @@ Func _WinHttpConnect($hSession, $sServerName, $iServerPort = Default)
 	Else
 		$sServerName = $aURL[2]
 		$iServerPort = $aURL[3]
-		If $iServerPort = $INTERNET_DEFAULT_HTTPS_PORT Then
-			$iScheme = $INTERNET_SCHEME_HTTPS
-		ElseIf $iServerPort = $INTERNET_DEFAULT_HTTP_PORT Then
-			$iScheme = $INTERNET_SCHEME_HTTP
-		EndIf
+		$iScheme = $aURL[1]
 	EndIf
 	Local $aCall = DllCall($hWINHTTPDLL__WINHTTP, "handle", "WinHttpConnect", _
 			"handle", $hSession, _
