@@ -153,12 +153,17 @@ EndFunc
 ; Link ..........: http://msdn.microsoft.com/en-us/library/aa384091.aspx
 ;============================================================================================
 Func _WinHttpConnect($hSession, $sServerName, $iServerPort = Default)
-	Local $aURL = _WinHttpCrackUrl($sServerName)
+	Local $aURL = _WinHttpCrackUrl($sServerName), $iScheme = 0
 	If @error Then
 		__WinHttpDefault($iServerPort, $INTERNET_DEFAULT_PORT)
 	Else
 		$sServerName = $aURL[2]
 		$iServerPort = $aURL[3]
+		If $iServerPort = $INTERNET_DEFAULT_HTTPS_PORT Then
+			$iScheme = $INTERNET_SCHEME_HTTPS
+		ElseIf $iServerPort = $INTERNET_DEFAULT_HTTP_PORT Then
+			$iScheme = $INTERNET_SCHEME_HTTP
+		EndIf
 	EndIf
 	Local $aCall = DllCall($hWINHTTPDLL__WINHTTP, "handle", "WinHttpConnect", _
 			"handle", $hSession, _
@@ -166,6 +171,7 @@ Func _WinHttpConnect($hSession, $sServerName, $iServerPort = Default)
 			"dword", $iServerPort, _
 			"dword", 0)
 	If @error Or Not $aCall[0] Then Return SetError(1, 0, 0)
+	_WinHttpSetOption($aCall[0], $WINHTTP_OPTION_CONTEXT_VALUE, $iScheme)
 	Return $aCall[0]
 EndFunc
 
@@ -1137,10 +1143,21 @@ Func _WinHttpSimpleFormFill(ByRef $hInternet, $sActionPage = Default, $sFormId =
 		$hOpen = $sActionPage
 		$fVarForm = True
 	Else
-		$sHTML = _WinHttpSimpleRequest($hInternet, Default, $sActionPage, Default, Default, "Accept: text/html;q=0.9,text/plain;q=0.8,*/*;q=0.5", Default, Default, $sCredName, $sCredPass)
-		If @error Or @extended >= $HTTP_STATUS_BAD_REQUEST Then
-			$sHTML = _WinHttpSimpleSSLRequest($hInternet, Default, $sActionPage, Default, Default, "Accept: text/html;q=0.9,text/plain;q=0.8,*/*;q=0.5", Default, Default, $sCredName, $sCredPass)
-			$iScheme = $INTERNET_SCHEME_HTTPS
+		$iScheme = _WinHttpQueryOption($hInternet, $WINHTTP_OPTION_CONTEXT_VALUE); read internet scheme from the connection handle
+		Local $sAccpt = "Accept: text/html;q=0.9,text/plain;q=0.8,*/*;q=0.5"
+		If $iScheme = $INTERNET_SCHEME_HTTPS Then
+			$sHTML = _WinHttpSimpleSSLRequest($hInternet, Default, $sActionPage, Default, Default, $sAccpt, Default, Default, $sCredName, $sCredPass)
+		ElseIf $iScheme = $INTERNET_SCHEME_HTTP Then
+			$sHTML = _WinHttpSimpleRequest($hInternet, Default, $sActionPage, Default, Default, $sAccpt, Default, Default, $sCredName, $sCredPass)
+		Else
+			; Try both http and https scheme and deduct the right one besed on response
+			$sHTML = _WinHttpSimpleRequest($hInternet, Default, $sActionPage, Default, Default, $sAccpt, Default, Default, $sCredName, $sCredPass)
+			If @error Or @extended >= $HTTP_STATUS_BAD_REQUEST Then
+				$sHTML = _WinHttpSimpleSSLRequest($hInternet, Default, $sActionPage, Default, Default, $sAccpt, Default, Default, $sCredName, $sCredPass)
+				$iScheme = $INTERNET_SCHEME_HTTPS
+			Else
+				$iScheme = $INTERNET_SCHEME_HTTP
+			EndIf
 		EndIf
 	EndIf
 	$sHTML = StringRegExpReplace($sHTML, "(?s)<!--.*?-->", "") ; removing comments
