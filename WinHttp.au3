@@ -1670,8 +1670,8 @@ Func _WinHttpSimpleRequest($hConnect, $sType = Default, $sPath = Default, $sRefe
 	If $iMode > 2 Or $iMode < 0 Then Return SetError(4, 0, 0)
 	Local $hRequest = _WinHttpSimpleSendRequest($hConnect, $sType, $sPath, $sReferrer, $sData, $sHeader)
 	If @error Then Return SetError(@error, 0, 0)
-	Local $iExtended = _WinHttpQueryHeaders($hRequest, $WINHTTP_QUERY_STATUS_CODE)
 	__WinHttpSetCredentials($hRequest, $sHeader, $sData, $sCredName, $sCredPass)
+	Local $iExtended = _WinHttpQueryHeaders($hRequest, $WINHTTP_QUERY_STATUS_CODE)
 	If $fGetHeaders Then
 		Local $aData[2] = [_WinHttpQueryHeaders($hRequest), _WinHttpSimpleReadData($hRequest, $iMode)]
 		_WinHttpCloseHandle($hRequest)
