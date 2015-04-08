@@ -19,7 +19,7 @@ $hOpen = _WinHttpOpen()
 ; Get connection handle
 $hConnect = _WinHttpConnect($hOpen, "wq.apnic.net")
 ; Fill form on this page
-$sRead = _WinHttpSimpleFormFill($hConnect, "apnic-bin/whois.pl", Default, "name:searchtext", "4.2.2.2")
+$sRead = _WinHttpSimpleFormFill($hConnect, "apnic-bin/whois.pl", Default, "name:searchtext", "4.2.2.2", "name:object_type", "All")
 ; Close connection handle
 _WinHttpCloseHandle($hConnect)
 ; Close session handle
