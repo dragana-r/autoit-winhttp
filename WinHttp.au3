@@ -1078,7 +1078,7 @@ EndFunc
 ;                  $sData1 - [optional] Data to set to coresponding field.
 ;                  (...) - [optional] Other pairs of Id/Data. Overall number of fields is 40.
 ;                  $sAdditionalData - [optional] Additional data (read Remarks section).
-; Return values .: Success - Returns HTML source of the page returned by the server on submited form.
+; Return values .: Success - Returns HTML source of the page returned by the server on submited form. @extended is set to HTTP status code.
 ;                  Failure - Returns empty string and sets @error:
 ;                  |1 - No forms on the page
 ;                  |2 - Invalid form
@@ -1551,8 +1551,9 @@ Func _WinHttpSimpleFormFill(ByRef $hInternet, $sActionPage = Default, $sFormId =
 			_WinHttpCloseHandle($hRequest)
 			Return SetError(4, 0, "") ; either site is expiriencing problems or your connection
 		EndIf
+		Local $iSCode = _WinHttpQueryHeaders($hRequest, $WINHTTP_QUERY_STATUS_CODE)
 		_WinHttpCloseHandle($hRequest)
-		Return $sReturned
+		Return SetExtended($iSCode, $sReturned)
 	EndIf
 	; If here then there is no form on the page with specified attributes (name, id or index)
 	Return SetError(3, 0, "")
