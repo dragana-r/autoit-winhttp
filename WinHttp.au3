@@ -1100,7 +1100,7 @@ EndFunc
 ;                  and the other removed from the submited form. "Checkbox" and "Button" input types are removed from the submitted form unless explicitly set. Same goes for "Radio" with exception that
 ;                  only one such control can be set, the rest are removed. These controls are set by their values. Wrong value makes them invalid and therefore not part of the submited data.
 ;                  +All other non-set fields are left default.
-;                  +Last (superfluous) [[$sAdditionalData]] argument can be used to pass authorization credentials in form [["[CRED:username,password]"]], magic string to ignore cerificate errors in form [["[IGNORE_CERT_ERRORS]"]] and/or HTTP request header data to add.
+;                  +Last (superfluous) [[$sAdditionalData]] argument can be used to pass authorization credentials in form [["[CRED:username:password]"]], magic string to ignore cerificate errors in form [["[IGNORE_CERT_ERRORS]"]] and/or HTTP request header data to add.
 ;                  +
 ;                  +If this function is used to upload multiple files then there are two available ways. Default would be to submit the form following RFC2388 specification.
 ;                  In that case every file is represented as multipart/mixed part embedded within the multipart/form-data.
@@ -1125,7 +1125,9 @@ Func _WinHttpSimpleFormFill(ByRef $hInternet, $sActionPage = Default, $sFormId =
 		If $iIgnoreCertErr Then $sAdditionalHeaders = StringReplace($sAdditionalHeaders, "[IGNORE_CERT_ERRORS]", "", 1)
 		Local $aCred = StringRegExp($sAdditionalHeaders, "\[CRED:(.*?)\]", 2)
 		If Not @error Then
-			Local $aStrSplit = StringSplit($aCred[1], ",", 3)
+			Local $sCredDelim = ":"
+			If Not StringInStr($aCred[1], $sCredDelim) Then $sCredDelim = ","
+			Local $aStrSplit = StringSplit($aCred[1], $sCredDelim, 3)
 			If Not @error Then
 				$sCredName = $aStrSplit[0]
 				$sCredPass = $aStrSplit[1]
