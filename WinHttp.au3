@@ -1466,11 +1466,11 @@ Func _WinHttpSimpleFormFill(ByRef $hInternet, $sActionPage = Default, $sFormId =
 							Next
 						Else ; like getElementsByName
 							For $j = 0 To UBound($aInputIds, 2) - 1
-								If $aInputIds[1][$j] = $aSplit[1] And $aInputIds[3][$j] = "file" Then
+								If $aInputIds[1][$j] == $aSplit[1] And $aInputIds[3][$j] = "file" Then
 									$sAddData = StringReplace($sAddData, _
 											$sCDisp & $aSplit[1] & '"; filename=""' & @CRLF & @CRLF & $aInputIds[2][$j] & @CRLF, _
 											__WinHttpFileContent($sAccept, $aInputIds[1][$j], $sPassedData, $sBoundary), 0, 1)
-								ElseIf $aInputIds[1][$j] = $aSplit[1] And $aInputIds[3][$j] = "submit" Then
+								ElseIf $aInputIds[1][$j] == $aSplit[1] And $aInputIds[3][$j] = "submit" Then
 									If $sPassedData = True Then ; if this "submit" is set to TRUE then
 										If $sSubmit Then ; If not already processed; only the first is valid
 											Local $fMDel = False
@@ -1490,7 +1490,7 @@ Func _WinHttpSimpleFormFill(ByRef $hInternet, $sActionPage = Default, $sFormId =
 									Else ; False means do nothing
 										ContinueLoop 2 ; process next parameter
 									EndIf
-								ElseIf $aInputIds[1][$j] = $aSplit[1] And $aInputIds[3][$j] = "radio" Then
+								ElseIf $aInputIds[1][$j] == $aSplit[1] And $aInputIds[3][$j] = "radio" Then
 									For $sChunkSub In StringSplit($sRadio, $sGrSep, 3) ; go tru all "radio" controls
 										If StringInStr($sChunkSub, "--" & $sBoundary & @CRLF & $sCDisp & $aInputIds[1][$j] & '"' & @CRLF & @CRLF & $sPassedData & @CRLF, 1) Then
 											$sAddData = StringRegExpReplace($sAddData, "\Q--" & $sBoundary & @CRLF & $sCDisp & $aInputIds[1][$j] & '"' & @CRLF & @CRLF & "\E" & "(.*?)" & @CRLF, "")
@@ -1500,13 +1500,13 @@ Func _WinHttpSimpleFormFill(ByRef $hInternet, $sActionPage = Default, $sFormId =
 										EndIf
 									Next
 									ContinueLoop 2 ; process next parameter
-								ElseIf $aInputIds[1][$j] = $aSplit[1] And $aInputIds[3][$j] = "checkbox" Then
+								ElseIf $aInputIds[1][$j] == $aSplit[1] And $aInputIds[3][$j] = "checkbox" Then
 									$sCheckBox = StringRegExpReplace($sCheckBox, "\Q--" & $sBoundary & @CRLF & _
 											$sCDisp & $aInputIds[1][$j] & '"' & @CRLF & @CRLF & _
 											$sPassedData & @CRLF & "\E" & $sGrSep & "*", "")
 									If StringRight($sCheckBox, 1) = $sGrSep Then $sCheckBox = StringTrimRight($sCheckBox, 1)
 									ContinueLoop 2 ; process next parameter
-								ElseIf $aInputIds[1][$j] = $aSplit[1] And $aInputIds[3][$j] = "button" Then
+								ElseIf $aInputIds[1][$j] == $aSplit[1] And $aInputIds[3][$j] = "button" Then
 									$sButton = StringRegExpReplace($sButton, "\Q--" & $sBoundary & @CRLF & _
 											$sCDisp & $aInputIds[1][$j] & '"' & @CRLF & @CRLF & _
 											$sPassedData & @CRLF & "\E" & $sGrSep & "*", "")
