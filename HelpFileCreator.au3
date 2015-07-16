@@ -292,7 +292,7 @@ Func _WriteHHP($sWorkingFolder, $aFunctions)
 			"Full-text search=No" & @CRLF & @CRLF
 
 	$sData &= "[WINDOWS]" & @CRLF & _
-			'NewWindow="' & $sName & ' Help"' & _
+			'NewWindow="' & $sName & ' ' & $sCurrentVersionNumber & ' Help"' & _
 			'"","","html\Functions\IFame.htm","",,,,,0x20420,0,0x0,,0x10030000,,,1,,,0' & @CRLF & @CRLF
 
 	$sData &= "[FILES]" & @CRLF
