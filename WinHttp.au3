@@ -1113,14 +1113,13 @@ Func _WinHttpSimpleFormFill(ByRef $hInternet, $sActionPage = Default, $sFormId =
 		$sFieldId11 = Default, $sData11 = Default, $sFieldId12 = Default, $sData12 = Default, $sFieldId13 = Default, $sData13 = Default, $sFieldId14 = Default, $sData14 = Default, $sFieldId15 = Default, $sData15 = Default, $sFieldId16 = Default, $sData16 = Default, $sFieldId17 = Default, $sData17 = Default, $sFieldId18 = Default, $sData18 = Default, $sFieldId19 = Default, $sData19 = Default, $sFieldId20 = Default, $sData20 = Default, _
 		$sFieldId21 = Default, $sData21 = Default, $sFieldId22 = Default, $sData22 = Default, $sFieldId23 = Default, $sData23 = Default, $sFieldId24 = Default, $sData24 = Default, $sFieldId25 = Default, $sData25 = Default, $sFieldId26 = Default, $sData26 = Default, $sFieldId27 = Default, $sData27 = Default, $sFieldId28 = Default, $sData28 = Default, $sFieldId29 = Default, $sData29 = Default, $sFieldId30 = Default, $sData30 = Default, _
 		$sFieldId31 = Default, $sData31 = Default, $sFieldId32 = Default, $sData32 = Default, $sFieldId33 = Default, $sData33 = Default, $sFieldId34 = Default, $sData34 = Default, $sFieldId35 = Default, $sData35 = Default, $sFieldId36 = Default, $sData36 = Default, $sFieldId37 = Default, $sData37 = Default, $sFieldId38 = Default, $sData38 = Default, $sFieldId39 = Default, $sData39 = Default, $sFieldId40 = Default, $sData40 = Default)
-	#forceref $sFieldId1, $sData1, $sFieldId2, $sData2, $sFieldId3, $sData3, $sFieldId4, $sData4, $sFieldId5, $sData5, $sFieldId6, $sData6, $sFieldId7, $sData7, $sFieldId8, $sData8, $sFieldId9, $sData9, $sFieldId10, $sData10
-	#forceref $sFieldId11, $sData11, $sFieldId12, $sData12, $sFieldId13, $sData13, $sFieldId14, $sData14, $sFieldId15, $sData15, $sFieldId16, $sData16, $sFieldId17, $sData17, $sFieldId18, $sData18, $sFieldId19, $sData19, $sFieldId20, $sData20
-	#forceref $sFieldId21, $sData21, $sFieldId22, $sData22, $sFieldId23, $sData23, $sFieldId24, $sData24, $sFieldId25, $sData25, $sFieldId26, $sData26, $sFieldId27, $sData27, $sFieldId28, $sData28, $sFieldId29, $sData29, $sFieldId30, $sData30
-	#forceref $sFieldId31, $sData31, $sFieldId32, $sData32, $sFieldId33, $sData33, $sFieldId34, $sData34, $sFieldId35, $sData35, $sFieldId36, $sData36, $sFieldId37, $sData37, $sFieldId38, $sData38, $sFieldId39, $sData39, $sFieldId40, $sData40
 	__WinHttpDefault($sActionPage, "")
 	Local $iNumArgs = @NumParams, $sAdditionalHeaders, $sCredName, $sCredPass, $iIgnoreCertErr
+	Local $aDtas[41] = [0, $sData1, $sData2, $sData3, $sData4, $sData5, $sData6, $sData7, $sData8, $sData9, $sData10, $sData11, $sData12, $sData13, $sData14, $sData15, $sData16, $sData17, $sData18, $sData19, $sData20, $sData21, $sData22, $sData23, $sData24, $sData25, $sData26, $sData27, $sData28, $sData29, $sData30, $sData31, $sData32, $sData33, $sData34, $sData35, $sData36, $sData37, $sData38, $sData39, $sData40]
+	Local $aFlds[41] = [0, $sFieldId1, $sFieldId2, $sFieldId3, $sFieldId4, $sFieldId5, $sFieldId6, $sFieldId7, $sFieldId8, $sFieldId9, $sFieldId10, $sFieldId11, $sFieldId12, $sFieldId13, $sFieldId14, $sFieldId15, $sFieldId16, $sFieldId17, $sFieldId18, $sFieldId19, $sFieldId20, $sFieldId21, $sFieldId22, $sFieldId23, $sFieldId24, $sFieldId25, $sFieldId26, $sFieldId27, $sFieldId28, $sFieldId29, $sFieldId30, $sFieldId31, $sFieldId32, $sFieldId33, $sFieldId34, $sFieldId35, $sFieldId36, $sFieldId37, $sFieldId38, $sFieldId39, $sFieldId40]
 	If Not Mod($iNumArgs, 2) Then
-		$sAdditionalHeaders = Eval("sFieldId" & $iNumArgs / 2 - 1)
+		$sAdditionalHeaders = $aFlds[$iNumArgs / 2 - 1]
+		$aFlds[$iNumArgs / 2 - 1] = 0
 		$iIgnoreCertErr = StringInStr($sAdditionalHeaders, "[IGNORE_CERT_ERRORS]")
 		If $iIgnoreCertErr Then $sAdditionalHeaders = StringReplace($sAdditionalHeaders, "[IGNORE_CERT_ERRORS]", "", 1)
 		Local $aCred = StringRegExp($sAdditionalHeaders, "\[CRED:(.*?)\]", 2)
@@ -1255,8 +1254,10 @@ Func _WinHttpSimpleFormFill(ByRef $hInternet, $sActionPage = Default, $sFormId =
 				$sButton = StringTrimRight($sButton, 1)
 				$sAddData = StringTrimRight($sAddData, 1)
 				For $k = 1 To $iNumParams
-					$sPassedData = __WinHttpURLEncode(Eval("sData" & $k))
-					$sPassedId = Eval("sFieldId" & $k)
+					$sPassedData = __WinHttpURLEncode($aDtas[$k])
+					$aDtas[$k] = 0
+					$sPassedId = $aFlds[$k]
+					$aFlds[$k] = 0
 					$aSplit = StringSplit($sPassedId, ":", 2)
 					If @error Or $aSplit[0] <> "name" Then ; like .getElementById
 						If Not @error And $aSplit[0] = "id" Then $sPassedId = $aSplit[1]
@@ -1404,8 +1405,10 @@ Func _WinHttpSimpleFormFill(ByRef $hInternet, $sActionPage = Default, $sFormId =
 					$sButton = StringTrimRight($sButton, 1)
 					$sAddData &= "--" & $sBoundary & "--" & @CRLF
 					For $k = 1 To $iNumParams
-						$sPassedData = Eval("sData" & $k)
-						$sPassedId = Eval("sFieldId" & $k)
+						$sPassedData = $aDtas[$k]
+						$aDtas[$k] = 0
+						$sPassedId = $aFlds[$k]
+						$aFlds[$k] = 0
 						$aSplit = StringSplit($sPassedId, ":", 2)
 						If @error Or $aSplit[0] <> "name" Then ; like getElementById
 							If Not @error And $aSplit[0] = "id" Then $sPassedId = $aSplit[1]
