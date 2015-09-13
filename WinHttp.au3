@@ -369,13 +369,13 @@ EndFunc
 Func _WinHttpDetectAutoProxyConfigUrl($iAutoDetectFlags)
 	Local $aCall = DllCall($hWINHTTPDLL__WINHTTP, "bool", "WinHttpDetectAutoProxyConfigUrl", "dword", $iAutoDetectFlags, "ptr*", 0)
 	If @error Or Not $aCall[0] Then Return SetError(1, 0, "")
-	Local $pString = $aCall[2]
-	If $pString Then
-		Local $iLen = __WinHttpPtrStringLenW($pString)
+	Local $pStr = $aCall[2]
+	If $pStr Then
+		Local $iLen = __WinHttpPtrStringLenW($pStr)
 		If @error Then Return SetError(2, 0, "")
-		Local $tString = DllStructCreate("wchar[" & $iLen + 1 & "]", $pString)
+		Local $tString = DllStructCreate("wchar[" & $iLen + 1 & "]", $pStr)
 		Local $sString = DllStructGetData($tString, 1)
-		__WinHttpMemGlobalFree($pString)
+		__WinHttpMemGlobalFree($pStr)
 		Return $sString
 	EndIf
 	Return ""
@@ -1070,12 +1070,12 @@ EndFunc
 ; #FUNCTION# ;===============================================================================
 ; Name...........: _WinHttpSimpleFormFill
 ; Description ...: Fills web form.
-; Syntax.........: _WinHttpSimpleFormFill(ByRef $hInternet [, $sActionPage = Default [, $sFormId = Default [, $sFieldId1 = Default [, $sData1 = Default [, (...) [, $sAdditionalData]]]]]])
+; Syntax.........: _WinHttpSimpleFormFill(ByRef $hInternet [, $sActionPage = Default [, $sFormId = Default [, $sFldId1 = Default [, $sDta1 = Default [, (...) [, $sAdditionalData]]]]]])
 ; Parameters ....: $hInternet - Handle returned by _WinHttpConnect() or string variable with form.
 ;                  $sActionPage -  [optional] path to the page with form or session handle if $hInternet is string (default: "" - empty string; meaning 'default' page on the server in former).
 ;                  $sFormId - [optional] Id of the form. Can be name or zero-based index too (read Remarks section).
-;                  $sFieldId1 - [optional] Id of the input.
-;                  $sData1 - [optional] Data to set to coresponding field.
+;                  $sFldId1 - [optional] Id of the input.
+;                  $sDta1 - [optional] Data to set to coresponding field.
 ;                  (...) - [optional] Other pairs of Id/Data. Overall number of fields is 40.
 ;                  $sAdditionalData - [optional] Additional data (read Remarks section).
 ; Return values .: Success - Returns HTML source of the page returned by the server on submited form. @extended is set to HTTP status code.
@@ -1094,7 +1094,7 @@ EndFunc
 ;                  identify form by its zero-based index number (in case of e.g. three forms on some page first one will have index=0, second index=1, third index=2).
 ;                  Use [["name:FormName"]] to identify form by its name like with [[.getElementsByName(FormName)]]. FormName will be taken to be what's right of colon mark.
 ;                  In that case first form with that name is filled.
-;                  +As for fields, If [["name:FieldName"]] option is used all the fields except last with that name are removed from the form. Last one is filled with specified [[$sData]] data.
+;                  +As for fields, If [["name:FieldName"]] option is used all the fields except last with that name are removed from the form. Last one is filled with specified [[$sDta]] data.
 ;                  +This function can be used to fill forms with up to 40 fields at once.
 ;                  +"Submit" control you want to keep (click) set to True. If no such control is set then the first one found in the form is "clicked"
 ;                  and the other removed from the submited form. "Checkbox" and "Button" input types are removed from the submitted form unless explicitly set. Same goes for "Radio" with exception that
@@ -1109,14 +1109,14 @@ EndFunc
 ;                  +Muliple files are always separated with vertical line ASCII character when filling the form.
 ; Related .......: _WinHttpConnect
 ;============================================================================================
-Func _WinHttpSimpleFormFill(ByRef $hInternet, $sActionPage = Default, $sFormId = Default, $sFieldId1 = Default, $sData1 = Default, $sFieldId2 = Default, $sData2 = Default, $sFieldId3 = Default, $sData3 = Default, $sFieldId4 = Default, $sData4 = Default, $sFieldId5 = Default, $sData5 = Default, $sFieldId6 = Default, $sData6 = Default, $sFieldId7 = Default, $sData7 = Default, $sFieldId8 = Default, $sData8 = Default, $sFieldId9 = Default, $sData9 = Default, $sFieldId10 = Default, $sData10 = Default, _
-		$sFieldId11 = Default, $sData11 = Default, $sFieldId12 = Default, $sData12 = Default, $sFieldId13 = Default, $sData13 = Default, $sFieldId14 = Default, $sData14 = Default, $sFieldId15 = Default, $sData15 = Default, $sFieldId16 = Default, $sData16 = Default, $sFieldId17 = Default, $sData17 = Default, $sFieldId18 = Default, $sData18 = Default, $sFieldId19 = Default, $sData19 = Default, $sFieldId20 = Default, $sData20 = Default, _
-		$sFieldId21 = Default, $sData21 = Default, $sFieldId22 = Default, $sData22 = Default, $sFieldId23 = Default, $sData23 = Default, $sFieldId24 = Default, $sData24 = Default, $sFieldId25 = Default, $sData25 = Default, $sFieldId26 = Default, $sData26 = Default, $sFieldId27 = Default, $sData27 = Default, $sFieldId28 = Default, $sData28 = Default, $sFieldId29 = Default, $sData29 = Default, $sFieldId30 = Default, $sData30 = Default, _
-		$sFieldId31 = Default, $sData31 = Default, $sFieldId32 = Default, $sData32 = Default, $sFieldId33 = Default, $sData33 = Default, $sFieldId34 = Default, $sData34 = Default, $sFieldId35 = Default, $sData35 = Default, $sFieldId36 = Default, $sData36 = Default, $sFieldId37 = Default, $sData37 = Default, $sFieldId38 = Default, $sData38 = Default, $sFieldId39 = Default, $sData39 = Default, $sFieldId40 = Default, $sData40 = Default)
+Func _WinHttpSimpleFormFill(ByRef $hInternet, $sActionPage = Default, $sFormId = Default, $sFldId1 = Default, $sDta1 = Default, $sFldId2 = Default, $sDta2 = Default, $sFldId3 = Default, $sDta3 = Default, $sFldId4 = Default, $sDta4 = Default, $sFldId5 = Default, $sDta5 = Default, $sFldId6 = Default, $sDta6 = Default, $sFldId7 = Default, $sDta7 = Default, $sFldId8 = Default, $sDta8 = Default, $sFldId9 = Default, $sDta9 = Default, $sFldId10 = Default, $sDta10 = Default, _
+		$sFldId11 = Default, $sDta11 = Default, $sFldId12 = Default, $sDta12 = Default, $sFldId13 = Default, $sDta13 = Default, $sFldId14 = Default, $sDta14 = Default, $sFldId15 = Default, $sDta15 = Default, $sFldId16 = Default, $sDta16 = Default, $sFldId17 = Default, $sDta17 = Default, $sFldId18 = Default, $sDta18 = Default, $sFldId19 = Default, $sDta19 = Default, $sFldId20 = Default, $sDta20 = Default, _
+		$sFldId21 = Default, $sDta21 = Default, $sFldId22 = Default, $sDta22 = Default, $sFldId23 = Default, $sDta23 = Default, $sFldId24 = Default, $sDta24 = Default, $sFldId25 = Default, $sDta25 = Default, $sFldId26 = Default, $sDta26 = Default, $sFldId27 = Default, $sDta27 = Default, $sFldId28 = Default, $sDta28 = Default, $sFldId29 = Default, $sDta29 = Default, $sFldId30 = Default, $sDta30 = Default, _
+		$sFldId31 = Default, $sDta31 = Default, $sFldId32 = Default, $sDta32 = Default, $sFldId33 = Default, $sDta33 = Default, $sFldId34 = Default, $sDta34 = Default, $sFldId35 = Default, $sDta35 = Default, $sFldId36 = Default, $sDta36 = Default, $sFldId37 = Default, $sDta37 = Default, $sFldId38 = Default, $sDta38 = Default, $sFldId39 = Default, $sDta39 = Default, $sFldId40 = Default, $sDta40 = Default)
 	__WinHttpDefault($sActionPage, "")
 	Local $iNumArgs = @NumParams, $sAdditionalHeaders, $sCredName, $sCredPass, $iIgnoreCertErr
-	Local $aDtas[41] = [0, $sData1, $sData2, $sData3, $sData4, $sData5, $sData6, $sData7, $sData8, $sData9, $sData10, $sData11, $sData12, $sData13, $sData14, $sData15, $sData16, $sData17, $sData18, $sData19, $sData20, $sData21, $sData22, $sData23, $sData24, $sData25, $sData26, $sData27, $sData28, $sData29, $sData30, $sData31, $sData32, $sData33, $sData34, $sData35, $sData36, $sData37, $sData38, $sData39, $sData40]
-	Local $aFlds[41] = [0, $sFieldId1, $sFieldId2, $sFieldId3, $sFieldId4, $sFieldId5, $sFieldId6, $sFieldId7, $sFieldId8, $sFieldId9, $sFieldId10, $sFieldId11, $sFieldId12, $sFieldId13, $sFieldId14, $sFieldId15, $sFieldId16, $sFieldId17, $sFieldId18, $sFieldId19, $sFieldId20, $sFieldId21, $sFieldId22, $sFieldId23, $sFieldId24, $sFieldId25, $sFieldId26, $sFieldId27, $sFieldId28, $sFieldId29, $sFieldId30, $sFieldId31, $sFieldId32, $sFieldId33, $sFieldId34, $sFieldId35, $sFieldId36, $sFieldId37, $sFieldId38, $sFieldId39, $sFieldId40]
+	Local $aDtas[41] = [0, $sDta1, $sDta2, $sDta3, $sDta4, $sDta5, $sDta6, $sDta7, $sDta8, $sDta9, $sDta10, $sDta11, $sDta12, $sDta13, $sDta14, $sDta15, $sDta16, $sDta17, $sDta18, $sDta19, $sDta20, $sDta21, $sDta22, $sDta23, $sDta24, $sDta25, $sDta26, $sDta27, $sDta28, $sDta29, $sDta30, $sDta31, $sDta32, $sDta33, $sDta34, $sDta35, $sDta36, $sDta37, $sDta38, $sDta39, $sDta40]
+	Local $aFlds[41] = [0, $sFldId1, $sFldId2, $sFldId3, $sFldId4, $sFldId5, $sFldId6, $sFldId7, $sFldId8, $sFldId9, $sFldId10, $sFldId11, $sFldId12, $sFldId13, $sFldId14, $sFldId15, $sFldId16, $sFldId17, $sFldId18, $sFldId19, $sFldId20, $sFldId21, $sFldId22, $sFldId23, $sFldId24, $sFldId25, $sFldId26, $sFldId27, $sFldId28, $sFldId29, $sFldId30, $sFldId31, $sFldId32, $sFldId33, $sFldId34, $sFldId35, $sFldId36, $sFldId37, $sFldId38, $sFldId39, $sFldId40]
 	If Not Mod($iNumArgs, 2) Then
 		$sAdditionalHeaders = $aFlds[$iNumArgs / 2 - 1]
 		$aFlds[$iNumArgs / 2 - 1] = 0
@@ -1633,12 +1633,12 @@ EndFunc
 ; #FUNCTION# ====================================================================================================================
 ; Name...........: _WinHttpSimpleRequest
 ; Description ...: A function to send a request in a simpler form
-; Syntax.........: _WinHttpSimpleRequest($hConnect, $sType, $sPath [, $sReferrer = Default [, $sData = Default [, $sHeader = Default [, $fGetHeaders = Default [, $iMode = Default ]]]]])
+; Syntax.........: _WinHttpSimpleRequest($hConnect, $sType, $sPath [, $sReferrer = Default [, $sDta = Default [, $sHeader = Default [, $fGetHeaders = Default [, $iMode = Default ]]]]])
 ; Parameters ....: $hConnect  - Handle from _WinHttpConnect
 ;                  $sType       - [optional] GET or POST (default: GET)
 ;                  $sPath       - [optional] request path (default: "" - empty string; meaning 'default' page on the server)
 ;                  $sReferrer   - [optional] referrer (default: $WINHTTP_NO_REFERER)
-;                  $sData       - [optional] POST-Data (default: $WINHTTP_NO_REQUEST_DATA)
+;                  $sDta        - [optional] POST-Data (default: $WINHTTP_NO_REQUEST_DATA)
 ;                  $sHeader     - [optional] additional Headers (default: $WINHTTP_NO_ADDITIONAL_HEADERS)
 ;                  $fGetHeaders - [optional] return response headers (default: False)
 ;                  $iMode       - [optional] reading mode of result
@@ -1658,21 +1658,21 @@ EndFunc
 ; Modified.......: trancexx
 ; Related .......: _WinHttpSimpleSSLRequest, _WinHttpSimpleSendRequest, _WinHttpSimpleSendSSLRequest, _WinHttpQueryHeaders, _WinHttpSimpleReadData
 ; ===============================================================================================================================
-Func _WinHttpSimpleRequest($hConnect, $sType = Default, $sPath = Default, $sReferrer = Default, $sData = Default, $sHeader = Default, $fGetHeaders = Default, $iMode = Default, $sCredName = Default, $sCredPass = Default)
+Func _WinHttpSimpleRequest($hConnect, $sType = Default, $sPath = Default, $sReferrer = Default, $sDta = Default, $sHeader = Default, $fGetHeaders = Default, $iMode = Default, $sCredName = Default, $sCredPass = Default)
 	; Author: ProgAndy
 	__WinHttpDefault($sType, "GET")
 	__WinHttpDefault($sPath, "")
 	__WinHttpDefault($sReferrer, $WINHTTP_NO_REFERER)
-	__WinHttpDefault($sData, $WINHTTP_NO_REQUEST_DATA)
+	__WinHttpDefault($sDta, $WINHTTP_NO_REQUEST_DATA)
 	__WinHttpDefault($sHeader, $WINHTTP_NO_ADDITIONAL_HEADERS)
 	__WinHttpDefault($fGetHeaders, False)
 	__WinHttpDefault($iMode, Default)
 	__WinHttpDefault($sCredName, "")
 	__WinHttpDefault($sCredPass, "")
 	If $iMode > 2 Or $iMode < 0 Then Return SetError(4, 0, 0)
-	Local $hRequest = _WinHttpSimpleSendRequest($hConnect, $sType, $sPath, $sReferrer, $sData, $sHeader)
+	Local $hRequest = _WinHttpSimpleSendRequest($hConnect, $sType, $sPath, $sReferrer, $sDta, $sHeader)
 	If @error Then Return SetError(@error, 0, 0)
-	__WinHttpSetCredentials($hRequest, $sHeader, $sData, $sCredName, $sCredPass)
+	__WinHttpSetCredentials($hRequest, $sHeader, $sDta, $sCredName, $sCredPass)
 	Local $iExtended = _WinHttpQueryHeaders($hRequest, $WINHTTP_QUERY_STATUS_CODE)
 	If $fGetHeaders Then
 		Local $aData[2] = [_WinHttpQueryHeaders($hRequest), _WinHttpSimpleReadData($hRequest, $iMode)]
@@ -1687,12 +1687,12 @@ EndFunc
 ; #FUNCTION# ====================================================================================================================
 ; Name...........: _WinHttpSimpleSendRequest
 ; Description ...: A function to send a request in a simpler form, but not read the data
-; Syntax.........: _WinHttpSimpleSendRequest($hConnect, $sType, $sPath [, $sReferrer = Default [, $sData = Default [, $sHeader = Default ]]])
+; Syntax.........: _WinHttpSimpleSendRequest($hConnect, $sType, $sPath [, $sReferrer = Default [, $sDta = Default [, $sHeader = Default ]]])
 ; Parameters ....: $hConnect  - Handle from _WinHttpConnect
 ;                  $sType       - [optional] GET or POST (default: GET)
 ;                  $sPath       - [optional] request path (default: "" - empty string; meaning 'default' page on the server)
 ;                  $sReferrer   - [optional] referrer (default: $WINHTTP_NO_REFERER)
-;                  $sData       - [optional] POST-Data (default: $WINHTTP_NO_REQUEST_DATA)
+;                  $sDta        - [optional] POST-Data (default: $WINHTTP_NO_REQUEST_DATA)
 ;                  $sHeader     - [optional] additional Headers (default: $WINHTTP_NO_ADDITIONAL_HEADERS)
 ; Return values .: Success      - handle of request after _WinHttpReceiveResponse.
 ;                  Failure      - 0 and set @error
@@ -1702,19 +1702,19 @@ EndFunc
 ; Author ........: ProgAndy
 ; Related .......: _WinHttpSimpleRequest, _WinHttpSimpleSendSSLRequest, _WinHttpSimpleReadData
 ; ===============================================================================================================================
-Func _WinHttpSimpleSendRequest($hConnect, $sType = Default, $sPath = Default, $sReferrer = Default, $sData = Default, $sHeader = Default)
+Func _WinHttpSimpleSendRequest($hConnect, $sType = Default, $sPath = Default, $sReferrer = Default, $sDta = Default, $sHeader = Default)
 	; Author: ProgAndy
 	__WinHttpDefault($sType, "GET")
 	__WinHttpDefault($sPath, "")
 	__WinHttpDefault($sReferrer, $WINHTTP_NO_REFERER)
-	__WinHttpDefault($sData, $WINHTTP_NO_REQUEST_DATA)
+	__WinHttpDefault($sDta, $WINHTTP_NO_REQUEST_DATA)
 	__WinHttpDefault($sHeader, $WINHTTP_NO_ADDITIONAL_HEADERS)
 	Local $hRequest = _WinHttpOpenRequest($hConnect, $sType, $sPath, Default, $sReferrer)
 	If Not $hRequest Then Return SetError(1, @error, 0)
 	If $sType = "POST" And $sHeader = $WINHTTP_NO_ADDITIONAL_HEADERS Then $sHeader = "Content-Type: application/x-www-form-urlencoded" & @CRLF
 	_WinHttpSetOption($hRequest, $WINHTTP_OPTION_DECOMPRESSION, $WINHTTP_DECOMPRESSION_FLAG_ALL)
 	_WinHttpSetOption($hRequest, $WINHTTP_OPTION_UNSAFE_HEADER_PARSING, 1)
-	_WinHttpSendRequest($hRequest, $sHeader, $sData)
+	_WinHttpSendRequest($hRequest, $sHeader, $sDta)
 	If @error Then Return SetError(2, 0 * _WinHttpCloseHandle($hRequest), 0)
 	_WinHttpReceiveResponse($hRequest)
 	If @error Then Return SetError(3, 0 * _WinHttpCloseHandle($hRequest), 0)
@@ -1724,12 +1724,12 @@ EndFunc
 ; #FUNCTION# ====================================================================================================================
 ; Name...........: _WinHttpSimpleSendSSLRequest
 ; Description ...: A function to send a SSL request in a simpler form, but not read the data
-; Syntax.........: _WinHttpSimpleSendSSLRequest($hConnect [, $sType [, $sPath [, $sReferrer = Default [, $sData = Default [, $sHeader = Default ]]]]])
+; Syntax.........: _WinHttpSimpleSendSSLRequest($hConnect [, $sType [, $sPath [, $sReferrer = Default [, $sDta = Default [, $sHeader = Default ]]]]])
 ; Parameters ....: $hConnect  - Handle from _WinHttpConnect
 ;                  $sType       - [optional] GET or POST (default: GET)
 ;                  $sPath       - [optional] request path (default: "" - empty string; meaning 'default' page on the server)
 ;                  $sReferrer   - [optional] referrer (default: $WINHTTP_NO_REFERER)
-;                  $sData       - [optional] POST-Data (default: $WINHTTP_NO_REQUEST_DATA)
+;                  $sDta        - [optional] POST-Data (default: $WINHTTP_NO_REQUEST_DATA)
 ;                  $sHeader     - [optional] additional Headers (default: $WINHTTP_NO_ADDITIONAL_HEADERS)
 ; Return values .: Success      - handle of request after _WinHttpReceiveResponse.
 ;                  Failure      - 0 and set @error
@@ -1739,12 +1739,12 @@ EndFunc
 ; Author ........: ProgAndy
 ; Related .......: _WinHttpSimpleSSLRequest, _WinHttpSimpleSendRequest, _WinHttpSimpleReadData
 ; ===============================================================================================================================
-Func _WinHttpSimpleSendSSLRequest($hConnect, $sType = Default, $sPath = Default, $sReferrer = Default, $sData = Default, $sHeader = Default, $iIgnoreAllCertErrors = 0)
+Func _WinHttpSimpleSendSSLRequest($hConnect, $sType = Default, $sPath = Default, $sReferrer = Default, $sDta = Default, $sHeader = Default, $iIgnoreAllCertErrors = 0)
 	; Author: ProgAndy
 	__WinHttpDefault($sType, "GET")
 	__WinHttpDefault($sPath, "")
 	__WinHttpDefault($sReferrer, $WINHTTP_NO_REFERER)
-	__WinHttpDefault($sData, $WINHTTP_NO_REQUEST_DATA)
+	__WinHttpDefault($sDta, $WINHTTP_NO_REQUEST_DATA)
 	__WinHttpDefault($sHeader, $WINHTTP_NO_ADDITIONAL_HEADERS)
 	Local $hRequest = _WinHttpOpenRequest($hConnect, $sType, $sPath, Default, $sReferrer, Default, BitOR($WINHTTP_FLAG_SECURE, $WINHTTP_FLAG_ESCAPE_DISABLE))
 	If Not $hRequest Then Return SetError(1, @error, 0)
@@ -1752,7 +1752,7 @@ Func _WinHttpSimpleSendSSLRequest($hConnect, $sType = Default, $sPath = Default,
 	If $sType = "POST" And $sHeader = $WINHTTP_NO_ADDITIONAL_HEADERS Then $sHeader = "Content-Type: application/x-www-form-urlencoded" & @CRLF
 	_WinHttpSetOption($hRequest, $WINHTTP_OPTION_DECOMPRESSION, $WINHTTP_DECOMPRESSION_FLAG_ALL)
 	_WinHttpSetOption($hRequest, $WINHTTP_OPTION_UNSAFE_HEADER_PARSING, 1)
-	_WinHttpSendRequest($hRequest, $sHeader, $sData)
+	_WinHttpSendRequest($hRequest, $sHeader, $sDta)
 	If @error Then Return SetError(2, 0 * _WinHttpCloseHandle($hRequest), 0)
 	_WinHttpReceiveResponse($hRequest)
 	If @error Then Return SetError(3, 0 * _WinHttpCloseHandle($hRequest), 0)
@@ -1762,12 +1762,12 @@ EndFunc
 ; #FUNCTION# ====================================================================================================================
 ; Name...........: _WinHttpSimpleSSLRequest
 ; Description ...: A function to send a SSL request in a simpler form
-; Syntax.........: _WinHttpSimpleSSLRequest($hConnect [, $sType [, $sPath [, $sReferrer = Default [, $sData = Default [, $sHeader = Default [, $fGetHeaders = Default [, $iMode = Default ]]]]]]])
+; Syntax.........: _WinHttpSimpleSSLRequest($hConnect [, $sType [, $sPath [, $sReferrer = Default [, $sDta = Default [, $sHeader = Default [, $fGetHeaders = Default [, $iMode = Default ]]]]]]])
 ; Parameters ....: $hConnect  - Handle from _WinHttpConnect
 ;                  $sType       - [optional] GET or POST (default: GET)
 ;                  $sPath       - [optional] request path (default: "" - empty string; meaning 'default' page on the server)
 ;                  $sReferrer   - [optional] referrer (default: $WINHTTP_NO_REFERER)
-;                  $sData       - [optional] POST-Data (default: $WINHTTP_NO_REQUEST_DATA)
+;                  $sDta        - [optional] POST-Data (default: $WINHTTP_NO_REQUEST_DATA)
 ;                  $sHeader     - [optional] additional Headers (default: $WINHTTP_NO_ADDITIONAL_HEADERS)
 ;                  $fGetHeaders - [optional] return response headers (default: False)
 ;                  $iMode       - [optional] reading mode of result
@@ -1787,21 +1787,21 @@ EndFunc
 ; Modified.......: trancexx
 ; Related .......: _WinHttpSimpleRequest, _WinHttpSimpleSendSSLRequest, _WinHttpSimpleSendRequest, _WinHttpQueryHeaders, _WinHttpSimpleReadData
 ; ===============================================================================================================================
-Func _WinHttpSimpleSSLRequest($hConnect, $sType = Default, $sPath = Default, $sReferrer = Default, $sData = Default, $sHeader = Default, $fGetHeaders = Default, $iMode = Default, $sCredName = Default, $sCredPass = Default, $iIgnoreCertErrors = 0)
+Func _WinHttpSimpleSSLRequest($hConnect, $sType = Default, $sPath = Default, $sReferrer = Default, $sDta = Default, $sHeader = Default, $fGetHeaders = Default, $iMode = Default, $sCredName = Default, $sCredPass = Default, $iIgnoreCertErrors = 0)
 	; Author: ProgAndy
 	__WinHttpDefault($sType, "GET")
 	__WinHttpDefault($sPath, "")
 	__WinHttpDefault($sReferrer, $WINHTTP_NO_REFERER)
-	__WinHttpDefault($sData, $WINHTTP_NO_REQUEST_DATA)
+	__WinHttpDefault($sDta, $WINHTTP_NO_REQUEST_DATA)
 	__WinHttpDefault($sHeader, $WINHTTP_NO_ADDITIONAL_HEADERS)
 	__WinHttpDefault($fGetHeaders, False)
 	__WinHttpDefault($iMode, Default)
 	__WinHttpDefault($sCredName, "")
 	__WinHttpDefault($sCredPass, "")
 	If $iMode > 2 Or $iMode < 0 Then Return SetError(4, 0, 0)
-	Local $hRequest = _WinHttpSimpleSendSSLRequest($hConnect, $sType, $sPath, $sReferrer, $sData, $sHeader, $iIgnoreCertErrors)
+	Local $hRequest = _WinHttpSimpleSendSSLRequest($hConnect, $sType, $sPath, $sReferrer, $sDta, $sHeader, $iIgnoreCertErrors)
 	If @error Then Return SetError(@error, 0, 0)
-	__WinHttpSetCredentials($hRequest, $sHeader, $sData, $sCredName, $sCredPass)
+	__WinHttpSetCredentials($hRequest, $sHeader, $sDta, $sCredName, $sCredPass)
 	If $fGetHeaders Then
 		Local $aData[2] = [_WinHttpQueryHeaders($hRequest), _WinHttpSimpleReadData($hRequest, $iMode)]
 		_WinHttpCloseHandle($hRequest)
@@ -2043,10 +2043,10 @@ Func __WinHttpFinalizeCtrls($sSubmit, $sRadio, $sCheckBox, $sButton, ByRef $sAdd
 	EndIf
 EndFunc
 
-Func __WinHttpTrimBounds(ByRef $sData, $sBound)
+Func __WinHttpTrimBounds(ByRef $sDta, $sBound)
 	Local $iBLen = StringLen($sBound)
-	If StringRight($sData, $iBLen) = $sBound Then $sData = StringTrimRight($sData, $iBLen)
-	If StringLeft($sData, $iBLen) = $sBound Then $sData = StringTrimLeft($sData, $iBLen)
+	If StringRight($sDta, $iBLen) = $sBound Then $sDta = StringTrimRight($sDta, $iBLen)
+	If StringLeft($sDta, $iBLen) = $sBound Then $sDta = StringTrimLeft($sDta, $iBLen)
 EndFunc
 
 Func __WinHttpFormAttrib(ByRef $aAttrib, $i, $sElement)
@@ -2121,8 +2121,8 @@ Func __WinHttpMemGlobalFree($pMem)
 	Return 1
 EndFunc
 
-Func __WinHttpPtrStringLenW($pString)
-	Local $aCall = DllCall("kernel32.dll", "dword", "lstrlenW", "ptr", $pString)
+Func __WinHttpPtrStringLenW($pStr)
+	Local $aCall = DllCall("kernel32.dll", "dword", "lstrlenW", "ptr", $pStr)
 	If @error Then Return SetError(1, 0, 0)
 	Return $aCall[0]
 EndFunc
@@ -2133,11 +2133,11 @@ Func __WinHttpUA()
 EndFunc
 
 Func __WinHttpSysInfo()
-	Local $sData = FileGetVersion("kernel32.dll")
-	$sData = "(Windows NT " & StringLeft($sData, StringInStr($sData, ".", 1, 2) - 1)
-	If StringInStr(@OSArch, "64") And Not @AutoItX64 Then $sData &= "; WOW64"
-	$sData &= ")"
-	Return $sData
+	Local $sDta = FileGetVersion("kernel32.dll")
+	$sDta = "(Windows NT " & StringLeft($sDta, StringInStr($sDta, ".", 1, 2) - 1)
+	If StringInStr(@OSArch, "64") And Not @AutoItX64 Then $sDta &= "; WOW64"
+	$sDta &= ")"
+	Return $sDta
 EndFunc
 
 Func __WinHttpVer()
