@@ -822,6 +822,7 @@ Func _WinHttpSendRequest($hRequest, $sHeaders = Default, $sOptional = Default, $
 	Local $pOptional = 0, $iOptionalLength = 0
 	If @NumParams > 2 Then
 		Local $tOptional
+		If IsString($sOptional) Then $sOptional = StringToBinary($sOptional)
 		$iOptionalLength = BinaryLen($sOptional)
 		$tOptional = DllStructCreate("byte[" & $iOptionalLength & "]")
 		If $iOptionalLength Then $pOptional = DllStructGetPtr($tOptional)
