@@ -803,29 +803,29 @@ EndFunc
 ; Syntax.........: _WinHttpSendRequest($hRequest [, $sHeaders = Default [, $sOptional = Default [, $iTotalLength = Default [, $iContext = Default ]]]])
 ; Parameters ....: $hRequest - Handle returned by _WinHttpOpenRequest().
 ;                  $sHeaders - [optional] Additional headers to append to the request. Default is $WINHTTP_NO_ADDITIONAL_HEADERS.
-;                  $sOptional - [optional] Optional data to send immediately after the request headers. Default is $WINHTTP_NO_REQUEST_DATA.
+;                  $vOptional - [optional] Optional data to send immediately after the request headers. Default is $WINHTTP_NO_REQUEST_DATA.
 ;                  $iTotalLength - [optional] Length, in bytes, of the total optional data sent. Default is 0.
 ;                  $iContext - [optional] Application-defined value that is passed, with the request handle, to any callback functions. Default is 0.
 ; Return values .: Success - Returns 1.
 ;                  Failure - Returns 0 and sets @error:
 ;                  |1 - DllCall failed
 ; Author ........: trancexx
-; Remarks .......: Specifying optional data [[$sOptional]] will cause [[$iTotalLength]] to receive the size of that data if left default value.
+; Remarks .......: Specifying optional data [[$vOptional]] will cause [[$iTotalLength]] to receive the size of that data if left default value.
 ; Related .......: _WinHttpOpenRequest
 ; Link ..........: http://msdn.microsoft.com/en-us/library/aa384110.aspx
 ;============================================================================================
-Func _WinHttpSendRequest($hRequest, $sHeaders = Default, $sOptional = Default, $iTotalLength = Default, $iContext = Default)
+Func _WinHttpSendRequest($hRequest, $sHeaders = Default, $vOptional = Default, $iTotalLength = Default, $iContext = Default)
 	__WinHttpDefault($sHeaders, $WINHTTP_NO_ADDITIONAL_HEADERS)
-	__WinHttpDefault($sOptional, $WINHTTP_NO_REQUEST_DATA)
+	__WinHttpDefault($vOptional, $WINHTTP_NO_REQUEST_DATA)
 	__WinHttpDefault($iTotalLength, 0)
 	__WinHttpDefault($iContext, 0)
 	Local $pOptional = 0, $iOptionalLength = 0
 	If @NumParams > 2 Then
 		Local $tOptional
-		$iOptionalLength = BinaryLen($sOptional)
+		$iOptionalLength = BinaryLen($vOptional)
 		$tOptional = DllStructCreate("byte[" & $iOptionalLength & "]")
 		If $iOptionalLength Then $pOptional = DllStructGetPtr($tOptional)
-		DllStructSetData($tOptional, 1, $sOptional)
+		DllStructSetData($tOptional, 1, $vOptional)
 	EndIf
 	If Not $iTotalLength Or $iTotalLength < $iOptionalLength Then $iTotalLength += $iOptionalLength
 	Local $aCall = DllCall($hWINHTTPDLL__WINHTTP, "bool", "WinHttpSendRequest", _
