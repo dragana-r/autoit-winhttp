@@ -1,26 +1,26 @@
 
 
-#include "WinHttp.au3"
+#include "\WinHttp.au3"
 
-Opt("MustDeclareVars", 1)
+; http://www.w3schools.com/php/demo_form_validation_escapechar.php
 
-; !!!Note that this example will fail because of invalid username and password!!!
+$sUserName = "SomeUserName"
+$sEmail = "some.email@something.com"
 
-Global $sUserName = "SomeUserName"
-Global $sPassword = "SomePassword"
-Global $sDomain = "www.google.com"
-Global $sPage = "accounts/ClientLogin"
-; Visit http://code.google.com/apis/accounts/docs/AuthForInstalledApps.html for more informations
-Global $sAdditionalData = "accountType=HOSTED_OR_GOOGLE&Email=" & $sUserName & "&Passwd=" & $sPassword & "&service=mail&source=Gulp-CalGulp-1.05"
+$sDomain = "www.w3schools.com"
+$sPage = "/php/demo_form_validation_escapechar.php"
+
+; Data to send
+$sAdditionalData = "name=" & $sUserName & "&email=" & $sEmail
 
 ; Initialize and get session handle
-Global $hOpen = _WinHttpOpen("Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.9.2.6) Gecko/20100625 Firefox/3.6.6")
+$hOpen = _WinHttpOpen("Mozilla/5.0 (Windows NT 6.1; WOW64; rv:40.0) Gecko/20100101 Firefox/40.0")
 
 ; Get connection handle
-Global $hConnect = _WinHttpConnect($hOpen, $sDomain)
+$hConnect = _WinHttpConnect($hOpen, $sDomain)
 
 ; Make a request
-Global $hRequest = _WinHttpOpenRequest($hConnect, "POST", $sPage, -1, -1, -1, $WINHTTP_FLAG_SECURE)
+$hRequest = _WinHttpOpenRequest($hConnect, "POST", $sPage)
 
 ; Send it. Specify additional data to send too. This is required by the Google API:
 _WinHttpSendRequest($hRequest, "Content-Type: application/x-www-form-urlencoded", $sAdditionalData)
@@ -29,7 +29,7 @@ _WinHttpSendRequest($hRequest, "Content-Type: application/x-www-form-urlencoded"
 _WinHttpReceiveResponse($hRequest)
 
 ; See what's returned
-Global $sReturned
+Dim $sReturned
 If _WinHttpQueryDataAvailable($hRequest) Then ; if there is data
 	Do
 		$sReturned &= _WinHttpReadData($hRequest)
@@ -42,4 +42,5 @@ _WinHttpCloseHandle($hConnect)
 _WinHttpCloseHandle($hOpen)
 
 ; See what's returned
-MsgBox(0, "Returned", $sReturned)
+MsgBox(4096, "Returned", $sReturned)
+ConsoleWrite($sReturned & @CRLF)
