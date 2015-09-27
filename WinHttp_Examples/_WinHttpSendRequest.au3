@@ -1,6 +1,6 @@
 
 
-#include "\WinHttp.au3"
+#include "WinHttp.au3"
 
 ; http://www.w3schools.com/php/demo_form_validation_escapechar.php
 
