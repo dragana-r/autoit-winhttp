@@ -1224,7 +1224,7 @@ Func _WinHttpSimpleFormFill(ByRef $hInternet, $sActionPage = Default, $sFormId =
 			$sAction = StringRegExpReplace($sAction, "\A(/*\.\./)*", "") ; /../
 		Else
 			$iScheme = $aCrackURL[1]
-			$sNewURL = $aCrackURL[2]
+			$sNewURL = $aCrackURL[0] & "://" & $aCrackURL[2] & ":" & $aCrackURL[3]
 			$sAction = $aCrackURL[6] & $aCrackURL[7]
 		EndIf
 		If $fVarForm And Not $sNewURL Then Return SetError(5, 0, "") ; "action" must have URL specified
