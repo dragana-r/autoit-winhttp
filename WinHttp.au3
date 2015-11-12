@@ -1114,7 +1114,7 @@ Func _WinHttpSimpleFormFill(ByRef $hInternet, $sActionPage = Default, $sFormId =
 		$sFldId21 = Default, $sDta21 = Default, $sFldId22 = Default, $sDta22 = Default, $sFldId23 = Default, $sDta23 = Default, $sFldId24 = Default, $sDta24 = Default, $sFldId25 = Default, $sDta25 = Default, $sFldId26 = Default, $sDta26 = Default, $sFldId27 = Default, $sDta27 = Default, $sFldId28 = Default, $sDta28 = Default, $sFldId29 = Default, $sDta29 = Default, $sFldId30 = Default, $sDta30 = Default, _
 		$sFldId31 = Default, $sDta31 = Default, $sFldId32 = Default, $sDta32 = Default, $sFldId33 = Default, $sDta33 = Default, $sFldId34 = Default, $sDta34 = Default, $sFldId35 = Default, $sDta35 = Default, $sFldId36 = Default, $sDta36 = Default, $sFldId37 = Default, $sDta37 = Default, $sFldId38 = Default, $sDta38 = Default, $sFldId39 = Default, $sDta39 = Default, $sFldId40 = Default, $sDta40 = Default)
 	__WinHttpDefault($sActionPage, "")
-	Local $iNumArgs = @NumParams, $sAdditionalHeaders, $sCredName, $sCredPass, $iIgnoreCertErr
+	Local $iNumArgs = @NumParams, $sAdditionalHeaders, $sCredName, $sCredPass, $iIgnoreCertErr, $iRetArr
 	Local $aDtas[41] = [0, $sDta1, $sDta2, $sDta3, $sDta4, $sDta5, $sDta6, $sDta7, $sDta8, $sDta9, $sDta10, $sDta11, $sDta12, $sDta13, $sDta14, $sDta15, $sDta16, $sDta17, $sDta18, $sDta19, $sDta20, $sDta21, $sDta22, $sDta23, $sDta24, $sDta25, $sDta26, $sDta27, $sDta28, $sDta29, $sDta30, $sDta31, $sDta32, $sDta33, $sDta34, $sDta35, $sDta36, $sDta37, $sDta38, $sDta39, $sDta40]
 	Local $aFlds[41] = [0, $sFldId1, $sFldId2, $sFldId3, $sFldId4, $sFldId5, $sFldId6, $sFldId7, $sFldId8, $sFldId9, $sFldId10, $sFldId11, $sFldId12, $sFldId13, $sFldId14, $sFldId15, $sFldId16, $sFldId17, $sFldId18, $sFldId19, $sFldId20, $sFldId21, $sFldId22, $sFldId23, $sFldId24, $sFldId25, $sFldId26, $sFldId27, $sFldId28, $sFldId29, $sFldId30, $sFldId31, $sFldId32, $sFldId33, $sFldId34, $sFldId35, $sFldId36, $sFldId37, $sFldId38, $sFldId39, $sFldId40]
 	If Not Mod($iNumArgs, 2) Then
@@ -1122,6 +1122,8 @@ Func _WinHttpSimpleFormFill(ByRef $hInternet, $sActionPage = Default, $sFormId =
 		$aFlds[$iNumArgs / 2 - 1] = 0
 		$iIgnoreCertErr = StringInStr($sAdditionalHeaders, "[IGNORE_CERT_ERRORS]")
 		If $iIgnoreCertErr Then $sAdditionalHeaders = StringReplace($sAdditionalHeaders, "[IGNORE_CERT_ERRORS]", "", 1)
+		$iRetArr = StringInStr($sAdditionalHeaders, "[RETURN_ARRAY]")
+		If $iRetArr Then $sAdditionalHeaders = StringReplace($sAdditionalHeaders, "[RETURN_ARRAY]", "", 1)
 		Local $aCred = StringRegExp($sAdditionalHeaders, "\[CRED:(.*?)\]", 2)
 		If Not @error Then
 			Local $sCredDelim = ":"
@@ -1551,14 +1553,18 @@ Func _WinHttpSimpleFormFill(ByRef $hInternet, $sActionPage = Default, $sFormId =
 				$hRequest = __WinHttpFormSend($hInternet, $sMethod, $sAction, $fMultiPart, $sBoundary, $sAddData, True, $sAdditionalHeaders, $sCredName, $sCredPass, $iIgnoreCertErr) ; try adding $WINHTTP_FLAG_SECURE
 			EndIf
 		EndIf
-		Local $sReturned = _WinHttpSimpleReadData($hRequest)
+		Local $vReturned = _WinHttpSimpleReadData($hRequest)
 		If @error Then
 			_WinHttpCloseHandle($hRequest)
 			Return SetError(4, 0, "") ; either site is expiriencing problems or your connection
 		EndIf
 		Local $iSCode = _WinHttpQueryHeaders($hRequest, $WINHTTP_QUERY_STATUS_CODE)
+		If $iRetArr Then
+			Local $aReturn[2] = [$vReturned, _WinHttpQueryHeaders($hRequest)]
+			$vReturned = $aReturn
+		EndIf
 		_WinHttpCloseHandle($hRequest)
-		Return SetExtended($iSCode, $sReturned)
+		Return SetExtended($iSCode, $vReturned)
 	EndIf
 	; If here then there is no form on the page with specified attributes (name, id or index)
 	Return SetError(3, 0, "")
