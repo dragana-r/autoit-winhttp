@@ -1205,7 +1205,7 @@ Func _WinHttpSimpleFormFill(ByRef $hInternet, $sActionPage = Default, $sFormId =
 		If $fGetFormById And $sFormId <> Default And $sId <> $sFormId Then ContinueLoop
 		$sName = __WinHttpAttribVal($sAttributes, "name")
 		If $fGetFormByName And $sFormName <> $sName Then ContinueLoop
-		$sAction = StringReplace(__WinHttpAttribVal($sAttributes, "action"), "&amp;", "&")
+		$sAction = __WinHttpHTMLDecode(__WinHttpAttribVal($sAttributes, "action"))
 		$sAccept = __WinHttpAttribVal($sAttributes, "accept")
 		$sEnctype = __WinHttpAttribVal($sAttributes, "enctype")
 		$sMethod = __WinHttpAttribVal($sAttributes, "method")
@@ -2004,6 +2004,7 @@ EndFunc
 
 Func __WinHttpURLEncode($vData)
 	If IsBool($vData) Then Return $vData
+	$vData = __WinHttpHTMLDecode($vData)
 	Local $aData = StringToASCIIArray($vData, Default, Default, 2)
 	Local $sOut
 	For $i = 0 To UBound($aData) - 1
@@ -2017,6 +2018,10 @@ Func __WinHttpURLEncode($vData)
 		EndSwitch
 	Next
 	Return $sOut
+EndFunc
+
+Func __WinHttpHTMLDecode($vData)
+	Return StringReplace(StringReplace(StringReplace(StringReplace($vData, "&amp;", "&"), "&lt;", "<"), "&gt;", ">"), "&quot;", '"')
 EndFunc
 
 Func __WinHttpFinalizeCtrls($sSubmit, $sRadio, $sCheckBox, $sButton, ByRef $sAddData, $sGrSep, $sBound = "")
