@@ -289,6 +289,8 @@ Func _WriteHHP($sWorkingFolder, $aFunctions)
 			"Display compile progress=Yes" & @CRLF & _
 			"Display compile notes=Yes" & @CRLF & _
 			"Default Font=Segoe UI, 9" & @CRLF & _
+			"Default topic=html\Functions\IFame.htm" & @CRLF & _
+			"Language=0x409" & @CRLF & _
 			"Full-text search=No" & @CRLF & @CRLF
 
 	$sData &= "[WINDOWS]" & @CRLF & _
