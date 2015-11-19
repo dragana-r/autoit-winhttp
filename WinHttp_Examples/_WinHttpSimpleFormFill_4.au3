@@ -13,7 +13,7 @@ $hOpen = _WinHttpOpen()
 ; Get connection handle
 $hConnect = _WinHttpConnect($hOpen, "https://www.cs.tut.fi")
 ; Fill form on this page
-$sRead = _WinHttpSimpleFormFill($hConnect, "~jkorpela/forms/testing.html", _
+$aRead = _WinHttpSimpleFormFill($hConnect, "~jkorpela/forms/testing.html", _
 		"index:1", _
 		"name:textfield", "Testing file upload", _
 		"name:filefield", @ScriptFullPath, _
@@ -24,4 +24,4 @@ _WinHttpCloseHandle($hConnect)
 ; Close session handle
 _WinHttpCloseHandle($hOpen)
 
-_ArrayDisplay($sRead)
+_ArrayDisplay($aRead)
