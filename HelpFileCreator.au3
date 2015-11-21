@@ -168,7 +168,7 @@ Func _CHM_UDFToHTMPages($sFileUDF, ByRef $aFunctions, $sFolder = Default)
 		$sRemarks = _CHM_GetHeaderData($aHeaders[$j], "Remarks")
 		If $sRemarks Then
 			$sHTM &= "        <h2>Remarks</h2>" & @CRLF & _
-					"        <p>" & StringRegExpReplace(StringReplace(StringRegExpReplace(StringRegExpReplace($sRemarks, ";\h*\+", "<br>"), ";\h*", "    "), "    |", "<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"), "\[{2}(.*?)\]{2}", '<span class="codelike">$1</span>') & "</p>" & @CRLF & _
+					"        <p>" & StringRegExpReplace(StringReplace(StringRegExpReplace(StringRegExpReplace($sRemarks, ";\h*\+", "<br>"), ";\h*", "    "), "    |", "<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"), "\[{2}(.*?\]?)\]{2}", '<span class="codelike">$1</span>') & "</p>" & @CRLF & _
 					"        <br>" & @CRLF & @CRLF
 		EndIf
 
