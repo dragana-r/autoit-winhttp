@@ -731,3 +731,20 @@ a.home:hover
 {
 	background: url('../images/home1.png') no-repeat;
 }
+
+#in
+{
+	height:28px;
+	margin-right:-5px;
+}
+
+#click
+{
+	background: url('../images/search.png') no-repeat;
+	height:28px;
+	width:28px;
+	margin-left:-5px;
+	border:0;
+	cursor:arrow;
+	font-size:0;
+}
