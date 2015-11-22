@@ -1239,11 +1239,11 @@ Func _WinHttpSimpleFormFill(ByRef $hInternet, $sActionPage = Default, $sFormId =
 		If @error Then Return SetError(2, 0, "") ; invalid form
 		Local $aInputIds[4][UBound($aInput)]
 		Switch $sEnctype
-			Case "", "application/x-www-form-urlencoded"
+			Case "", "application/x-www-form-urlencoded", "text/plain"
 				For $i = 0 To UBound($aInput) - 1 ; for all input elements
 					__WinHttpFormAttrib($aInputIds, $i, $aInput[$i])
 					If $aInputIds[1][$i] Then ; if there is 'name' field then add it
-						$aInputIds[2][$i] = __WinHttpURLEncode($aInputIds[2][$i])
+						$aInputIds[2][$i] = __WinHttpURLEncode($aInputIds[2][$i], $sEnctype)
 						$sAddData &= $aInputIds[1][$i] & "=" & $aInputIds[2][$i] & "&"
 						If $aInputIds[3][$i] = "submit" Then $sSubmit &= $aInputIds[1][$i] & "=" & $aInputIds[2][$i] & $sGrSep ; add to overall "submit" string
 						If $aInputIds[3][$i] = "radio" Then $sRadio &= $aInputIds[1][$i] & "=" & $aInputIds[2][$i] & $sGrSep ; add to overall "radio" string
@@ -1257,7 +1257,7 @@ Func _WinHttpSimpleFormFill(ByRef $hInternet, $sActionPage = Default, $sFormId =
 				$sButton = StringTrimRight($sButton, 1)
 				$sAddData = StringTrimRight($sAddData, 1)
 				For $k = 1 To $iNumParams
-					$sPassedData = __WinHttpURLEncode($aDtas[$k])
+					$sPassedData = __WinHttpURLEncode($aDtas[$k], $sEnctype)
 					$aDtas[$k] = 0
 					$sPassedId = $aFlds[$k]
 					$aFlds[$k] = 0
@@ -2003,9 +2003,10 @@ Func __WinHttpCharSet($sContentType)
 	If $sContentType = "utf-8" Then Return 65001
 EndFunc
 
-Func __WinHttpURLEncode($vData)
+Func __WinHttpURLEncode($vData, $sEncType = "")
 	If IsBool($vData) Then Return $vData
 	$vData = __WinHttpHTMLDecode($vData)
+	If $sEnctype = "text/plain" Then Return StringReplace($vData, " ", "+")
 	Local $aData = StringToASCIIArray($vData, Default, Default, 2)
 	Local $sOut
 	For $i = 0 To UBound($aData) - 1
