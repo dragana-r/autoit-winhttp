@@ -69,12 +69,13 @@ Func _CHM_WriteJScript($sWorkingFolder, $sFileUDF, $sHomeLink)
 	Local $aHeaders = StringRegExp($sData, "(?si); #FUNCTION# ;*.*?;\h*=", 3)
 	If @error Then Return SetError(1, 0, 0)
 
-	Local $sNewContent, $sFunctionName, $sDesc
+	Local $sNewContent, $sFunctionName, $sDesc, $sSearchTerms
 	; Build-up search terms based on functions names and descriptions
 	For $j = 0 To UBound($aHeaders) - 1
 		$sFunctionName = _CHM_GetHeaderData($aHeaders[$j], "Name")
+		$sSearchTerms = StringRegExpReplace(StringReplace(StringReplace(StringRegExpReplace(StringReplace(_CHM_GetHeaderData($aHeaders[$j], "Parameters") & " " & _CHM_GetHeaderData($aHeaders[$j], "Remarks"), @CRLF, " "), "\s{2,}", ""), "[out]", ""), "[optional]", ""), '[\;\-\"\[\]\(\)]', "")
 		$sDesc = _CHM_GetHeaderData($aHeaders[$j], "Description")
-		$sNewContent &= 'searchDB.push(new searchOption("' & $sFunctionName & '", "' & $sDesc & '"));' & @CRLF
+		$sNewContent &= 'searchDB.push(new searchOption("' & $sFunctionName & '", "' & $sSearchTerms & '", "' & $sDesc & '"));' & @CRLF
 	Next
 
 	Local $sJS = StringReplace(FileRead($sJSFile), "//--PLACEHOLDER-I-DO-NOT-REMOVE-ME--//", $sNewContent)
