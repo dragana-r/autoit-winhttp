@@ -1100,7 +1100,7 @@ EndFunc
 ;                  and the other removed from the submited form. "Checkbox" and "Button" input types are removed from the submitted form unless explicitly set. Same goes for "Radio" with exception that
 ;                  only one such control can be set, the rest are removed. These controls are set by their values. Wrong value makes them invalid and therefore not part of the submited data.
 ;                  +All other non-set fields are left default.
-;                  +Last (superfluous) [[$sAdditionalData]] argument can be used to pass authorization credentials in form [["[CRED:username:password]"]], magic string to ignore cerificate errors in form [["[IGNORE_CERT_ERRORS]"]], change output type to extended array with [["[RETURN_ARRAY]"]] moniker, and/or HTTP request header data to add.
+;                  +Last (superfluous) [[$sAdditionalData]] argument can be used to pass authorization credentials in form [["[CRED:username:password]"]], magic string to ignore certificate errors in form [["[IGNORE_CERT_ERRORS]"]], change output type to extended array with [["[RETURN_ARRAY]"]] moniker, and/or HTTP request header data to add.
 ;                  If array is returned then [[array[0]]] is the response header, [[array[1]]] is returned data and [[array[2]]] is URL of the final request.
 ;                  +
 ;                  +If this function is used to upload multiple files then there are two available ways. Default would be to submit the form following RFC2388 specification.
