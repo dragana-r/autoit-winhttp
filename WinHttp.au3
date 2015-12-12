@@ -1191,8 +1191,7 @@ Func _WinHttpSimpleFormFill(ByRef $hInternet, $sActionPage = Default, $sFormId =
 	; Variables
 	Local $sForm, $sAttributes, $aInput
 	Local $iNumParams = Ceiling(($iNumArgs - 2) / 2) - 1
-	Local $sAddData
-	Local $aCrackURL, $sNewURL
+	Local $sAddData, $sNewURL
 	; Loop thru all forms on the page and find one that was specified
 	For $iFormOrdinal = 0 To UBound($aForm) - 1
 		If $fGetFormByIndex And $iFormOrdinal <> $iFormIndex Then ContinueLoop
@@ -1210,33 +1209,15 @@ Func _WinHttpSimpleFormFill(ByRef $hInternet, $sActionPage = Default, $sFormId =
 		$sAccept = __WinHttpAttribVal($sAttributes, "accept")
 		$sEnctype = __WinHttpAttribVal($sAttributes, "enctype")
 		$sMethod = __WinHttpAttribVal($sAttributes, "method")
-		If Not $sMethod Then $sMethod = "GET"
-		If $sMethod = "GET" Then $sEnctype = ""
-		$aCrackURL = _WinHttpCrackUrl($sAction)
-		If @error Then
-			If $sAction Then
-				If StringLeft($sAction, 1) <> "/" Then
-					Local $sCurrent
-					Local $aURL = StringRegExp($sActionPage, '(.*)/', 3)
-					If Not @error Then $sCurrent = $aURL[0]
-					If $sCurrent Then $sAction = $sCurrent & "/" & $sAction
-				EndIf
-				If StringLeft($sAction, 1) = "?" Then $sAction = $sActionPage & $sAction
-			EndIf
-			If Not $sAction Then $sAction = $sActionPage
-			$sAction = StringRegExpReplace($sAction, "\A(/*\.\./)*", "") ; /../
-		Else
-			$iScheme = $aCrackURL[1]
-			$sNewURL = $aCrackURL[0] & "://" & $aCrackURL[2] & ":" & $aCrackURL[3]
-			$sAction = $aCrackURL[6] & $aCrackURL[7]
-		EndIf
-		If $fVarForm And Not $sNewURL Then Return SetError(5, 0, "") ; "action" must have URL specified
 		; Requested form is found. Set $fSend flag to true
 		$fSend = True
-		Local $aSplit, $sBoundary, $sPassedId, $sPassedData, $iNumRepl, $fMultiPart = False, $sSubmit, $sRadio, $sCheckBox, $sButton
-		Local $sGrSep = Chr(29)
 		$aInput = StringRegExp($sForm, "(?si)<\h*(?:input|textarea|label|fieldset|legend|select|optgroup|option|button)\h*(.*?)/*\h*>", 3)
 		If @error Then Return SetError(2, 0, "") ; invalid form
+		; Workout correct URL, scheme, etc...
+		__WinHttpNormalizeActionURL($sActionPage, $sAction, $iScheme, $sNewURL, $sEnctype, $sMethod)
+		If $fVarForm And Not $sNewURL Then Return SetError(5, 0, "") ; "action" must have URL specified
+		Local $aSplit, $sBoundary, $sPassedId, $sPassedData, $iNumRepl, $fMultiPart = False, $sSubmit, $sRadio, $sCheckBox, $sButton
+		Local $sGrSep = Chr(29)
 		Local $aInputIds[4][UBound($aInput)]
 		Switch $sEnctype
 			Case "", "application/x-www-form-urlencoded", "text/plain"
@@ -2024,6 +2005,29 @@ EndFunc
 
 Func __WinHttpHTMLDecode($vData)
 	Return StringReplace(StringReplace(StringReplace(StringReplace($vData, "&amp;", "&"), "&lt;", "<"), "&gt;", ">"), "&quot;", '"')
+EndFunc
+
+Func __WinHttpNormalizeActionURL($sActionPage, ByRef $sAction, ByRef $iScheme, ByRef $sNewURL, ByRef $sEnctype, ByRef $sMethod)
+	Local $aCrackURL = _WinHttpCrackUrl($sAction)
+	If @error Then
+		If $sAction Then
+			If StringLeft($sAction, 1) <> "/" Then
+				Local $sCurrent
+				Local $aURL = StringRegExp($sActionPage, '(.*)/', 3)
+				If Not @error Then $sCurrent = $aURL[0]
+				If $sCurrent Then $sAction = $sCurrent & "/" & $sAction
+			EndIf
+			If StringLeft($sAction, 1) = "?" Then $sAction = $sActionPage & $sAction
+		EndIf
+		If Not $sAction Then $sAction = $sActionPage
+		$sAction = StringRegExpReplace($sAction, "\A(/*\.\./)*", "") ; /../
+	Else
+		$iScheme = $aCrackURL[1]
+		$sNewURL = $aCrackURL[0] & "://" & $aCrackURL[2] & ":" & $aCrackURL[3]
+		$sAction = $aCrackURL[6] & $aCrackURL[7]
+	EndIf
+	If Not $sMethod Then $sMethod = "GET"
+	If $sMethod = "GET" Then $sEnctype = ""
 EndFunc
 
 Func __WinHttpFinalizeCtrls($sSubmit, $sRadio, $sCheckBox, $sButton, ByRef $sAddData, $sGrSep, $sBound = "")
