@@ -1096,8 +1096,8 @@ EndFunc
 ;                  In that case first form with that name is filled.
 ;                  +As for fields, If [["name:FieldName"]] option is used all the fields except last with that name are removed from the form. Last one is filled with specified [[$sDta]] data.
 ;                  +This function can be used to fill forms with up to 40 fields at once.
-;                  +"Submit" control you want to keep (click) set to True. If no such control is set then the first one found in the form is "clicked"
-;                  and the other removed from the submited form. "Checkbox" and "Button" input types are removed from the submitted form unless explicitly set. Same goes for "Radio" with exception that
+;                  +"Submit" control you want to keep (click) set to True. If no such control is set then the first one found in the form is "clicked". You can also use [["type:submit", zero_based_index_of_the_submit]] to "click" if no id or name is available.
+;                  All other "submit" controls are removed from the submited form. "Checkbox" and "Button" input types are removed from the submitted form unless explicitly set. Same goes for "Radio" with exception that
 ;                  only one such control can be set, the rest are removed. These controls are set by their values. Wrong value makes them invalid and therefore not part of the submited data.
 ;                  +All other non-set fields are left default.
 ;                  +Last (superfluous) [[$sAdditionalData]] argument can be used to pass authorization credentials in form [["[CRED:username:password]"]], magic string to ignore certificate errors in form [["[IGNORE_CERT_ERRORS]"]], change output type to extended array with [["[RETURN_ARRAY]"]] moniker, and/or HTTP request header data to add.
@@ -1213,6 +1213,8 @@ Func _WinHttpSimpleFormFill(ByRef $hInternet, $sActionPage = Default, $sFormId =
 		$fSend = True
 		$aInput = StringRegExp($sForm, "(?si)<\h*(?:input|textarea|label|fieldset|legend|select|optgroup|option|button)\h*(.*?)/*\h*>", 3)
 		If @error Then Return SetError(2, 0, "") ; invalid form
+		; HTML5 allows for "formaction", "formenctype", "formmethod" submit-control attributes to be set. If such control is "clicked" then form's attributes needs updating/correcting
+		__WinHttpHTML5FormAttribs($aDtas, $aFlds, $iNumParams, $aInput, $sAction, $sEnctype, $sMethod)
 		; Workout correct URL, scheme, etc...
 		__WinHttpNormalizeActionURL($sActionPage, $sAction, $iScheme, $sNewURL, $sEnctype, $sMethod)
 		If $fVarForm And Not $sNewURL Then Return SetError(5, 0, "") ; "action" must have URL specified
@@ -2028,6 +2030,70 @@ Func __WinHttpNormalizeActionURL($sActionPage, ByRef $sAction, ByRef $iScheme, B
 	EndIf
 	If Not $sMethod Then $sMethod = "GET"
 	If $sMethod = "GET" Then $sEnctype = ""
+EndFunc
+
+Func __WinHttpHTML5FormAttribs($aDtas, $aFlds, $iNumParams, ByRef $aInput, ByRef $sAction, ByRef $sEnctype, ByRef $sMethod)
+	; Clicking "submit" is done using:
+	; "type:submit", zero_based_index_of_the_submit_button
+	; "name:whatever", True
+	; "id:whatever", True
+	; "whatever", True     ;<- same as "id:whatever"
+	Local $aSpl, $iSubmitHTML5 = 0, $iInpSubm
+	For $k = 1 To $iNumParams
+		$aSpl = StringSplit($aFlds[$k], ":", 2)
+		If $aSpl[0] = "type" And $aSpl[1] = "submit" Then
+			Local $iSubmIndex = $aDtas[$k], $iSubmCur = 0
+			For $i = 0 To UBound($aInput) - 1 ; for all input elements
+				If __WinHttpAttribVal($aInput[$i], "type") = "submit" Then
+					If $iSubmCur = $iSubmIndex Then
+						$iSubmitHTML5 = 1
+						$iInpSubm = $i
+					Else
+						$aInput[$i] = "" ; remove any other submit control
+					EndIf
+					$iSubmCur += 1
+				EndIf
+			Next
+		ElseIf $aSpl[0] = "name" Then
+			Local $sInpNme = $aSpl[1]
+			For $i = 0 To UBound($aInput) - 1 ; for all input elements
+				If __WinHttpAttribVal($aInput[$i], "type") = "submit" Then
+					If __WinHttpAttribVal($aInput[$i], "name") = $sInpNme And $aDtas[$k] = True Then
+						ConsoleWrite($sInpNme & @CRLF)
+						$iSubmitHTML5 = 1
+						$iInpSubm = $i
+						ExitLoop
+					EndIf
+				EndIf
+			Next
+			If $iSubmitHTML5 Then ExitLoop
+		Else ; id
+			Local $sInpId
+			If @error Then
+				$sInpId = $aSpl[0]
+			ElseIf $aSpl[0] = "id" Then
+				$sInpId = $aSpl[1]
+			EndIf
+			For $i = 0 To UBound($aInput) - 1 ; for all input elements
+				If __WinHttpAttribVal($aInput[$i], "type") = "submit" Then
+					If __WinHttpAttribVal($aInput[$i], "id") = $sInpId And $aDtas[$k] = True Then
+						$iSubmitHTML5 = 1
+						$iInpSubm = $i
+						ExitLoop
+					EndIf
+				EndIf
+			Next
+			If $iSubmitHTML5 Then ExitLoop
+		EndIf
+	Next
+	If $iSubmitHTML5 Then
+		Local $sAttr = __WinHttpAttribVal($aInput[$iInpSubm], "formaction")
+		If $sAttr Then $sAction = $sAttr
+		$sAttr = __WinHttpAttribVal($aInput[$iInpSubm], "formenctype")
+		If $sAttr Then $sEnctype = $sAttr
+		$sAttr = __WinHttpAttribVal($aInput[$iInpSubm], "formmethod")
+		If $sAttr Then $sMethod = $sAttr
+	EndIf
 EndFunc
 
 Func __WinHttpFinalizeCtrls($sSubmit, $sRadio, $sCheckBox, $sButton, ByRef $sAddData, $sGrSep, $sBound = "")
