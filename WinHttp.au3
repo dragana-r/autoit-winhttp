@@ -2140,7 +2140,7 @@ Func __WinHttpFormAttrib(ByRef $aAttrib, $i, $sElement)
 EndFunc
 
 Func __WinHttpAttribVal($sIn, $sAttrib)
-	Local $aArray = StringRegExp($sIn, '(?i).*?\b' & $sAttrib & '\h*=(\h*"(.*?)"|' & "\h*'(.*?)'|" & '\h*(.*?)(?: |\Z))', 3) ; e.g. id="abc" or id='abc' or id=abc
+	Local $aArray = StringRegExp($sIn, '(?i).*?(\A| )\b' & $sAttrib & '\h*=(\h*"(.*?)"|' & "\h*'(.*?)'|" & '\h*(.*?)(?: |\Z))', 3) ; e.g. id="abc" or id='abc' or id=abc
 	If @error Then Return ""
 	Return $aArray[UBound($aArray) - 1]
 EndFunc
