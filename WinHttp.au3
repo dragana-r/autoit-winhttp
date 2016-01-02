@@ -2085,7 +2085,6 @@ Func __WinHttpHTML5FormAttribs($aDtas, $aFlds, $iNumParams, ByRef $aInput, ByRef
 			For $i = 0 To UBound($aInput) - 1 ; for all input elements
 				If __WinHttpAttribVal($aInput[$i], "type") = "submit" Then
 					If __WinHttpAttribVal($aInput[$i], "name") = $sInpNme And $aDtas[$k] = True Then
-						ConsoleWrite($sInpNme & @CRLF)
 						$iSubmitHTML5 = 1
 						$iInpSubm = $i
 						ExitLoop
