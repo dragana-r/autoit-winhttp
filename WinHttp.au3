@@ -64,6 +64,7 @@ DllOpen("winhttp.dll") ; making sure reference count never reaches 0
 ;_WinHttpSetTimeouts
 ;_WinHttpSimpleBinaryConcat
 ;_WinHttpSimpleFormFill
+;_WinHttpSimpleFormFill_SetCallback
 ;_WinHttpSimpleReadData
 ;_WinHttpSimpleReadDataAsync
 ;_WinHttpSimpleRequest
@@ -1108,7 +1109,7 @@ EndFunc
 ;                  +If you want to upload using alternative way (to avoid certain PHP bug that could exist on server side) then prefix the file string with [["PHP#50338:"]] string.
 ;                  +For example: [[..."name:files[]", "PHP#50338:" & $sFile1 & "|" & $sFile2 ...]]
 ;                  +Muliple files are always separated with vertical line ASCII character when filling the form.
-; Related .......: _WinHttpConnect
+; Related .......: _WinHttpConnect, _WinHttpSimpleFormFill_SetCallback
 ;============================================================================================
 Func _WinHttpSimpleFormFill(ByRef $hInternet, $sActionPage = Default, $sFormId = Default, $sFldId1 = Default, $sDta1 = Default, $sFldId2 = Default, $sDta2 = Default, $sFldId3 = Default, $sDta3 = Default, $sFldId4 = Default, $sDta4 = Default, $sFldId5 = Default, $sDta5 = Default, $sFldId6 = Default, $sDta6 = Default, $sFldId7 = Default, $sDta7 = Default, $sFldId8 = Default, $sDta8 = Default, $sFldId9 = Default, $sDta9 = Default, $sFldId10 = Default, $sDta10 = Default, _
 		$sFldId11 = Default, $sDta11 = Default, $sFldId12 = Default, $sDta12 = Default, $sFldId13 = Default, $sDta13 = Default, $sFldId14 = Default, $sDta14 = Default, $sFldId15 = Default, $sDta15 = Default, $sFldId16 = Default, $sDta16 = Default, $sFldId17 = Default, $sDta17 = Default, $sFldId18 = Default, $sDta18 = Default, $sFldId19 = Default, $sDta19 = Default, $sFldId20 = Default, $sDta20 = Default, _
@@ -1552,6 +1553,31 @@ Func _WinHttpSimpleFormFill(ByRef $hInternet, $sActionPage = Default, $sFormId =
 	EndIf
 	; If here then there is no form on the page with specified attributes (name, id or index)
 	Return SetError(3, 0, "")
+EndFunc
+
+; #FUNCTION# ====================================================================================================================
+; Name...........: _WinHttpSimpleFormFill_SetCallback
+; Description ...: Sets user defined function as callback function for _WinHttpSimpleFormFill
+; Syntax.........: _WinHttpSimpleFormFill_SetCallback($vCallback [, $iNumChunks = 100 ])
+; Parameters ....: $vCallback - UDF's name
+;                  $iNumChunks - [optional] number of chunks to send during form submitting. Default is 100.
+; Return values .: Undefined.
+; Author ........: trancexx
+; Remarks .......: Unregistering is done by passing [[0]] as first argument.
+; Related .......: _WinHttpSimpleFormFill
+; ===============================================================================================================================
+Func _WinHttpSimpleFormFill_SetCallback($vCallback = Default, $iNumChunks = 100)
+	If $iNumChunks <= 0 Then $iNumChunks = 100
+	Local Static $vFunc = Default, $iParts = $iNumChunks
+	If $vCallback <> Default Then
+		$vFunc = $vCallback
+		$iParts = Ceiling($iNumChunks)
+	ElseIf $vCallback = 0 Then
+		$vFunc = Default
+		$iParts = 1
+	EndIf
+	Local $aOut[2] = [$vFunc, $iParts]
+	Return $aOut
 EndFunc
 
 ; #FUNCTION# ====================================================================================================================
@@ -2163,7 +2189,18 @@ Func __WinHttpFormSend($hInternet, $sMethod, $sAction, $fMultiPart, $sBoundary, 
 	If $sAdditionalHeaders Then _WinHttpAddRequestHeaders($hRequest, $sAdditionalHeaders, BitOR($WINHTTP_ADDREQ_FLAG_REPLACE, $WINHTTP_ADDREQ_FLAG_ADD))
 	_WinHttpSetOption($hRequest, $WINHTTP_OPTION_DECOMPRESSION, $WINHTTP_DECOMPRESSION_FLAG_ALL)
 	_WinHttpSetOption($hRequest, $WINHTTP_OPTION_UNSAFE_HEADER_PARSING, 1)
-	_WinHttpSendRequest($hRequest, Default, $sAddData)
+	Local $aClbk = _WinHttpSimpleFormFill_SetCallback()
+	If $aClbk[0] <> Default Then
+		Local $iSize = StringLen($sAddData), $iChunk = Floor($iSize / $aClbk[1]), $iRest = $iSize - ($aClbk[1] - 1) * $iChunk, $iCurCh = $iChunk
+		_WinHttpSendRequest($hRequest, Default, Default, $iSize)
+		For $i = 1 To $aClbk[1]
+			If $i = $aClbk[1] Then $iCurCh = $iRest
+			_WinHttpWriteData($hRequest, StringMid($sAddData, 1 + $iChunk * ($i -1), $iCurCh))
+			Call($aClbk[0], Floor($i * 100 / $aClbk[1]))
+		Next
+	Else
+		_WinHttpSendRequest($hRequest, Default, $sAddData)
+	EndIf
 	_WinHttpReceiveResponse($hRequest)
 	__WinHttpSetCredentials($hRequest, "", $sAddData, $sCredName, $sCredPass)
 	Return $hRequest
