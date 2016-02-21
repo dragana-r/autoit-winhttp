@@ -1691,7 +1691,7 @@ Func _WinHttpSimpleRequest($hConnect, $sType = Default, $sPath = Default, $sRefe
 	__WinHttpSetCredentials($hRequest, $sHeader, $sDta, $sCredName, $sCredPass)
 	Local $iExtended = _WinHttpQueryHeaders($hRequest, $WINHTTP_QUERY_STATUS_CODE)
 	If $fGetHeaders Then
-		Local $aData[2] = [_WinHttpQueryHeaders($hRequest), _WinHttpSimpleReadData($hRequest, $iMode)]
+		Local $aData[3] = [_WinHttpQueryHeaders($hRequest), _WinHttpSimpleReadData($hRequest, $iMode), _WinHttpQueryOption($hRequest, $WINHTTP_OPTION_URL)]
 		_WinHttpCloseHandle($hRequest)
 		Return SetExtended($iExtended, $aData)
 	EndIf
@@ -1819,7 +1819,7 @@ Func _WinHttpSimpleSSLRequest($hConnect, $sType = Default, $sPath = Default, $sR
 	If @error Then Return SetError(@error, 0, 0)
 	__WinHttpSetCredentials($hRequest, $sHeader, $sDta, $sCredName, $sCredPass)
 	If $fGetHeaders Then
-		Local $aData[2] = [_WinHttpQueryHeaders($hRequest), _WinHttpSimpleReadData($hRequest, $iMode)]
+		Local $aData[3] = [_WinHttpQueryHeaders($hRequest), _WinHttpSimpleReadData($hRequest, $iMode), _WinHttpQueryOption($hRequest, $WINHTTP_OPTION_URL)]
 		_WinHttpCloseHandle($hRequest)
 		Return $aData
 	EndIf
