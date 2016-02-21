@@ -2043,11 +2043,27 @@ Func __WinHttpNormalizeActionURL($sActionPage, ByRef $sAction, ByRef $iScheme, B
 	Local $aCrackURL = _WinHttpCrackUrl($sAction)
 	If @error Then
 		If $sAction Then
-			If StringLeft($sAction, 1) <> "/" Then
-				Local $sCurrent
-				Local $aURL = StringRegExp($sActionPage, '(.*)/', 3)
-				If Not @error Then $sCurrent = $aURL[0]
-				If $sCurrent Then $sAction = $sCurrent & "/" & $sAction
+			If StringLeft($sAction, 2) = "//" Then
+				$aCrackURL = _WinHttpCrackUrl($sURL)
+				If Not @error Then
+					$aCrackURL = _WinHttpCrackUrl($aCrackURL[0] & ":" & $sAction)
+					If Not @error Then
+						$sNewURL = $aCrackURL[0] & "://" & $aCrackURL[2] & ":" & $aCrackURL[3]
+						$iScheme = $aCrackURL[1]
+						$sAction = $aCrackURL[6] & $aCrackURL[7]
+						$sActionPage = ""
+					EndIf
+				EndIf
+			ElseIf StringLeft($sAction, 1) = "?" Then
+				$aCrackURL = _WinHttpCrackUrl($sURL)
+				$sAction = $aCrackURL[6] & $sAction
+			ElseIf StringLeft($sAction, 1) = "#" Then
+				$sAction = StringReplace($sActionPage, StringRegExpReplace($sActionPage, "(.*?)(#.*?)", "$2"), $sAction)
+			ElseIf StringLeft($sAction, 1) <> "/" Then
+					Local $sCurrent
+					Local $aURL = StringRegExp($sActionPage, '(.*)/', 3)
+					If Not @error Then $sCurrent = $aURL[0]
+					If $sCurrent Then $sAction = $sCurrent & "/" & $sAction
 			EndIf
 			If StringLeft($sAction, 1) = "?" Then $sAction = $sActionPage & $sAction
 		EndIf
