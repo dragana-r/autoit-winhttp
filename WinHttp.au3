@@ -2188,24 +2188,13 @@ Func __WinHttpFormSend($hInternet, $sMethod, $sAction, $fMultiPart, $sBoundary, 
 	If $sAdditionalHeaders Then _WinHttpAddRequestHeaders($hRequest, $sAdditionalHeaders, BitOR($WINHTTP_ADDREQ_FLAG_REPLACE, $WINHTTP_ADDREQ_FLAG_ADD))
 	_WinHttpSetOption($hRequest, $WINHTTP_OPTION_DECOMPRESSION, $WINHTTP_DECOMPRESSION_FLAG_ALL)
 	_WinHttpSetOption($hRequest, $WINHTTP_OPTION_UNSAFE_HEADER_PARSING, 1)
-	Local $aClbk = _WinHttpSimpleFormFill_SetCallback()
-	If $aClbk[0] <> Default Then
-		Local $iSize = StringLen($sAddData), $iChunk = Floor($iSize / $aClbk[1]), $iRest = $iSize - ($aClbk[1] - 1) * $iChunk, $iCurCh = $iChunk
-		_WinHttpSendRequest($hRequest, Default, Default, $iSize)
-		For $i = 1 To $aClbk[1]
-			If $i = $aClbk[1] Then $iCurCh = $iRest
-			_WinHttpWriteData($hRequest, StringMid($sAddData, 1 + $iChunk * ($i -1), $iCurCh))
-			Call($aClbk[0], Floor($i * 100 / $aClbk[1]))
-		Next
-	Else
-		_WinHttpSendRequest($hRequest, Default, $sAddData)
-	EndIf
+	__WinHttpFormUpload($hRequest, "", $sAddData)
 	_WinHttpReceiveResponse($hRequest)
-	__WinHttpSetCredentials($hRequest, "", $sAddData, $sCredName, $sCredPass)
+	__WinHttpSetCredentials($hRequest, "", $sAddData, $sCredName, $sCredPass, 1)
 	Return $hRequest
 EndFunc
 
-Func __WinHttpSetCredentials($hRequest, $sHeaders = "", $sOptional = "", $sCredName = "", $sCredPass = "")
+Func __WinHttpSetCredentials($hRequest, $sHeaders = "", $sOptional = "", $sCredName = "", $sCredPass = "", $iFormFill = 0)
 	If $sCredName And $sCredPass Then
 		Local $iStatusCode = _WinHttpQueryHeaders($hRequest, $WINHTTP_QUERY_STATUS_CODE)
 		; Check status code
@@ -2222,11 +2211,30 @@ Func __WinHttpSetCredentials($hRequest, $sHeaders = "", $sOptional = "", $sCredN
 					_WinHttpSetCredentials($hRequest, $iAuthTarget, $iFirstScheme, $sCredName, $sCredPass)
 				EndIf
 				; Send request again now
-				_WinHttpSendRequest($hRequest, $sHeaders, $sOptional)
+				If $iFormFill Then
+					__WinHttpFormUpload($hRequest, $sHeaders, $sOptional)
+				Else
+					_WinHttpSendRequest($hRequest, $sHeaders, $sOptional)
+				EndIf
 				; And wait for the response again
 				_WinHttpReceiveResponse($hRequest)
 			EndIf
 		EndIf
+	EndIf
+EndFunc
+
+Func __WinHttpFormUpload($hRequest, $sHeaders, $sData)
+	Local $aClbk = _WinHttpSimpleFormFill_SetCallback()
+	If $aClbk[0] <> Default Then
+		Local $iSize = StringLen($sData), $iChunk = Floor($iSize / $aClbk[1]), $iRest = $iSize - ($aClbk[1] - 1) * $iChunk, $iCurCh = $iChunk
+		_WinHttpSendRequest($hRequest, Default, Default, $iSize)
+		For $i = 1 To $aClbk[1]
+			If $i = $aClbk[1] Then $iCurCh = $iRest
+			_WinHttpWriteData($hRequest, StringMid($sData, 1 + $iChunk * ($i -1), $iCurCh))
+			Call($aClbk[0], Floor($i * 100 / $aClbk[1]))
+		Next
+	Else
+		_WinHttpSendRequest($hRequest, Default, $sData)
 	EndIf
 EndFunc
 
