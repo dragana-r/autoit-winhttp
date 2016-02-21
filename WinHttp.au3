@@ -1139,7 +1139,7 @@ Func _WinHttpSimpleFormFill(ByRef $hInternet, $sActionPage = Default, $sFormId =
 		EndIf
 	EndIf
 	; Get page source
-	Local $hOpen, $sHTML, $fVarForm, $iScheme = $INTERNET_SCHEME_HTTP
+	Local $hOpen, $aHTML, $sHTML, $sURL, $fVarForm, $iScheme = $INTERNET_SCHEME_HTTP
 	If IsString($hInternet) Then ; $hInternet is page source
 		$sHTML = $hInternet
 		If _WinHttpQueryOption($sActionPage, $WINHTTP_OPTION_HANDLE_TYPE) <> $WINHTTP_HANDLE_TYPE_SESSION Then Return SetError(6, 0, "")
@@ -1149,18 +1149,22 @@ Func _WinHttpSimpleFormFill(ByRef $hInternet, $sActionPage = Default, $sFormId =
 		$iScheme = _WinHttpQueryOption($hInternet, $WINHTTP_OPTION_CONTEXT_VALUE); read internet scheme from the connection handle
 		Local $sAccpt = "Accept: text/html;q=0.9,text/plain;q=0.8,*/*;q=0.5"
 		If $iScheme = $INTERNET_SCHEME_HTTPS Then
-			$sHTML = _WinHttpSimpleSSLRequest($hInternet, Default, $sActionPage, Default, Default, $sAccpt, Default, Default, $sCredName, $sCredPass, $iIgnoreCertErr)
+			$aHTML = _WinHttpSimpleSSLRequest($hInternet, Default, $sActionPage, Default, Default, $sAccpt, 1, Default, $sCredName, $sCredPass, $iIgnoreCertErr)
 		ElseIf $iScheme = $INTERNET_SCHEME_HTTP Then
-			$sHTML = _WinHttpSimpleRequest($hInternet, Default, $sActionPage, Default, Default, $sAccpt, Default, Default, $sCredName, $sCredPass)
+			$aHTML = _WinHttpSimpleRequest($hInternet, Default, $sActionPage, Default, Default, $sAccpt, 1, Default, $sCredName, $sCredPass)
 		Else
 			; Try both http and https scheme and deduct the right one besed on response
-			$sHTML = _WinHttpSimpleRequest($hInternet, Default, $sActionPage, Default, Default, $sAccpt, Default, Default, $sCredName, $sCredPass)
+			$aHTML = _WinHttpSimpleRequest($hInternet, Default, $sActionPage, Default, Default, $sAccpt, 1, Default, $sCredName, $sCredPass)
 			If @error Or @extended >= $HTTP_STATUS_BAD_REQUEST Then
-				$sHTML = _WinHttpSimpleSSLRequest($hInternet, Default, $sActionPage, Default, Default, $sAccpt, Default, Default, $sCredName, $sCredPass, $iIgnoreCertErr)
+				$aHTML = _WinHttpSimpleSSLRequest($hInternet, Default, $sActionPage, Default, Default, $sAccpt, 1, Default, $sCredName, $sCredPass, $iIgnoreCertErr)
 				$iScheme = $INTERNET_SCHEME_HTTPS
 			Else
 				$iScheme = $INTERNET_SCHEME_HTTP
 			EndIf
+		EndIf
+		If Not @error Then ; Error is checked after If...Then...Else block. Be careful before changing anything!
+			$sHTML = $aHTML[1]
+			$sURL = $aHTML[2]
 		EndIf
 	EndIf
 	$sHTML = StringRegExpReplace($sHTML, "(?s)<!--.*?-->", "") ; removing comments
@@ -1217,7 +1221,7 @@ Func _WinHttpSimpleFormFill(ByRef $hInternet, $sActionPage = Default, $sFormId =
 		; HTML5 allows for "formaction", "formenctype", "formmethod" submit-control attributes to be set. If such control is "clicked" then form's attributes needs updating/correcting
 		__WinHttpHTML5FormAttribs($aDtas, $aFlds, $iNumParams, $aInput, $sAction, $sEnctype, $sMethod)
 		; Workout correct URL, scheme, etc...
-		__WinHttpNormalizeActionURL($sActionPage, $sAction, $iScheme, $sNewURL, $sEnctype, $sMethod)
+		__WinHttpNormalizeActionURL($sActionPage, $sAction, $iScheme, $sNewURL, $sEnctype, $sMethod, $sURL)
 		If $fVarForm And Not $sNewURL Then Return SetError(5, 0, "") ; "action" must have URL specified
 		Local $aSplit, $sBoundary, $sPassedId, $sPassedData, $iNumRepl, $fMultiPart = False, $sSubmit, $sRadio, $sCheckBox, $sButton
 		Local $sGrSep = Chr(29)
@@ -2035,7 +2039,7 @@ Func __WinHttpHTMLDecode($vData)
 	Return StringReplace(StringReplace(StringReplace(StringReplace($vData, "&amp;", "&"), "&lt;", "<"), "&gt;", ">"), "&quot;", '"')
 EndFunc
 
-Func __WinHttpNormalizeActionURL($sActionPage, ByRef $sAction, ByRef $iScheme, ByRef $sNewURL, ByRef $sEnctype, ByRef $sMethod)
+Func __WinHttpNormalizeActionURL($sActionPage, ByRef $sAction, ByRef $iScheme, ByRef $sNewURL, ByRef $sEnctype, ByRef $sMethod, $sURL = "")
 	Local $aCrackURL = _WinHttpCrackUrl($sAction)
 	If @error Then
 		If $sAction Then
