@@ -1203,7 +1203,7 @@ Func _WinHttpSimpleFormFill(ByRef $hInternet, $sActionPage = Default, $sFormId =
 		$sForm = $aForm[$iFormOrdinal]
 		; Extract form attributes
 		$sAttributes = StringRegExp($sForm, "(?s)(.*?)>", 3)
-		If Not @error Then $sAttributes = $sAttributes[0]
+		If Not @error Then $sAttributes = StringRegExpReplace($sAttributes[0], "\v", " ")
 		Local $sAction = "", $sAccept = "", $sEnctype = "", $sMethod = "", $sName = "", $sId = ""
 		; Check set attributes
 		$sId = __WinHttpAttribVal($sAttributes, "id")
