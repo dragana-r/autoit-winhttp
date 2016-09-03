@@ -1224,13 +1224,14 @@ Func _WinHttpSimpleFormFill(ByRef $hInternet, $sActionPage = Default, $sFormId =
 		__WinHttpNormalizeActionURL($sActionPage, $sAction, $iScheme, $sNewURL, $sEnctype, $sMethod, $sURL)
 		If $fVarForm And Not $sNewURL Then Return SetError(5, 0, "") ; "action" must have URL specified
 		Local $aSplit, $sBoundary, $sPassedId, $sPassedData, $iNumRepl, $fMultiPart = False, $sSubmit, $sRadio, $sCheckBox, $sButton
-		Local $sGrSep = Chr(29)
+		Local $sGrSep = Chr(29), $iErr
 		Local $aInputIds[4][UBound($aInput)]
 		Switch $sEnctype
 			Case "", "application/x-www-form-urlencoded", "text/plain"
 				For $i = 0 To UBound($aInput) - 1 ; for all input elements
 					__WinHttpFormAttrib($aInputIds, $i, $aInput[$i])
 					If $aInputIds[1][$i] Then ; if there is 'name' field then add it
+						$aInputIds[1][$i] = __WinHttpURLEncode($aInputIds[1][$i], $sEnctype)
 						$aInputIds[2][$i] = __WinHttpURLEncode($aInputIds[2][$i], $sEnctype)
 						$sAddData &= $aInputIds[1][$i] & "=" & $aInputIds[2][$i] & "&"
 						If $aInputIds[3][$i] = "submit" Then $sSubmit &= $aInputIds[1][$i] & "=" & $aInputIds[2][$i] & $sGrSep ; add to overall "submit" string
@@ -1250,8 +1251,11 @@ Func _WinHttpSimpleFormFill(ByRef $hInternet, $sActionPage = Default, $sFormId =
 					$sPassedId = $aFlds[$k]
 					$aFlds[$k] = 0
 					$aSplit = StringSplit($sPassedId, ":", 2)
-					If @error Or $aSplit[0] <> "name" Then ; like .getElementById
-						If Not @error And $aSplit[0] = "id" Then $sPassedId = $aSplit[1]
+					$iErr = @error
+					$aSplit[0] = __WinHttpURLEncode($aSplit[0], $sEnctype)
+					If Not $iErr Then $aSplit[1] = __WinHttpURLEncode($aSplit[1], $sEnctype)
+					If $iErr Or $aSplit[0] <> "name" Then ; like .getElementById
+						If Not $iErr And $aSplit[0] = "id" Then $sPassedId = $aSplit[1]
 						For $j = 0 To UBound($aInputIds, 2) - 1
 							If $aInputIds[0][$j] = $sPassedId Then
 								If $aInputIds[3][$j] = "submit" Then
