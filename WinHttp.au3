@@ -2082,66 +2082,129 @@ Func __WinHttpNormalizeActionURL($sActionPage, ByRef $sAction, ByRef $iScheme, B
 	If $sMethod = "GET" Then $sEnctype = ""
 EndFunc
 
-Func __WinHttpHTML5FormAttribs($aDtas, $aFlds, $iNumParams, ByRef $aInput, ByRef $sAction, ByRef $sEnctype, ByRef $sMethod)
-	; Clicking "submit" is done using:
+Func __WinHttpHTML5FormAttribs(ByRef $aDtas, ByRef $aFlds, ByRef $iNumParams, ByRef $aInput, ByRef $sAction, ByRef $sEnctype, ByRef $sMethod)
+	; Clicking "submit" or "image" is done using:
 	; "type:submit", zero_based_index_of_the_submit_button
+	; "type:image", zero_based_index_of_the_image_control Xcoord,Ycoord
 	; "name:whatever", True
 	; "id:whatever", True
 	; "whatever", True     ;<- same as "id:whatever"
-	Local $aSpl, $iSubmitHTML5 = 0, $iInpSubm
+	Local $aSpl, $iSubmitHTML5 = 0, $iInpSubm, $sImgAppx = "."
 	For $k = 1 To $iNumParams
 		$aSpl = StringSplit($aFlds[$k], ":", 2)
-		If $aSpl[0] = "type" And $aSpl[1] = "submit" Then
-			Local $iSubmIndex = $aDtas[$k], $iSubmCur = 0
+		If $aSpl[0] = "type" And ($aSpl[1] = "submit" Or $aSpl[1] = "image") Then
+			Local $iSubmIndex = $aDtas[$k], $iSubmCur = 0, $iImgCur = 0, $sType, $sInpNme
+			If $aSpl[1] = "image" Then
+				$iSubmIndex = Int($aDtas[$k])
+			EndIf
 			For $i = 0 To UBound($aInput) - 1 ; for all input elements
-				If __WinHttpAttribVal($aInput[$i], "type") = "submit" Then
-					If $iSubmCur = $iSubmIndex Then
-						$iSubmitHTML5 = 1
-						$iInpSubm = $i
-					Else
-						$aInput[$i] = "" ; remove any other submit control
-					EndIf
-					$iSubmCur += 1
-				EndIf
+				Switch __WinHttpAttribVal($aInput[$i], "type")
+					Case "submit"
+						If $iSubmCur = $iSubmIndex Then
+							$iSubmitHTML5 = 1
+							$iInpSubm = $i
+							ExitLoop 2
+						EndIf
+						$iSubmCur += 1
+					Case "image"
+						If $iImgCur = $iSubmIndex Then
+							$iSubmitHTML5 = 1
+							$iInpSubm = $i
+							$sInpNme = __WinHttpAttribVal($aInput[$iInpSubm], "name")
+							If $sInpNme Then $sInpNme &= $sImgAppx
+							$aInput[$iInpSubm] = 'type="image" formaction="' & __WinHttpAttribVal($aInput[$iInpSubm], "formaction") & '" formenctype="' & __WinHttpAttribVal($aInput[$iInpSubm], "formenctype") & '" formmethod="' & __WinHttpAttribVal($aInput[$iInpSubm], "formmethod") & '"'
+							Local $sX = 0, $sY = 0
+							$iX = Int(StringRegExpReplace($aDtas[$k], "(\d+)\h*(\d+),(\d+)", "$2", 1))
+							$iY = Int(StringRegExpReplace($aDtas[$k], "(\d+)\h*(\d+),(\d+)", "$3", 1))
+							ReDim $aInput[UBound($aInput) + 2]
+							$aInput[UBound($aInput) - 2] = 'type="image" name="' & $sInpNme & 'x" value="' & $iX & '"'
+							$aInput[UBound($aInput) - 1] = 'type="image" name="' & $sInpNme & 'y" value="' & $iY & '"'
+							ExitLoop 2
+						EndIf
+						$iImgCur += 1
+				EndSwitch
 			Next
-		ElseIf $aSpl[0] = "name" Then
-			Local $sInpNme = $aSpl[1]
+			ElseIf $aSpl[0] = "name" Then
+			Local $sInpNme = $aSpl[1], $sType
 			For $i = 0 To UBound($aInput) - 1 ; for all input elements
-				If __WinHttpAttribVal($aInput[$i], "type") = "submit" Then
+				$sType = __WinHttpAttribVal($aInput[$i], "type")
+				If $sType = "submit" Then
 					If __WinHttpAttribVal($aInput[$i], "name") = $sInpNme And $aDtas[$k] = True Then
 						$iSubmitHTML5 = 1
 						$iInpSubm = $i
-						ExitLoop
+						ExitLoop 2
+					EndIf
+				ElseIf $sType = "image" Then
+					If __WinHttpAttribVal($aInput[$i], "name") = $sInpNme And $aDtas[$k] Then
+						$iSubmitHTML5 = 1
+						$iInpSubm = $i
+						Local $aStrSplit = StringSplit($aDtas[$k], ",", 3), $iX = 0, $iY = 0
+						If Not @error Then
+							$iX = Int($aStrSplit[0])
+							$iY = Int($aStrSplit[1])
+						EndIf
+						$aInput[$iInpSubm] = 'type="image" formaction="' & __WinHttpAttribVal($aInput[$iInpSubm], "formaction") & '" formenctype="' & __WinHttpAttribVal($aInput[$iInpSubm], "formenctype") & '" formmethod="' & __WinHttpAttribVal($aInput[$iInpSubm], "formmethod") & '"'
+						$sInpNme &= $sImgAppx
+						ReDim $aInput[UBound($aInput) + 2]
+						$aInput[UBound($aInput) - 2] = 'type="image" name="' & $sInpNme & 'x" value="' & $iX & '"'
+						$aInput[UBound($aInput) - 1] = 'type="image" name="' & $sInpNme & 'y" value="' & $iY & '"'
+						ExitLoop 2
 					EndIf
 				EndIf
 			Next
-			If $iSubmitHTML5 Then ExitLoop
 		Else ; id
-			Local $sInpId
+			Local $sInpId, $sType
 			If @error Then
 				$sInpId = $aSpl[0]
 			ElseIf $aSpl[0] = "id" Then
 				$sInpId = $aSpl[1]
 			EndIf
 			For $i = 0 To UBound($aInput) - 1 ; for all input elements
-				If __WinHttpAttribVal($aInput[$i], "type") = "submit" Then
+				$sType = __WinHttpAttribVal($aInput[$i], "type")
+				If $sType = "submit" Then
 					If __WinHttpAttribVal($aInput[$i], "id") = $sInpId And $aDtas[$k] = True Then
 						$iSubmitHTML5 = 1
 						$iInpSubm = $i
-						ExitLoop
+						ExitLoop 2
+					EndIf
+				ElseIf $sType = "image" Then
+					If __WinHttpAttribVal($aInput[$i], "id") = $sInpId And $aDtas[$k] Then
+						$iSubmitHTML5 = 1
+						$iInpSubm = $i
+						Local $sInpNme = __WinHttpAttribVal($aInput[$iInpSubm], "name")
+						If $sInpNme Then $sInpNme &= $sImgAppx
+						Local $aStrSplit = StringSplit($aDtas[$k], ",", 3), $iX = 0, $iY = 0
+						If Not @error Then
+							$iX = Int($aStrSplit[0])
+							$iY = Int($aStrSplit[1])
+						EndIf
+						$aInput[$iInpSubm] = 'type="image" formaction="' & __WinHttpAttribVal($aInput[$iInpSubm], "formaction") & '" formenctype="' & __WinHttpAttribVal($aInput[$iInpSubm], "formenctype") & '" formmethod="' & __WinHttpAttribVal($aInput[$iInpSubm], "formmethod") & '"'
+						ReDim $aInput[UBound($aInput) + 2]
+						$aInput[UBound($aInput) - 2] = 'type="image" name="' & $sInpNme & 'x" value="' & $iX & '"'
+						$aInput[UBound($aInput) - 1] = 'type="image" name="' & $sInpNme & 'y" value="' & $iY & '"'
+						ExitLoop 2
 					EndIf
 				EndIf
 			Next
-			If $iSubmitHTML5 Then ExitLoop
 		EndIf
 	Next
 	If $iSubmitHTML5 Then
+		Local $iUbound = UBound($aInput) - 1
+		If __WinHttpAttribVal($aInput[$iInpSubm], "type") = "image" Then $iUbound -= 2 ; two form fields are added for "image"
+		For $j = 0 To $iUbound ; for all other input elements
+			If $j = $iInpSubm Then ContinueLoop
+			Switch __WinHttpAttribVal($aInput[$j], "type")
+				Case "submit", "image"
+					$aInput[$j] = "" ; remove any other submit/image controls
+			EndSwitch
+		Next
 		Local $sAttr = __WinHttpAttribVal($aInput[$iInpSubm], "formaction")
 		If $sAttr Then $sAction = $sAttr
 		$sAttr = __WinHttpAttribVal($aInput[$iInpSubm], "formenctype")
 		If $sAttr Then $sEnctype = $sAttr
 		$sAttr = __WinHttpAttribVal($aInput[$iInpSubm], "formmethod")
 		If $sAttr Then $sMethod = $sAttr
+		If __WinHttpAttribVal($aInput[$iInpSubm], "type") = "image" Then $aInput[$iInpSubm] = ""
 	EndIf
 EndFunc
 
