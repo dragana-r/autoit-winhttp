@@ -1098,7 +1098,9 @@ EndFunc
 ;                  +As for fields, If [["name:FieldName"]] option is used all the fields except last with that name are removed from the form. Last one is filled with specified [[$sDta]] data.
 ;                  +This function can be used to fill forms with up to 40 fields at once.
 ;                  +"Submit" control you want to keep (click) set to True. If no such control is set then the first one found in the form is "clicked". You can also use [["type:submit", zero_based_index_of_the_submit]] to "click" if no id or name is available.
-;                  All other "submit" controls are removed from the submited form. "Checkbox" and "Button" input types are removed from the submitted form unless explicitly set. Same goes for "Radio" with exception that
+;                  +All other "submit" controls are removed from the submited form (including images).
+;                  +If form is submitted by clicking an image then pass click coordinates [["name:image_name", "Xcoord,Ycoord"]] or [["image_id", "Xcoord,Ycoord"]]. If the image has no name or id then you can use its index of appearance [["type:image", "zero_based_index_of_the_image Xcoord,Ycoord"]].
+;                  +"Checkbox" and "Button" input types are removed from the submitted form unless explicitly set. Same goes for "Radio" with exception that
 ;                  only one such control can be set, the rest are removed. These controls are set by their values. Wrong value makes them invalid and therefore not part of the submited data.
 ;                  +All other non-set fields are left default.
 ;                  +Last (superfluous) [[$sAdditionalData]] argument can be used to pass authorization credentials in form [["[CRED:username:password]"]], magic string to ignore certificate errors in form [["[IGNORE_CERT_ERRORS]"]], change output type to extended array with [["[RETURN_ARRAY]"]] moniker, and/or HTTP request header data to add.
@@ -2083,12 +2085,16 @@ Func __WinHttpNormalizeActionURL($sActionPage, ByRef $sAction, ByRef $iScheme, B
 EndFunc
 
 Func __WinHttpHTML5FormAttribs(ByRef $aDtas, ByRef $aFlds, ByRef $iNumParams, ByRef $aInput, ByRef $sAction, ByRef $sEnctype, ByRef $sMethod)
-	; Clicking "submit" or "image" is done using:
+	; Clicking "submit" is done using:
 	; "type:submit", zero_based_index_of_the_submit_button
-	; "type:image", zero_based_index_of_the_image_control Xcoord,Ycoord
 	; "name:whatever", True
 	; "id:whatever", True
 	; "whatever", True     ;<- same as "id:whatever"
+	; Clicking "image" is done using:
+	; "type:image", "zero_based_index_of_the_image_control Xcoord,Ycoord"
+	; "name:whatever", "Xcoord,Ycoord"
+	; "id:whatever", "Xcoord,Ycoord"
+	; "whatever", "Xcoord,Ycoord"     ;<- same as "id:whatever"
 	Local $aSpl, $iSubmitHTML5 = 0, $iInpSubm, $sImgAppx = "."
 	For $k = 1 To $iNumParams
 		$aSpl = StringSplit($aFlds[$k], ":", 2)
