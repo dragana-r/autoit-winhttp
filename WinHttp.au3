@@ -1218,6 +1218,8 @@ Func _WinHttpSimpleFormFill(ByRef $hInternet, $sActionPage = Default, $sFormId =
 		$sMethod = __WinHttpAttribVal($sAttributes, "method")
 		; Requested form is found. Set $fSend flag to true
 		$fSend = True
+		Local $sSpr1 = Chr(27), $sSpr2 = Chr(26)
+		__WinHttpNormalizeForm($sForm, $sSpr1, $sSpr2)
 		$aInput = StringRegExp($sForm, "(?si)<\h*(?:input|textarea|label|fieldset|legend|select|optgroup|option|button)\h*(.*?)/*\h*>", 3)
 		If @error Then Return SetError(2, 0, "") ; invalid form
 		; HTML5 allows for "formaction", "formenctype", "formmethod" submit-control attributes to be set. If such control is "clicked" then form's attributes needs updating/correcting
@@ -1233,8 +1235,8 @@ Func _WinHttpSimpleFormFill(ByRef $hInternet, $sActionPage = Default, $sFormId =
 				For $i = 0 To UBound($aInput) - 1 ; for all input elements
 					__WinHttpFormAttrib($aInputIds, $i, $aInput[$i])
 					If $aInputIds[1][$i] Then ; if there is 'name' field then add it
-						$aInputIds[1][$i] = __WinHttpURLEncode($aInputIds[1][$i], $sEnctype)
-						$aInputIds[2][$i] = __WinHttpURLEncode($aInputIds[2][$i], $sEnctype)
+						$aInputIds[1][$i] = __WinHttpURLEncode(StringReplace($aInputIds[1][$i], $sSpr1, " "), $sEnctype)
+						$aInputIds[2][$i] = __WinHttpURLEncode(StringReplace(StringReplace($aInputIds[2][$i], $sSpr2, ">"), $sSpr1, " "), $sEnctype)
 						$sAddData &= $aInputIds[1][$i] & "=" & $aInputIds[2][$i] & "&"
 						If $aInputIds[3][$i] = "submit" Then $sSubmit &= $aInputIds[1][$i] & "=" & $aInputIds[2][$i] & $sGrSep ; add to overall "submit" string
 						If $aInputIds[3][$i] = "radio" Then $sRadio &= $aInputIds[1][$i] & "=" & $aInputIds[2][$i] & $sGrSep ; add to overall "radio" string
@@ -1373,6 +1375,8 @@ Func _WinHttpSimpleFormFill(ByRef $hInternet, $sActionPage = Default, $sFormId =
 					For $i = 0 To UBound($aInput) - 1 ; for all input elements
 						__WinHttpFormAttrib($aInputIds, $i, $aInput[$i])
 						If $aInputIds[1][$i] Then ; if there is 'name' field
+							$aInputIds[1][$i] = StringReplace($aInputIds[1][$i], $sSpr1, " ")
+							$aInputIds[2][$i] = StringReplace(StringReplace($aInputIds[2][$i], $sSpr2, ">"), $sSpr1, " ")
 							If $aInputIds[3][$i] = "file" Then
 								$sAddData &= "--" & $sBoundary & @CRLF & _
 										$sCDisp & $aInputIds[1][$i] & '"; filename=""' & @CRLF & @CRLF & _
@@ -2212,6 +2216,34 @@ Func __WinHttpHTML5FormAttribs(ByRef $aDtas, ByRef $aFlds, ByRef $iNumParams, By
 		If $sAttr Then $sMethod = $sAttr
 		If __WinHttpAttribVal($aInput[$iInpSubm], "type") = "image" Then $aInput[$iInpSubm] = ""
 	EndIf
+EndFunc
+
+Func __WinHttpNormalizeForm(ByRef $sForm, $sSpr1, $sSpr2)
+	Local $aData = StringToASCIIArray($sForm, Default, Default, 2)
+	Local $sOut, $bQuot = False, $bSQuot = False
+	For $i = 0 To UBound($aData) - 1
+		Switch $aData[$i]
+			Case 34
+				$bQuot = Not $bQuot
+			Case 39
+				$bSQuot = Not $bSQuot
+			Case 32 ; space
+				If $bQuot Or $bSQuot Then
+					$sOut &= $sSpr1
+				Else
+					$sOut &= Chr($aData[$i])
+				EndIf
+			Case 62 ; >
+				If $bQuot Or $bSQuot Then
+					$sOut &= $sSpr2
+				Else
+					$sOut &= Chr($aData[$i])
+				EndIf
+			Case Else
+				$sOut &= Chr($aData[$i])
+		EndSwitch
+	Next
+	$sForm = $sOut
 EndFunc
 
 Func __WinHttpFinalizeCtrls($sSubmit, $sRadio, $sCheckBox, $sButton, ByRef $sAddData, $sGrSep, $sBound = "")
