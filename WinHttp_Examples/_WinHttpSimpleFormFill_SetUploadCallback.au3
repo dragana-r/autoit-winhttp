@@ -21,7 +21,7 @@ $hConnect = $sForm ; will pass form as string so this is for coding correctness 
 ProgressOn("UPLOADING", $sFileToUpload, "0%")
 
 ; Register callback function
-_WinHttpSimpleFormFill_SetCallback(UploadCallback)
+_WinHttpSimpleFormFill_SetUploadCallback(UploadCallback)
 
 ; Fill form
 $sHTML = _WinHttpSimpleFormFill($hConnect, $hOpen, _
@@ -31,7 +31,7 @@ $sHTML = _WinHttpSimpleFormFill($hConnect, $hOpen, _
 $iErr = @error
 
 ; Unregister callback function
-_WinHttpSimpleFormFill_SetCallback(0)
+_WinHttpSimpleFormFill_SetUploadCallback(0)
 
 ; Kill progress bar window
 ProgressOff()
