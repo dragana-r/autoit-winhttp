@@ -2123,7 +2123,7 @@ Func __WinHttpHTML5FormAttribs(ByRef $aDtas, ByRef $aFlds, ByRef $iNumParams, By
 							$sInpNme = __WinHttpAttribVal($aInput[$iInpSubm], "name")
 							If $sInpNme Then $sInpNme &= $sImgAppx
 							$aInput[$iInpSubm] = 'type="image" formaction="' & __WinHttpAttribVal($aInput[$iInpSubm], "formaction") & '" formenctype="' & __WinHttpAttribVal($aInput[$iInpSubm], "formenctype") & '" formmethod="' & __WinHttpAttribVal($aInput[$iInpSubm], "formmethod") & '"'
-							Local $sX = 0, $sY = 0
+							Local $iX = 0, $iY = 0
 							$iX = Int(StringRegExpReplace($aDtas[$k], "(\d+)\h*(\d+),(\d+)", "$2", 1))
 							$iY = Int(StringRegExpReplace($aDtas[$k], "(\d+)\h*(\d+),(\d+)", "$3", 1))
 							ReDim $aInput[UBound($aInput) + 2]
