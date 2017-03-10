@@ -2220,23 +2220,29 @@ EndFunc
 
 Func __WinHttpNormalizeForm(ByRef $sForm, $sSpr1, $sSpr2)
 	Local $aData = StringToASCIIArray($sForm, Default, Default, 2)
-	Local $sOut, $bQuot = False, $bSQuot = False
+	Local $sOut, $bQuot = False, $bSQuot = False, $bOpTg = True
 	For $i = 0 To UBound($aData) - 1
 		Switch $aData[$i]
 			Case 34
-				$bQuot = Not $bQuot
+				If $bOpTg Then $bQuot = Not $bQuot
+				$sOut &= Chr($aData[$i])
 			Case 39
-				$bSQuot = Not $bSQuot
+				If $bOpTg Then $bSQuot = Not $bSQuot
+				$sOut &= Chr($aData[$i])
 			Case 32 ; space
 				If $bQuot Or $bSQuot Then
 					$sOut &= $sSpr1
 				Else
 					$sOut &= Chr($aData[$i])
 				EndIf
+			Case 60 ; <
+				If Not $bOpTg Then $bOpTg = True
+				$sOut &= Chr($aData[$i])
 			Case 62 ; >
 				If $bQuot Or $bSQuot Then
 					$sOut &= $sSpr2
 				Else
+					If $bOpTg Then $bOpTg = False
 					$sOut &= Chr($aData[$i])
 				EndIf
 			Case Else
