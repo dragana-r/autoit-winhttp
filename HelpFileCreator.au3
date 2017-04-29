@@ -26,7 +26,7 @@ Global $sExamplesFolder = @ScriptDir & "\WinHttp_Examples"
 Global Const $sCurrentVersionNumber = _GetVersionNumber($sFile)
 #XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
-ConsoleWrite(@CRLF & "> Generating pages..." & @CRLF)
+ConsoleWrite(@CRLF & "> Generating pages... " & @CRLF)
 
 Global $aFunctions
 Global $sWorkingFolder = _CHM_UDFToHTMPages($sFile, $aFunctions)
