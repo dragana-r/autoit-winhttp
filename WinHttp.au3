@@ -26,7 +26,7 @@
 ; #INDEX# ===================================================================================
 ; Title ...............: WinHttp
 ; File Name............: WinHttp.au3
-; File Version.........: 1.6.4.1
+; File Version.........: 1.6.4.2
 ; Min. AutoIt Version..: v3.3.7.20
 ; Description .........: AutoIt wrapper for WinHTTP functions
 ; Author... ...........: trancexx, ProgAndy
@@ -2399,7 +2399,7 @@ Func __WinHttpSysInfo()
 EndFunc
 
 Func __WinHttpVer()
-	Return "1.6.4.1"
+	Return "1.6.4.2"
 EndFunc
 
 Func _WinHttpBinaryConcat(ByRef $bBinary1, ByRef $bBinary2)
