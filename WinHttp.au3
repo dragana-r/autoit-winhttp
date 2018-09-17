@@ -1769,6 +1769,7 @@ EndFunc
 ;                  |2 - could not send request
 ;                  |3 - could not receive response
 ; Author ........: ProgAndy
+; Modified.......: trancexx
 ; Related .......: _WinHttpSimpleSSLRequest, _WinHttpSimpleSendRequest, _WinHttpSimpleReadData
 ; ===============================================================================================================================
 Func _WinHttpSimpleSendSSLRequest($hConnect, $sType = Default, $sPath = Default, $sReferer = Default, $sDta = Default, $sHeader = Default, $iIgnoreAllCertErrors = 0)
@@ -1784,6 +1785,7 @@ Func _WinHttpSimpleSendSSLRequest($hConnect, $sType = Default, $sPath = Default,
 	If $sType = "POST" And $sHeader = $WINHTTP_NO_ADDITIONAL_HEADERS Then $sHeader = "Content-Type: application/x-www-form-urlencoded" & @CRLF
 	_WinHttpSetOption($hRequest, $WINHTTP_OPTION_DECOMPRESSION, $WINHTTP_DECOMPRESSION_FLAG_ALL)
 	_WinHttpSetOption($hRequest, $WINHTTP_OPTION_UNSAFE_HEADER_PARSING, 1)
+	_WinHttpSetOption(_WinHttpQueryOption(_WinHttpQueryOption($hRequest, $WINHTTP_OPTION_PARENT_HANDLE), $WINHTTP_OPTION_PARENT_HANDLE), $WINHTTP_OPTION_SECURE_PROTOCOLS, BitOR($WINHTTP_FLAG_SECURE_PROTOCOL_ALL, $WINHTTP_FLAG_SECURE_PROTOCOL_TLS1_1, $WINHTTP_FLAG_SECURE_PROTOCOL_TLS1_2))
 	_WinHttpSendRequest($hRequest, $sHeader, $sDta)
 	If @error Then Return SetError(2, 0 * _WinHttpCloseHandle($hRequest), 0)
 	_WinHttpReceiveResponse($hRequest)
