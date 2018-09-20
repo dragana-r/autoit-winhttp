@@ -1785,6 +1785,7 @@ Func _WinHttpSimpleSendSSLRequest($hConnect, $sType = Default, $sPath = Default,
 	If $sType = "POST" And $sHeader = $WINHTTP_NO_ADDITIONAL_HEADERS Then $sHeader = "Content-Type: application/x-www-form-urlencoded" & @CRLF
 	_WinHttpSetOption($hRequest, $WINHTTP_OPTION_DECOMPRESSION, $WINHTTP_DECOMPRESSION_FLAG_ALL)
 	_WinHttpSetOption($hRequest, $WINHTTP_OPTION_UNSAFE_HEADER_PARSING, 1)
+	_WinHttpSetOption($hRequest, $WINHTTP_OPTION_REDIRECT_POLICY, $WINHTTP_OPTION_REDIRECT_POLICY_ALWAYS)
 	_WinHttpSetOption(_WinHttpQueryOption(_WinHttpQueryOption($hRequest, $WINHTTP_OPTION_PARENT_HANDLE), $WINHTTP_OPTION_PARENT_HANDLE), $WINHTTP_OPTION_SECURE_PROTOCOLS, BitOR($WINHTTP_FLAG_SECURE_PROTOCOL_ALL, $WINHTTP_FLAG_SECURE_PROTOCOL_TLS1_1, $WINHTTP_FLAG_SECURE_PROTOCOL_TLS1_2))
 	_WinHttpSendRequest($hRequest, $sHeader, $sDta)
 	If @error Then Return SetError(2, 0 * _WinHttpCloseHandle($hRequest), 0)
@@ -2320,6 +2321,7 @@ Func __WinHttpFormSend($hInternet, $sMethod, $sAction, $fMultiPart, $sBoundary, 
 	If $fSecure Then
 		$hRequest = _WinHttpOpenRequest($hInternet, $sMethod, $sAction, Default, Default, Default, $WINHTTP_FLAG_SECURE)
 		If $iIgnoreAllCertErrors Then _WinHttpSetOption($hRequest, $WINHTTP_OPTION_SECURITY_FLAGS, BitOR($SECURITY_FLAG_IGNORE_UNKNOWN_CA, $SECURITY_FLAG_IGNORE_CERT_DATE_INVALID, $SECURITY_FLAG_IGNORE_CERT_CN_INVALID, $SECURITY_FLAG_IGNORE_CERT_WRONG_USAGE))
+		_WinHttpSetOption($hRequest, $WINHTTP_OPTION_REDIRECT_POLICY, $WINHTTP_OPTION_REDIRECT_POLICY_ALWAYS)
 	Else
 		$hRequest = _WinHttpOpenRequest($hInternet, $sMethod, $sAction)
 	EndIf
