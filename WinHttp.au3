@@ -1218,10 +1218,14 @@ Func _WinHttpSimpleFormFill(ByRef $hInternet, $sActionPage = Default, $sFormId =
 		$sMethod = __WinHttpAttribVal($sAttributes, "method")
 		; Requested form is found. Set $fSend flag to true
 		$fSend = True
+		$sHTML = StringReplace($sHTML, $sForm, ">")
 		Local $sSpr1 = Chr(27), $sSpr2 = Chr(26)
 		__WinHttpNormalizeForm($sForm, $sSpr1, $sSpr2)
 		$aInput = StringRegExp($sForm, "(?si)<\h*(?:input|textarea|label|fieldset|legend|select|optgroup|option|button)\h*(.*?)/*\h*>", 3)
+		; HTML5 "form" attribute on form elements
+		__WinHttpHTML5Form($sHTML, $sId, @error, $aInput)
 		If @error Then Return SetError(2, 0, "") ; invalid form
+		$sHTML = ""
 		; HTML5 allows for "formaction", "formenctype", "formmethod" submit-control attributes to be set. If such control is "clicked" then form's attributes needs updating/correcting
 		__WinHttpHTML5FormAttribs($aDtas, $aFlds, $iNumParams, $aInput, $sAction, $sEnctype, $sMethod)
 		; Workout correct URL, scheme, etc...
@@ -2101,6 +2105,23 @@ Func __WinHttpNormalizeActionURL($sActionPage, ByRef $sAction, ByRef $iScheme, B
 	EndIf
 	If Not $sMethod Then $sMethod = "GET"
 	If $sMethod = "GET" Then $sEnctype = ""
+EndFunc
+
+Func __WinHttpHTML5Form($sHTML, $sId, $iFormErr, ByRef $aInput)
+	If $sId Then
+		If $iFormErr Then Dim $aInput[1]
+		$aInputHTML5 = StringRegExp($sHTML, "(?si)<\h*(?:input|textarea|label|fieldset|legend|select|optgroup|option|button)\h*(.*?)/*\h*>", 3)
+		If Not @error Then
+			For $sElem In $aInputHTML5
+				If __WinHttpAttribVal($sElem, "form") = $sId Then
+					$iFormErr = 0
+					ReDim $aInput[UBound($aInput) + 1]
+					$aInput[UBound($aInput) - 1] = $sElem
+				EndIf
+			Next
+		EndIf
+	EndIf
+	Return SetError($iFormErr, 0, "")
 EndFunc
 
 Func __WinHttpHTML5FormAttribs(ByRef $aDtas, ByRef $aFlds, ByRef $iNumParams, ByRef $aInput, ByRef $sAction, ByRef $sEnctype, ByRef $sMethod)
