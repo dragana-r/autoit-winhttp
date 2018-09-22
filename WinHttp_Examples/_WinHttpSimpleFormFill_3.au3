@@ -1,7 +1,7 @@
 
 #include "WinHttp.au3"
 
-$sAddress = "https://posttestserver.com/post.php?dump&dir=WinHttp" ; the address of the target  (https or http, makes no difference - handled automatically)
+$sAddress = "https://paratus.hr/software/testing/fileupload/" ; the address of the target
 
 $sFileToUpload = @ScriptFullPath ; upload itself
 
