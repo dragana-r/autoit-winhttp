@@ -2110,7 +2110,7 @@ EndFunc
 Func __WinHttpHTML5Form($sHTML, $sId, $iFormErr, ByRef $aInput)
 	If $sId Then
 		If $iFormErr Then Dim $aInput[1]
-		$aInputHTML5 = StringRegExp($sHTML, "(?si)<\h*(?:input|textarea|label|fieldset|legend|select|optgroup|option|button)\h*(.*?)/*\h*>", 3)
+		Local $aInputHTML5 = StringRegExp($sHTML, "(?si)<\h*(?:input|textarea|label|fieldset|legend|select|optgroup|option|button)\h*(.*?)/*\h*>", 3)
 		If Not @error Then
 			For $sElem In $aInputHTML5
 				If __WinHttpAttribVal($sElem, "form") = $sId Then
