@@ -1137,7 +1137,7 @@ Func _WinHttpSimpleFormFill(ByRef $hInternet, $sActionPage = Default, $sFormId =
 				$sCredName = $aStrSplit[0]
 				$sCredPass = $aStrSplit[1]
 			EndIf
-			$sAdditionalHeaders = StringReplace($sAdditionalHeaders, $aCred[0], "", 1)
+			$sAdditionalHeaders = StringReplace($sAdditionalHeaders, $aCred[0], "", 1, 0)
 		EndIf
 	EndIf
 	; Get page source
@@ -1218,7 +1218,7 @@ Func _WinHttpSimpleFormFill(ByRef $hInternet, $sActionPage = Default, $sFormId =
 		$sMethod = __WinHttpAttribVal($sAttributes, "method")
 		; Requested form is found. Set $fSend flag to true
 		$fSend = True
-		$sHTML = StringReplace($sHTML, $sForm, ">")
+		$sHTML = StringReplace($sHTML, $sForm, ">", 0, 1)
 		Local $sSpr1 = Chr(27), $sSpr2 = Chr(26)
 		__WinHttpNormalizeForm($sForm, $sSpr1, $sSpr2)
 		$aInput = StringRegExp($sForm, "(?si)<\h*(?:input|textarea|label|fieldset|legend|select|optgroup|option|button)\h*(.*?)/*\h*>", 3)
@@ -1241,8 +1241,8 @@ Func _WinHttpSimpleFormFill(ByRef $hInternet, $sActionPage = Default, $sFormId =
 				For $i = 0 To UBound($aInput) - 1 ; for all input elements
 					__WinHttpFormAttrib($aInputIds, $i, $aInput[$i])
 					If $aInputIds[1][$i] Then ; if there is 'name' field then add it
-						$aInputIds[1][$i] = __WinHttpURLEncode(StringReplace($aInputIds[1][$i], $sSpr1, " "), $sEnctype)
-						$aInputIds[2][$i] = __WinHttpURLEncode(StringReplace(StringReplace($aInputIds[2][$i], $sSpr2, ">"), $sSpr1, " "), $sEnctype)
+						$aInputIds[1][$i] = __WinHttpURLEncode(StringReplace($aInputIds[1][$i], $sSpr1, " ", 0, 1), $sEnctype)
+						$aInputIds[2][$i] = __WinHttpURLEncode(StringReplace(StringReplace($aInputIds[2][$i], $sSpr2, ">", 0, 1), $sSpr1, " ", 0, 1), $sEnctype)
 						$sAddData &= $aInputIds[1][$i] & "=" & $aInputIds[2][$i] & "&"
 						If $aInputIds[3][$i] = "submit" Then $sSubmit &= $aInputIds[1][$i] & "=" & $aInputIds[2][$i] & $sGrSep ; add to overall "submit" string
 						If $aInputIds[3][$i] = "radio" Then $sRadio &= $aInputIds[1][$i] & "=" & $aInputIds[2][$i] & $sGrSep ; add to overall "radio" string
@@ -1288,12 +1288,12 @@ Func _WinHttpSimpleFormFill(ByRef $hInternet, $sActionPage = Default, $sFormId =
 									If $sPassedData = $aInputIds[2][$j] Then
 										For $sChunkSub In StringSplit($sRadio, $sGrSep, 3) ; go tru all "radio" controls
 											If $sChunkSub == $aInputIds[1][$j] & "=" & $sPassedData Then
-												$sAddData = StringRegExpReplace(StringReplace($sAddData, "&", "&&"), "(?:&|\A)\Q" & $aInputIds[1][$j] & "\E(.*?)(?:&|\Z)", "&")
-												$sAddData = StringReplace(StringReplace($sAddData, "&&", "&"), "&&", "&")
+												$sAddData = StringRegExpReplace(StringReplace($sAddData, "&", "&&", 0, 1), "(?:&|\A)\Q" & $aInputIds[1][$j] & "\E(.*?)(?:&|\Z)", "&")
+												$sAddData = StringReplace(StringReplace($sAddData, "&&", "&", 0, 1), "&&", "&", 0, 1)
 												If StringLeft($sAddData, 1) = "&" Then $sAddData = StringTrimLeft($sAddData, 1)
 												$sAddData &= "&" & $sChunkSub
-												$sRadio = StringRegExpReplace(StringReplace($sRadio, $sGrSep, $sGrSep & $sGrSep), "(?:" & $sGrSep & "|\A)\Q" & $aInputIds[1][$j] & "\E(.*?)(?:" & $sGrSep & "|\Z)", $sGrSep)
-												$sRadio = StringReplace(StringReplace($sRadio, $sGrSep & $sGrSep, $sGrSep), $sGrSep & $sGrSep, $sGrSep)
+												$sRadio = StringRegExpReplace(StringReplace($sRadio, $sGrSep, $sGrSep & $sGrSep, 0, 1), "(?:" & $sGrSep & "|\A)\Q" & $aInputIds[1][$j] & "\E(.*?)(?:" & $sGrSep & "|\Z)", $sGrSep)
+												$sRadio = StringReplace(StringReplace($sRadio, $sGrSep & $sGrSep, $sGrSep, 0, 1), $sGrSep & $sGrSep, $sGrSep, 0, 1)
 											EndIf
 										Next
 									EndIf
@@ -1304,9 +1304,9 @@ Func _WinHttpSimpleFormFill(ByRef $hInternet, $sActionPage = Default, $sFormId =
 									$sButton = StringRegExpReplace($sButton, "\Q" & $aInputIds[1][$j] & "=" & $sPassedData & "\E" & $sGrSep & "*", "")
 									__WinHttpTrimBounds($sButton, $sGrSep)
 								Else
-									$sAddData = StringRegExpReplace(StringReplace($sAddData, "&", "&&"), "(?:&|\A)\Q" & $aInputIds[1][$j] & "=" & $aInputIds[2][$j] & "\E(?:&|\Z)", "&" & $aInputIds[1][$j] & "=" & $sPassedData & "&")
+									$sAddData = StringRegExpReplace(StringReplace($sAddData, "&", "&&", 0, 1), "(?:&|\A)\Q" & $aInputIds[1][$j] & "=" & $aInputIds[2][$j] & "\E(?:&|\Z)", "&" & $aInputIds[1][$j] & "=" & $sPassedData & "&")
 									$iNumRepl = @extended
-									$sAddData = StringReplace($sAddData, "&&", "&")
+									$sAddData = StringReplace($sAddData, "&&", "&", 0, 1)
 									If $iNumRepl > 1 Then ; equalize ; TODO: remove duplicates
 										$sAddData = StringRegExpReplace($sAddData, "(?:&|\A)\Q" & $aInputIds[1][$j] & "\E=.*?(?:&|\Z)", "&", $iNumRepl - 1)
 									EndIf
@@ -1340,11 +1340,11 @@ Func _WinHttpSimpleFormFill(ByRef $hInternet, $sActionPage = Default, $sFormId =
 							ElseIf $aInputIds[1][$j] == $aSplit[1] And $aInputIds[3][$j] = "radio" Then
 								For $sChunkSub In StringSplit($sRadio, $sGrSep, 3) ; go tru all "radio" controls
 									If $sChunkSub == $aInputIds[1][$j] & "=" & $sPassedData Then
-										$sAddData = StringReplace(StringReplace(StringRegExpReplace(StringReplace($sAddData, "&", "&&"), "(?:&|\A)\Q" & $aInputIds[1][$j] & "\E(.*?)(?:&|\Z)", "&"), "&&", "&"), "&&", "&")
+										$sAddData = StringReplace(StringReplace(StringRegExpReplace(StringReplace($sAddData, "&", "&&", 0, 1), "(?:&|\A)\Q" & $aInputIds[1][$j] & "\E(.*?)(?:&|\Z)", "&"), "&&", "&", 0, 1), "&&", "&", 0, 1)
 										If StringLeft($sAddData, 1) = "&" Then $sAddData = StringTrimLeft($sAddData, 1)
 										$sAddData &= "&" & $sChunkSub
-										$sRadio = StringRegExpReplace(StringReplace($sRadio, $sGrSep, $sGrSep & $sGrSep), "(?:" & $sGrSep & "|\A)\Q" & $aInputIds[1][$j] & "\E(.*?)(?:" & $sGrSep & "|\Z)", $sGrSep)
-										$sRadio = StringReplace(StringReplace($sRadio, $sGrSep & $sGrSep, $sGrSep), $sGrSep & $sGrSep, $sGrSep)
+										$sRadio = StringRegExpReplace(StringReplace($sRadio, $sGrSep, $sGrSep & $sGrSep, 0, 1), "(?:" & $sGrSep & "|\A)\Q" & $aInputIds[1][$j] & "\E(.*?)(?:" & $sGrSep & "|\Z)", $sGrSep)
+										$sRadio = StringReplace(StringReplace($sRadio, $sGrSep & $sGrSep, $sGrSep, 0, 1), $sGrSep & $sGrSep, $sGrSep, 0, 1)
 									EndIf
 								Next
 								ContinueLoop 2 ; process next parameter
@@ -1358,9 +1358,9 @@ Func _WinHttpSimpleFormFill(ByRef $hInternet, $sActionPage = Default, $sFormId =
 								ContinueLoop 2 ; process next parameter
 							EndIf
 						Next
-						$sAddData = StringRegExpReplace(StringReplace($sAddData, "&", "&&"), "(?:&|\A)\Q" & $aSplit[1] & "\E=.*?(?:&|\Z)", "&" & $aSplit[1] & "=" & $sPassedData & "&")
+						$sAddData = StringRegExpReplace(StringReplace($sAddData, "&", "&&", 0, 1), "(?:&|\A)\Q" & $aSplit[1] & "\E=.*?(?:&|\Z)", "&" & $aSplit[1] & "=" & $sPassedData & "&")
 						$iNumRepl = @extended
-						$sAddData = StringReplace($sAddData, "&&", "&")
+						$sAddData = StringReplace($sAddData, "&&", "&", 0, 1)
 						If $iNumRepl > 1 Then ; remove duplicates
 							$sAddData = StringRegExpReplace($sAddData, "(?:&|\A)\Q" & $aSplit[1] & "\E=.*?(?:&|\Z)", "&", $iNumRepl - 1)
 						EndIf
@@ -1381,8 +1381,8 @@ Func _WinHttpSimpleFormFill(ByRef $hInternet, $sActionPage = Default, $sFormId =
 					For $i = 0 To UBound($aInput) - 1 ; for all input elements
 						__WinHttpFormAttrib($aInputIds, $i, $aInput[$i])
 						If $aInputIds[1][$i] Then ; if there is 'name' field
-							$aInputIds[1][$i] = StringReplace($aInputIds[1][$i], $sSpr1, " ")
-							$aInputIds[2][$i] = StringReplace(StringReplace($aInputIds[2][$i], $sSpr2, ">"), $sSpr1, " ")
+							$aInputIds[1][$i] = StringReplace($aInputIds[1][$i], $sSpr1, " ", 0, 1)
+							$aInputIds[2][$i] = StringReplace(StringReplace($aInputIds[2][$i], $sSpr2, ">", 0, 1), $sSpr1, " ", 0, 1)
 							If $aInputIds[3][$i] = "file" Then
 								$sAddData &= "--" & $sBoundary & @CRLF & _
 										$sCDisp & $aInputIds[1][$i] & '"; filename=""' & @CRLF & @CRLF & _
@@ -1525,7 +1525,7 @@ Func _WinHttpSimpleFormFill(ByRef $hInternet, $sActionPage = Default, $sFormId =
 								EndIf
 							Next
 							$sAddData = StringRegExpReplace($sAddData, '(?s)\Q' & $sCDisp & $aSplit[1] & '"' & '\E\r\n\r\n.*?\r\n', _
-									$sCDisp & $aSplit[1] & '"' & @CRLF & @CRLF & StringReplace($sPassedData, "\", "\\") & @CRLF)
+									$sCDisp & $aSplit[1] & '"' & @CRLF & @CRLF & StringReplace($sPassedData, "\", "\\", 0, 1) & @CRLF)
 							$iNumRepl = @extended
 							If $iNumRepl > 1 Then ; remove duplicates
 								$sAddData = StringRegExpReplace($sAddData, '(?s)\Q--' & $sBoundary & @CRLF & $sCDisp & $aSplit[1] & '"' & '\E\r\n\r\n.*?\r\n', "", $iNumRepl - 1)
@@ -2038,7 +2038,7 @@ EndFunc
 Func __WinHttpURLEncode($vData, $sEncType = "")
 	If IsBool($vData) Then Return $vData
 	$vData = __WinHttpHTMLDecode($vData)
-	If $sEnctype = "text/plain" Then Return StringReplace($vData, " ", "+")
+	If $sEnctype = "text/plain" Then Return StringReplace($vData, " ", "+", 0, 1)
 	Local $aData = StringToASCIIArray($vData, Default, Default, 2)
 	Local $sOut
 	For $i = 0 To UBound($aData) - 1
@@ -2055,7 +2055,7 @@ Func __WinHttpURLEncode($vData, $sEncType = "")
 EndFunc
 
 Func __WinHttpHTMLDecode($vData)
-	Return StringReplace(StringReplace(StringReplace(StringReplace(StringReplace($vData, "&apos;", "'"), "&amp;", "&"), "&lt;", "<"), "&gt;", ">"), "&quot;", '"')
+	Return StringReplace(StringReplace(StringReplace(StringReplace(StringReplace($vData, "&apos;", "'", 0, 1), "&amp;", "&", 0, 1), "&lt;", "<", 0, 1), "&gt;", ">", 0, 1), "&quot;", '"', 0, 1)
 EndFunc
 
 Func __WinHttpNormalizeActionURL($sActionPage, ByRef $sAction, ByRef $iScheme, ByRef $sNewURL, ByRef $sEnctype, ByRef $sMethod, ByRef $sReferer, $sURL = "")
@@ -2080,7 +2080,7 @@ Func __WinHttpNormalizeActionURL($sActionPage, ByRef $sAction, ByRef $iScheme, B
 					$sAction = $aCrackURL[6] & $sAction
 				EndIf
 			ElseIf StringLeft($sAction, 1) = "#" Then
-				$sAction = StringReplace($sActionPage, StringRegExpReplace($sActionPage, "(.*?)(#.*?)", "$2"), $sAction)
+				$sAction = StringReplace($sActionPage, StringRegExpReplace($sActionPage, "(.*?)(#.*?)", "$2"), $sAction, 0, 1)
 			ElseIf StringLeft($sAction, 1) = "/" Then
 				$aCrackURL = _WinHttpCrackUrl($sURL)
 				If Not @error Then
