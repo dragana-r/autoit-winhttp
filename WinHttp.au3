@@ -2039,19 +2039,8 @@ Func __WinHttpURLEncode($vData, $sEncType = "")
 	If IsBool($vData) Then Return $vData
 	$vData = __WinHttpHTMLDecode($vData)
 	If $sEnctype = "text/plain" Then Return StringReplace($vData, " ", "+", 0, 1)
-	Local $aData = StringToASCIIArray($vData, Default, Default, 2)
-	Local $sOut
-	For $i = 0 To UBound($aData) - 1
-		Switch $aData[$i]
-			Case 45, 46, 48 To 57, 65 To 90, 95, 97 To 122, 126
-				$sOut &= Chr($aData[$i])
-			Case 32
-				$sOut &= "+"
-			Case Else
-				$sOut &= "%" & Hex($aData[$i], 2)
-		EndSwitch
-	Next
-	Return $sOut
+	Local $aURLArray[8] = ["http", 1, "", 80, "", "", BinaryToString(StringToBinary($vData, 4), 1), ""]
+	Return StringReplace(StringReplace(StringTrimLeft(_WinHttpCreateUrl($aURLArray), 7), "&", "%26", 0, 1), ";", "%3B", 0, 1)
 EndFunc
 
 Func __WinHttpHTMLDecode($vData)
