@@ -1,7 +1,7 @@
 
 #include "WinHTTP.au3"
 
-$sAddress = "https://posttestserver.com/post.php?dir=WinHttp" ; the address of the target (https or http, makes no difference - handled automatically)
+$sAddress = "https://paratus.hr/software/testing/fileupload/" ; the address of the target
 
 ; Select some file
 $sFileToUpload = FileOpenDialog("Select file to upload...", "", "All Files (*)")
