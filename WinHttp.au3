@@ -2044,7 +2044,7 @@ Func __WinHttpURLEncode($vData, $sEncType = "")
 EndFunc
 
 Func __WinHttpHTMLDecode($vData)
-	Return StringReplace(StringReplace(StringReplace(StringReplace(StringReplace($vData, "&apos;", "'", 0, 1), "&amp;", "&", 0, 1), "&lt;", "<", 0, 1), "&gt;", ">", 0, 1), "&quot;", '"', 0, 1)
+	Return StringRegExpReplace(StringRegExpReplace(StringRegExpReplace(StringRegExpReplace(StringRegExpReplace($vData, "(?i)&apos;", "'"), "(?i)&amp;", "&"), "(?i)&lt;", "<"), "(?i)&gt;", ">"), "(?i)&quot;", '"')
 EndFunc
 
 Func __WinHttpNormalizeActionURL($sActionPage, ByRef $sAction, ByRef $iScheme, ByRef $sNewURL, ByRef $sEnctype, ByRef $sMethod, ByRef $sReferer, $sURL = "")
