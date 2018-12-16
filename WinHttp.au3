@@ -1,3 +1,5 @@
+#AutoIt3Wrapper_Run_AU3Check=Y
+#AutoIt3Wrapper_Au3Check_Parameters=-d -w 1 -w 2 -w 3 -w 4 -w 5 -w 6 -w 7 -v1 -v2 -v3
 
 ; For those who would fear the license - don't. I tried to license it as liberal as possible.
 ; It really means you can do what ever you want with this.
@@ -100,7 +102,7 @@ Func _WinHttpAddRequestHeaders($hRequest, $sHeader, $iModifier = Default)
 			"dword", $iModifier)
 	If @error Or Not $aCall[0] Then Return SetError(1, 0, 0)
 	Return 1
-EndFunc
+EndFunc   ;==>_WinHttpAddRequestHeaders
 
 ; #FUNCTION# ;===============================================================================
 ; Name...........: _WinHttpCheckPlatform
@@ -118,7 +120,7 @@ Func _WinHttpCheckPlatform()
 	Local $aCall = DllCall($hWINHTTPDLL__WINHTTP, "bool", "WinHttpCheckPlatform")
 	If @error Then Return SetError(1, 0, 0)
 	Return $aCall[0]
-EndFunc
+EndFunc   ;==>_WinHttpCheckPlatform
 
 ; #FUNCTION# ;===============================================================================
 ; Name...........: _WinHttpCloseHandle
@@ -136,7 +138,7 @@ Func _WinHttpCloseHandle($hInternet)
 	Local $aCall = DllCall($hWINHTTPDLL__WINHTTP, "bool", "WinHttpCloseHandle", "handle", $hInternet)
 	If @error Or Not $aCall[0] Then Return SetError(1, 0, 0)
 	Return 1
-EndFunc
+EndFunc   ;==>_WinHttpCloseHandle
 
 ; #FUNCTION# ;===============================================================================
 ; Name...........: _WinHttpConnect
@@ -170,7 +172,7 @@ Func _WinHttpConnect($hSession, $sServerName, $iServerPort = Default)
 	If @error Or Not $aCall[0] Then Return SetError(1, 0, 0)
 	_WinHttpSetOption($aCall[0], $WINHTTP_OPTION_CONTEXT_VALUE, $iScheme)
 	Return $aCall[0]
-EndFunc
+EndFunc   ;==>_WinHttpConnect
 
 ; #FUNCTION# ;===============================================================================
 ; Name...........: _WinHttpCrackUrl
@@ -247,7 +249,7 @@ Func _WinHttpCrackUrl($sURL, $iFlag = Default)
 			DllStructGetData($tBuffers[4], 1), _
 			DllStructGetData($tBuffers[5], 1)]
 	Return $aRet
-EndFunc
+EndFunc   ;==>_WinHttpCrackUrl
 
 ; #FUNCTION# ;===============================================================================
 ; Name...........: _WinHttpCreateUrl
@@ -351,7 +353,7 @@ Func _WinHttpCreateUrl($aURLArray)
 			"dword*", $iURLLen)
 	If @error Or Not $aCall[0] Then Return SetError(3, 0, "")
 	Return DllStructGetData($URLBuffer, 1)
-EndFunc
+EndFunc   ;==>_WinHttpCreateUrl
 
 ; #FUNCTION# ;===============================================================================
 ; Name...........: _WinHttpDetectAutoProxyConfigUrl
@@ -380,7 +382,7 @@ Func _WinHttpDetectAutoProxyConfigUrl($iAutoDetectFlags)
 		Return $sString
 	EndIf
 	Return ""
-EndFunc
+EndFunc   ;==>_WinHttpDetectAutoProxyConfigUrl
 
 ; #FUNCTION# ;===============================================================================
 ; Name...........: _WinHttpGetDefaultProxyConfiguration
@@ -430,7 +432,7 @@ Func _WinHttpGetDefaultProxyConfiguration()
 	EndIf
 	Local $aRet[3] = [$iAccessType, $sProxy, $sProxyBypass]
 	Return $aRet
-EndFunc
+EndFunc   ;==>_WinHttpGetDefaultProxyConfiguration
 
 ; #FUNCTION# ;===============================================================================
 ; Name...........: _WinHttpGetIEProxyConfigForCurrentUser
@@ -489,7 +491,7 @@ Func _WinHttpGetIEProxyConfigForCurrentUser()
 	EndIf
 	Local $aOutput[4] = [$iAutoDetect, $sAutoConfigUrl, $sProxy, $sProxyBypass]
 	Return $aOutput
-EndFunc
+EndFunc   ;==>_WinHttpGetIEProxyConfigForCurrentUser
 
 ; #FUNCTION# ;===============================================================================
 ; Name...........: _WinHttpOpen
@@ -524,7 +526,7 @@ Func _WinHttpOpen($sUserAgent = Default, $iAccessType = Default, $sProxyName = D
 	If @error Or Not $aCall[0] Then Return SetError(1, 0, 0)
 	If $iFlag = $WINHTTP_FLAG_ASYNC Then _WinHttpSetOption($aCall[0], $WINHTTP_OPTION_CONTEXT_VALUE, $WINHTTP_FLAG_ASYNC)
 	Return $aCall[0]
-EndFunc
+EndFunc   ;==>_WinHttpOpen
 
 ; #FUNCTION# ;===============================================================================
 ; Name...........: _WinHttpOpenRequest
@@ -574,7 +576,7 @@ Func _WinHttpOpenRequest($hConnect, $sVerb = Default, $sObjectName = Default, $s
 			"dword", $iFlags)
 	If @error Or Not $aCall[0] Then Return SetError(1, 0, 0)
 	Return $aCall[0]
-EndFunc
+EndFunc   ;==>_WinHttpOpenRequest
 
 ; #FUNCTION# ====================================================================================================================
 ; Name ..........: _WinHttpQueryAuthSchemes
@@ -606,7 +608,7 @@ Func _WinHttpQueryAuthSchemes($hRequest, ByRef $iSupportedSchemes, ByRef $iFirst
 	$iFirstScheme = $aCall[3]
 	$iAuthTarget = $aCall[4]
 	Return 1
-EndFunc
+EndFunc   ;==>_WinHttpQueryAuthSchemes
 
 ; #FUNCTION# ;===============================================================================
 ; Name...........: _WinHttpQueryDataAvailable
@@ -629,7 +631,7 @@ Func _WinHttpQueryDataAvailable($hRequest)
 	Local $aCall = DllCall($hWINHTTPDLL__WINHTTP, "bool", "WinHttpQueryDataAvailable", "handle", $hRequest, $sReadType, 0)
 	If @error Then Return SetError(1, 0, 0)
 	Return SetExtended($aCall[2], $aCall[0])
-EndFunc
+EndFunc   ;==>_WinHttpQueryDataAvailable
 
 ; #FUNCTION# ;===============================================================================
 ; Name...........: _WinHttpQueryHeaders
@@ -660,7 +662,7 @@ Func _WinHttpQueryHeaders($hRequest, $iInfoLevel = Default, $sName = Default, $i
 			"dword*", $iIndex)
 	If @error Or Not $aCall[0] Then Return SetError(1, 0, "")
 	Return SetExtended($aCall[6], $aCall[4])
-EndFunc
+EndFunc   ;==>_WinHttpQueryHeaders
 
 ; #FUNCTION# ;===============================================================================
 ; Name...........: _WinHttpQueryOption
@@ -709,7 +711,7 @@ Func _WinHttpQueryOption($hInternet, $iOption)
 			"dword*", $iSize)
 	If @error Or Not $aCall[0] Then Return SetError(2, 0, "")
 	Return DllStructGetData($tBuffer, 1)
-EndFunc
+EndFunc   ;==>_WinHttpQueryOption
 
 ; #FUNCTION# ;===============================================================================
 ; Name...........: _WinHttpReadData
@@ -777,7 +779,7 @@ Func _WinHttpReadData($hRequest, $iMode = Default, $iNumberOfBytesToRead = Defau
 				Return SetExtended($aCall[4], BinaryToString(DllStructGetData($tBuffer, 1), 4))
 		EndSwitch
 	EndIf
-EndFunc
+EndFunc   ;==>_WinHttpReadData
 
 ; #FUNCTION# ;===============================================================================
 ; Name...........: _WinHttpReceiveResponse
@@ -796,7 +798,7 @@ Func _WinHttpReceiveResponse($hRequest)
 	Local $aCall = DllCall($hWINHTTPDLL__WINHTTP, "bool", "WinHttpReceiveResponse", "handle", $hRequest, "ptr", 0)
 	If @error Or Not $aCall[0] Then Return SetError(1, 0, 0)
 	Return 1
-EndFunc
+EndFunc   ;==>_WinHttpReceiveResponse
 
 ; #FUNCTION# ;===============================================================================
 ; Name...........: _WinHttpSendRequest
@@ -839,7 +841,7 @@ Func _WinHttpSendRequest($hRequest, $sHeaders = Default, $vOptional = Default, $
 			"dword_ptr", $iContext)
 	If @error Or Not $aCall[0] Then Return SetError(1, 0, 0)
 	Return 1
-EndFunc
+EndFunc   ;==>_WinHttpSendRequest
 
 ; #FUNCTION# ;===============================================================================
 ; Name...........: _WinHttpSetCredentials
@@ -867,7 +869,7 @@ Func _WinHttpSetCredentials($hRequest, $iAuthTargets, $iAuthScheme, $sUserName, 
 			"ptr", 0)
 	If @error Or Not $aCall[0] Then Return SetError(1, 0, 0)
 	Return 1
-EndFunc
+EndFunc   ;==>_WinHttpSetCredentials
 
 ; #FUNCTION# ;===============================================================================
 ; Name...........: _WinHttpSetDefaultProxyConfiguration
@@ -899,7 +901,7 @@ Func _WinHttpSetDefaultProxyConfiguration($iAccessType, $sProxy = "", $sProxyByp
 	Local $aCall = DllCall($hWINHTTPDLL__WINHTTP, "bool", "WinHttpSetDefaultProxyConfiguration", "struct*", $tWINHTTP_PROXY_INFO)
 	If @error Or Not $aCall[0] Then Return SetError(1, 0, 0)
 	Return 1
-EndFunc
+EndFunc   ;==>_WinHttpSetDefaultProxyConfiguration
 
 ; #FUNCTION# ;===============================================================================
 ; Name...........: _WinHttpSetOption
@@ -975,7 +977,7 @@ Func _WinHttpSetOption($hInternet, $iOption, $vSetting, $iSize = Default)
 	EndIf
 	If @error Or Not $aCall[0] Then Return SetError(4, 0, 0)
 	Return 1
-EndFunc
+EndFunc   ;==>_WinHttpSetOption
 
 ; #FUNCTION# ;===============================================================================
 ; Name...........: _WinHttpSetStatusCallback
@@ -1001,7 +1003,7 @@ Func _WinHttpSetStatusCallback($hInternet, $hInternetCallback, $iNotificationFla
 			"ptr", 0)
 	If @error Then Return SetError(1, 0, 0)
 	Return $aCall[0]
-EndFunc
+EndFunc   ;==>_WinHttpSetStatusCallback
 
 ; #FUNCTION# ;===============================================================================
 ; Name...........: _WinHttpSetTimeouts
@@ -1037,7 +1039,7 @@ Func _WinHttpSetTimeouts($hInternet, $iResolveTimeout = Default, $iConnectTimeou
 			"int", $iReceiveTimeout)
 	If @error Or Not $aCall[0] Then Return SetError(1, 0, 0)
 	Return 1
-EndFunc
+EndFunc   ;==>_WinHttpSetTimeouts
 
 ; #FUNCTION# ;===============================================================================
 ; Name...........: _WinHttpSimpleBinaryConcat
@@ -1066,7 +1068,7 @@ Func _WinHttpSimpleBinaryConcat(ByRef $bBinary1, ByRef $bBinary2)
 	DllStructSetData($tAuxiliary, 2, $bBinary2)
 	Local $tOutput = DllStructCreate("byte[" & DllStructGetSize($tAuxiliary) & "]", DllStructGetPtr($tAuxiliary))
 	Return DllStructGetData($tOutput, 1)
-EndFunc
+EndFunc   ;==>_WinHttpSimpleBinaryConcat
 
 ; #FUNCTION# ;===============================================================================
 ; Name...........: _WinHttpSimpleFormFill
@@ -1148,7 +1150,7 @@ Func _WinHttpSimpleFormFill(ByRef $hInternet, $sActionPage = Default, $sFormId =
 		$hOpen = $sActionPage
 		$fVarForm = True
 	Else
-		$iScheme = _WinHttpQueryOption($hInternet, $WINHTTP_OPTION_CONTEXT_VALUE); read internet scheme from the connection handle
+		$iScheme = _WinHttpQueryOption($hInternet, $WINHTTP_OPTION_CONTEXT_VALUE) ; read internet scheme from the connection handle
 		Local $sAccpt = "Accept: text/html;q=0.9,text/plain;q=0.8,*/*;q=0.5"
 		If $iScheme = $INTERNET_SCHEME_HTTPS Then
 			$aHTML = _WinHttpSimpleSSLRequest($hInternet, Default, $sActionPage, Default, Default, $sAccpt & @CRLF & $sAdditionalHeaders, 1, Default, $sCredName, $sCredPass, $iIgnoreCertErr)
@@ -1573,7 +1575,7 @@ Func _WinHttpSimpleFormFill(ByRef $hInternet, $sActionPage = Default, $sFormId =
 	EndIf
 	; If here then there is no form on the page with specified attributes (name, id or index)
 	Return SetError(3, 0, "")
-EndFunc
+EndFunc   ;==>_WinHttpSimpleFormFill
 
 ; #FUNCTION# ====================================================================================================================
 ; Name...........: _WinHttpSimpleFormFill_SetUploadCallback
@@ -1598,7 +1600,7 @@ Func _WinHttpSimpleFormFill_SetUploadCallback($vCallback = Default, $iNumChunks 
 	EndIf
 	Local $aOut[2] = [$vFunc, $iParts]
 	Return $aOut
-EndFunc
+EndFunc   ;==>_WinHttpSimpleFormFill_SetUploadCallback
 
 ; #FUNCTION# ====================================================================================================================
 ; Name...........: _WinHttpSimpleReadData
@@ -1641,7 +1643,7 @@ Func _WinHttpSimpleReadData($hRequest, $iMode = Default)
 		EndSwitch
 	EndIf
 	Return SetError(2, 0, $vData)
-EndFunc
+EndFunc   ;==>_WinHttpSimpleReadData
 
 ; #FUNCTION# ====================================================================================================================
 ; Name...........: _WinHttpSimpleReadDataAsync
@@ -1664,7 +1666,7 @@ Func _WinHttpSimpleReadDataAsync($hInternet, ByRef $pBuffer, $iNumberOfBytesToRe
 	__WinHttpDefault($iNumberOfBytesToRead, 8192)
 	Local $vOut = _WinHttpReadData($hInternet, 2, $iNumberOfBytesToRead, $pBuffer)
 	Return SetError(@error, @extended, $vOut)
-EndFunc
+EndFunc   ;==>_WinHttpSimpleReadDataAsync
 
 ; #FUNCTION# ====================================================================================================================
 ; Name...........: _WinHttpSimpleRequest
@@ -1718,7 +1720,7 @@ Func _WinHttpSimpleRequest($hConnect, $sType = Default, $sPath = Default, $sRefe
 	Local $sOutData = _WinHttpSimpleReadData($hRequest, $iMode)
 	_WinHttpCloseHandle($hRequest)
 	Return SetExtended($iExtended, $sOutData)
-EndFunc
+EndFunc   ;==>_WinHttpSimpleRequest
 
 ; #FUNCTION# ====================================================================================================================
 ; Name...........: _WinHttpSimpleSendRequest
@@ -1755,7 +1757,7 @@ Func _WinHttpSimpleSendRequest($hConnect, $sType = Default, $sPath = Default, $s
 	_WinHttpReceiveResponse($hRequest)
 	If @error Then Return SetError(3, 0 * _WinHttpCloseHandle($hRequest), 0)
 	Return $hRequest
-EndFunc
+EndFunc   ;==>_WinHttpSimpleSendRequest
 
 ; #FUNCTION# ====================================================================================================================
 ; Name...........: _WinHttpSimpleSendSSLRequest
@@ -1796,7 +1798,7 @@ Func _WinHttpSimpleSendSSLRequest($hConnect, $sType = Default, $sPath = Default,
 	_WinHttpReceiveResponse($hRequest)
 	If @error Then Return SetError(3, 0 * _WinHttpCloseHandle($hRequest), 0)
 	Return $hRequest
-EndFunc
+EndFunc   ;==>_WinHttpSimpleSendSSLRequest
 
 ; #FUNCTION# ====================================================================================================================
 ; Name...........: _WinHttpSimpleSSLRequest
@@ -1849,7 +1851,7 @@ Func _WinHttpSimpleSSLRequest($hConnect, $sType = Default, $sPath = Default, $sR
 	Local $sOutData = _WinHttpSimpleReadData($hRequest, $iMode)
 	_WinHttpCloseHandle($hRequest)
 	Return $sOutData
-EndFunc
+EndFunc   ;==>_WinHttpSimpleSSLRequest
 
 ; #FUNCTION# ;===============================================================================
 ; Name...........: _WinHttpTimeFromSystemTime
@@ -1879,7 +1881,7 @@ Func _WinHttpTimeFromSystemTime()
 	Local $aCall = DllCall($hWINHTTPDLL__WINHTTP, "bool", "WinHttpTimeFromSystemTime", "struct*", $SYSTEMTIME, "struct*", $tTime)
 	If @error Or Not $aCall[0] Then Return SetError(2, 0, "")
 	Return DllStructGetData($tTime, 1)
-EndFunc
+EndFunc   ;==>_WinHttpTimeFromSystemTime
 
 ; #FUNCTION# ;===============================================================================
 ; Name...........: _WinHttpTimeToSystemTime
@@ -1923,7 +1925,7 @@ Func _WinHttpTimeToSystemTime($sHttpTime)
 			DllStructGetData($SYSTEMTIME, "Second"), _
 			DllStructGetData($SYSTEMTIME, "Milliseconds")]
 	Return $aRet
-EndFunc
+EndFunc   ;==>_WinHttpTimeToSystemTime
 
 ; #FUNCTION# ;===============================================================================
 ; Name...........: _WinHttpWriteData
@@ -1966,12 +1968,12 @@ Func _WinHttpWriteData($hRequest, $vData, $iMode = Default)
 			"dword*", 0)
 	If @error Or Not $aCall[0] Then Return SetError(1, 0, 0)
 	Return SetExtended($aCall[4], 1)
-EndFunc
+EndFunc   ;==>_WinHttpWriteData
 
 
 ; #INTERNAL FUNCTIONS# ;=====================================================================
 Func __WinHttpFileContent($sAccept, $sName, $sFileString, $sBoundaryMain = "")
-	#forceref $sAccept ; FIXME: $sAccept is specified by the server (or left default). In case $sFileString is non-supported MIME type action should be aborted.
+	#forceref $sAccept ; FIXME : $sAccept is specified by the server(Or left Default). In Case $sFileString is non - supported MIME type action should be aborted.
 	Local $fNonStandard = False
 	If StringLeft($sFileString, 10) = "PHP#50338:" Then
 		$sFileString = StringTrimLeft($sFileString, 10)
@@ -2016,36 +2018,36 @@ Func __WinHttpFileContent($sAccept, $sName, $sFileString, $sBoundaryMain = "")
 		$sOut &= "--" & $sBoundary & "--" & @CRLF
 	EndIf
 	Return $sOut
-EndFunc
+EndFunc   ;==>__WinHttpFileContent
 
 Func __WinHttpMIMEType($sFileName)
 	Local $aArray = StringRegExp(__WinHttpMIMEAssocString(), "(?i)\Q;" & StringRegExpReplace($sFileName, ".*\.", "") & "\E\|(.*?);", 3)
 	If @error Then Return "application/octet-stream"
 	Return $aArray[0]
-EndFunc
+EndFunc   ;==>__WinHttpMIMEType
 
 Func __WinHttpMIMEAssocString()
 	Return ";ai|application/postscript;aif|audio/x-aiff;aifc|audio/x-aiff;aiff|audio/x-aiff;asc|text/plain;atom|application/atom+xml;au|audio/basic;avi|video/x-msvideo;bcpio|application/x-bcpio;bin|application/octet-stream;bmp|image/bmp;cdf|application/x-netcdf;cgm|image/cgm;class|application/octet-stream;cpio|application/x-cpio;cpt|application/mac-compactpro;csh|application/x-csh;css|text/css;dcr|application/x-director;dif|video/x-dv;dir|application/x-director;djv|image/vnd.djvu;djvu|image/vnd.djvu;dll|application/octet-stream;dmg|application/octet-stream;dms|application/octet-stream;doc|application/msword;dtd|application/xml-dtd;dv|video/x-dv;dvi|application/x-dvi;dxr|application/x-director;eps|application/postscript;etx|text/x-setext;exe|application/octet-stream;ez|application/andrew-inset;gif|image/gif;gram|application/srgs;grxml|application/srgs+xml;gtar|application/x-gtar;hdf|application/x-hdf;hqx|application/mac-binhex40;htm|text/html;html|text/html;ice|x-conference/x-cooltalk;ico|image/x-icon;ics|text/calendar;ief|image/ief;ifb|text/calendar;iges|model/iges;igs|model/iges;jnlp|application/x-java-jnlp-file;jp2|image/jp2;jpe|image/jpeg;jpeg|image/jpeg;jpg|image/jpeg;js|application/x-javascript;kar|audio/midi;latex|application/x-latex;lha|application/octet-stream;lzh|application/octet-stream;m3u|audio/x-mpegurl;m4a|audio/mp4a-latm;m4b|audio/mp4a-latm;m4p|audio/mp4a-latm;m4u|video/vnd.mpegurl;m4v|video/x-m4v;mac|image/x-macpaint;man|application/x-troff-man;mathml|application/mathml+xml;me|application/x-troff-me;mesh|model/mesh;mid|audio/midi;midi|audio/midi;mif|application/vnd.mif;mov|video/quicktime;movie|video/x-sgi-movie;mp2|audio/mpeg;mp3|audio/mpeg;mp4|video/mp4;mpe|video/mpeg;mpeg|video/mpeg;mpg|video/mpeg;mpga|audio/mpeg;ms|application/x-troff-ms;msh|model/mesh;mxu|video/vnd.mpegurl;nc|application/x-netcdf;oda|application/oda;ogg|application/ogg;pbm|image/x-portable-bitmap;pct|image/pict;pdb|chemical/x-pdb;pdf|application/pdf;pgm|image/x-portable-graymap;pgn|application/x-chess-pgn;pic|image/pict;pict|image/pict;png|image/png;pnm|image/x-portable-anymap;pnt|image/x-macpaint;pntg|image/x-macpaint;ppm|image/x-portable-pixmap;ppt|application/vnd.ms-powerpoint;ps|application/postscript;qt|video/quicktime;qti|image/x-quicktime;qtif|image/x-quicktime;ra|audio/x-pn-realaudio;ram|audio/x-pn-realaudio;ras|image/x-cmu-raster;rdf|application/rdf+xml;rgb|image/x-rgb;rm|application/vnd.rn-realmedia;roff|application/x-troff;rtf|text/rtf;rtx|text/richtext;sgm|text/sgml;sgml|text/sgml;sh|application/x-sh;shar|application/x-shar;silo|model/mesh;sit|application/x-stuffit;skd|application/x-koan;skm|application/x-koan;skp|application/x-koan;skt|application/x-koan;smi|application/smil;smil|application/smil;snd|audio/basic;so|application/octet-stream;spl|application/x-futuresplash;src|application/x-wais-source;sv4cpio|application/x-sv4cpio;sv4crc|application/x-sv4crc;svg|image/svg+xml;swf|application/x-shockwave-flash;t|application/x-troff;tar|application/x-tar;tcl|application/x-tcl;tex|application/x-tex;texi|application/x-texinfo;texinfo|application/x-texinfo;tif|image/tiff;tiff|image/tiff;tr|application/x-troff;tsv|text/tab-separated-values;txt|text/plain;ustar|application/x-ustar;vcd|application/x-cdlink;vrml|model/vrml;vxml|application/voicexml+xml;wav|audio/x-wav;wbmp|image/vnd.wap.wbmp;wbmxl|application/vnd.wap.wbxml;wml|text/vnd.wap.wml;wmlc|application/vnd.wap.wmlc;wmls|text/vnd.wap.wmlscript;wmlsc|application/vnd.wap.wmlscriptc;wrl|model/vrml;xbm|image/x-xbitmap;xht|application/xhtml+xml;xhtml|application/xhtml+xml;xls|application/vnd.ms-excel;xml|application/xml;xpm|image/x-xpixmap;xsl|application/xml;xslt|application/xslt+xml;xul|application/vnd.mozilla.xul+xml;xwd|image/x-xwindowdump;xyz|chemical/x-xyz;zip|application/zip;"
-EndFunc
+EndFunc   ;==>__WinHttpMIMEAssocString
 
 Func __WinHttpCharSet($sContentType)
 	Local $aContentType = StringRegExp($sContentType, "(?i).*?\Qcharset=\E(?U)([^ ]+)(;| |\Z)", 2)
 	If Not @error Then $sContentType = $aContentType[1]
 	If StringLeft($sContentType, 2) = "cp" Then Return Int(StringTrimLeft($sContentType, 2))
 	If $sContentType = "utf-8" Then Return 65001
-EndFunc
+EndFunc   ;==>__WinHttpCharSet
 
-Func __WinHttpURLEncode($vData, $sEncType = "")
+Func __WinHttpURLEncode($vData, $sEnctype = "")
 	If IsBool($vData) Then Return $vData
 	$vData = __WinHttpHTMLDecode($vData)
 	If $sEnctype = "text/plain" Then Return StringReplace($vData, " ", "+", 0, 1)
 	Local $aURLArray[8] = ["http", 1, "", 80, "", "", BinaryToString(StringToBinary($vData, 4), 1), ""]
 	Return StringReplace(StringReplace(StringTrimLeft(_WinHttpCreateUrl($aURLArray), 7), "&", "%26", 0, 1), ";", "%3B", 0, 1)
-EndFunc
+EndFunc   ;==>__WinHttpURLEncode
 
 Func __WinHttpHTMLDecode($vData)
 	Return StringRegExpReplace(StringRegExpReplace(StringRegExpReplace(StringRegExpReplace(StringRegExpReplace($vData, "(?i)&apos;", "'"), "(?i)&amp;", "&"), "(?i)&lt;", "<"), "(?i)&gt;", ">"), "(?i)&quot;", '"')
-EndFunc
+EndFunc   ;==>__WinHttpHTMLDecode
 
 Func __WinHttpNormalizeActionURL($sActionPage, ByRef $sAction, ByRef $iScheme, ByRef $sNewURL, ByRef $sEnctype, ByRef $sMethod, ByRef $sReferer, $sURL = "")
 	$sReferer = $sURL
@@ -2094,7 +2096,7 @@ Func __WinHttpNormalizeActionURL($sActionPage, ByRef $sAction, ByRef $iScheme, B
 	EndIf
 	If Not $sMethod Then $sMethod = "GET"
 	If $sMethod = "GET" Then $sEnctype = ""
-EndFunc
+EndFunc   ;==>__WinHttpNormalizeActionURL
 
 Func __WinHttpHTML5Form($sHTML, $sId, $iFormErr, ByRef $aInput)
 	If $sId Then
@@ -2111,7 +2113,7 @@ Func __WinHttpHTML5Form($sHTML, $sId, $iFormErr, ByRef $aInput)
 		EndIf
 	EndIf
 	Return SetError($iFormErr, 0, "")
-EndFunc
+EndFunc   ;==>__WinHttpHTML5Form
 
 Func __WinHttpHTML5FormAttribs(ByRef $aDtas, ByRef $aFlds, ByRef $iNumParams, ByRef $aInput, ByRef $sAction, ByRef $sEnctype, ByRef $sMethod)
 	; Clicking "submit" is done using:
@@ -2125,10 +2127,12 @@ Func __WinHttpHTML5FormAttribs(ByRef $aDtas, ByRef $aFlds, ByRef $iNumParams, By
 	; "id:whatever", "Xcoord,Ycoord"
 	; "whatever", "Xcoord,Ycoord"     ;<- same as "id:whatever"
 	Local $aSpl, $iSubmitHTML5 = 0, $iInpSubm, $sImgAppx = "."
+	Local $aStrSplit
 	For $k = 1 To $iNumParams
 		$aSpl = StringSplit($aFlds[$k], ":", 2)
+		Local $sInpNme
 		If $aSpl[0] = "type" And ($aSpl[1] = "submit" Or $aSpl[1] = "image") Then
-			Local $iSubmIndex = $aDtas[$k], $iSubmCur = 0, $iImgCur = 0, $sType, $sInpNme
+			Local $iSubmIndex = $aDtas[$k], $iSubmCur = 0, $iImgCur = 0, $sType
 			If $aSpl[1] = "image" Then
 				$iSubmIndex = Int($aDtas[$k])
 			EndIf
@@ -2159,8 +2163,9 @@ Func __WinHttpHTML5FormAttribs(ByRef $aDtas, ByRef $aFlds, ByRef $iNumParams, By
 						$iImgCur += 1
 				EndSwitch
 			Next
-			ElseIf $aSpl[0] = "name" Then
-			Local $sInpNme = $aSpl[1], $sType
+		ElseIf $aSpl[0] = "name" Then
+			$sInpNme = $aSpl[1]
+			$sType = ''
 			For $i = 0 To UBound($aInput) - 1 ; for all input elements
 				$sType = __WinHttpAttribVal($aInput[$i], "type")
 				If $sType = "submit" Then
@@ -2173,7 +2178,9 @@ Func __WinHttpHTML5FormAttribs(ByRef $aDtas, ByRef $aFlds, ByRef $iNumParams, By
 					If __WinHttpAttribVal($aInput[$i], "name") = $sInpNme And $aDtas[$k] Then
 						$iSubmitHTML5 = 1
 						$iInpSubm = $i
-						Local $aStrSplit = StringSplit($aDtas[$k], ",", 3), $iX = 0, $iY = 0
+						$aStrSplit = StringSplit($aDtas[$k], ",", 3)
+						$iX = 0
+						$iY = 0
 						If Not @error Then
 							$iX = Int($aStrSplit[0])
 							$iY = Int($aStrSplit[1])
@@ -2188,7 +2195,8 @@ Func __WinHttpHTML5FormAttribs(ByRef $aDtas, ByRef $aFlds, ByRef $iNumParams, By
 				EndIf
 			Next
 		Else ; id
-			Local $sInpId, $sType
+			$sType = ''
+			Local $sInpId
 			If @error Then
 				$sInpId = $aSpl[0]
 			ElseIf $aSpl[0] = "id" Then
@@ -2206,9 +2214,11 @@ Func __WinHttpHTML5FormAttribs(ByRef $aDtas, ByRef $aFlds, ByRef $iNumParams, By
 					If __WinHttpAttribVal($aInput[$i], "id") = $sInpId And $aDtas[$k] Then
 						$iSubmitHTML5 = 1
 						$iInpSubm = $i
-						Local $sInpNme = __WinHttpAttribVal($aInput[$iInpSubm], "name")
+						$sInpNme = __WinHttpAttribVal($aInput[$iInpSubm], "name")
 						If $sInpNme Then $sInpNme &= $sImgAppx
-						Local $aStrSplit = StringSplit($aDtas[$k], ",", 3), $iX = 0, $iY = 0
+						$aStrSplit = StringSplit($aDtas[$k], ",", 3)
+						$iX = 0
+						$iY = 0
 						If Not @error Then
 							$iX = Int($aStrSplit[0])
 							$iY = Int($aStrSplit[1])
@@ -2241,7 +2251,7 @@ Func __WinHttpHTML5FormAttribs(ByRef $aDtas, ByRef $aFlds, ByRef $iNumParams, By
 		If $sAttr Then $sMethod = $sAttr
 		If __WinHttpAttribVal($aInput[$iInpSubm], "type") = "image" Then $aInput[$iInpSubm] = ""
 	EndIf
-EndFunc
+EndFunc   ;==>__WinHttpHTML5FormAttribs
 
 Func __WinHttpNormalizeForm(ByRef $sForm, $sSpr1, $sSpr2)
 	Local $aData = StringToASCIIArray($sForm, Default, Default, 2)
@@ -2275,7 +2285,7 @@ Func __WinHttpNormalizeForm(ByRef $sForm, $sSpr1, $sSpr2)
 		EndSwitch
 	Next
 	$sForm = $sOut
-EndFunc
+EndFunc   ;==>__WinHttpNormalizeForm
 
 Func __WinHttpFinalizeCtrls($sSubmit, $sRadio, $sCheckBox, $sButton, ByRef $sAddData, $sGrSep, $sBound = "")
 	If $sSubmit Then ; If no submit is specified
@@ -2305,26 +2315,26 @@ Func __WinHttpFinalizeCtrls($sSubmit, $sRadio, $sCheckBox, $sButton, ByRef $sAdd
 		Next
 		__WinHttpTrimBounds($sAddData, $sBound)
 	EndIf
-EndFunc
+EndFunc   ;==>__WinHttpFinalizeCtrls
 
 Func __WinHttpTrimBounds(ByRef $sDta, $sBound)
 	Local $iBLen = StringLen($sBound)
 	If StringRight($sDta, $iBLen) = $sBound Then $sDta = StringTrimRight($sDta, $iBLen)
 	If StringLeft($sDta, $iBLen) = $sBound Then $sDta = StringTrimLeft($sDta, $iBLen)
-EndFunc
+EndFunc   ;==>__WinHttpTrimBounds
 
 Func __WinHttpFormAttrib(ByRef $aAttrib, $i, $sElement)
 	$aAttrib[0][$i] = __WinHttpAttribVal($sElement, "id")
 	$aAttrib[1][$i] = __WinHttpAttribVal($sElement, "name")
 	$aAttrib[2][$i] = __WinHttpAttribVal($sElement, "value")
 	$aAttrib[3][$i] = __WinHttpAttribVal($sElement, "type")
-EndFunc
+EndFunc   ;==>__WinHttpFormAttrib
 
 Func __WinHttpAttribVal($sIn, $sAttrib)
 	Local $aArray = StringRegExp($sIn, '(?i).*?(\A|\h)\b' & $sAttrib & '\h*=(?s)(\h*"(.*?)"|' & "\h*'(.*?)'|" & '\h*(.*?)(?: |\Z))', 1) ; e.g. id="abc" or id='abc' or id=abc
 	If @error Then Return ""
 	Return $aArray[UBound($aArray) - 1]
-EndFunc
+EndFunc   ;==>__WinHttpAttribVal
 
 Func __WinHttpFormSend($hInternet, $sMethod, $sAction, $fMultiPart, $sBoundary, $sAddData, $fSecure = False, $sAdditionalHeaders = "", $sCredName = "", $sCredPass = "", $iIgnoreAllCertErrors = 0)
 	Local $hRequest
@@ -2349,7 +2359,7 @@ Func __WinHttpFormSend($hInternet, $sMethod, $sAction, $fMultiPart, $sBoundary, 
 	_WinHttpReceiveResponse($hRequest)
 	__WinHttpSetCredentials($hRequest, "", $sAddData, $sCredName, $sCredPass, 1)
 	Return $hRequest
-EndFunc
+EndFunc   ;==>__WinHttpFormSend
 
 Func __WinHttpSetCredentials($hRequest, $sHeaders = "", $sOptional = "", $sCredName = "", $sCredPass = "", $iFormFill = 0)
 	If $sCredName And $sCredPass Then
@@ -2378,43 +2388,44 @@ Func __WinHttpSetCredentials($hRequest, $sHeaders = "", $sOptional = "", $sCredN
 			EndIf
 		EndIf
 	EndIf
-EndFunc
+EndFunc   ;==>__WinHttpSetCredentials
 
 Func __WinHttpFormUpload($hRequest, $sHeaders, $sData)
+	#forceref $sHeaders
 	Local $aClbk = _WinHttpSimpleFormFill_SetUploadCallback()
 	If $aClbk[0] <> Default Then
 		Local $iSize = StringLen($sData), $iChunk = Floor($iSize / $aClbk[1]), $iRest = $iSize - ($aClbk[1] - 1) * $iChunk, $iCurCh = $iChunk
 		_WinHttpSendRequest($hRequest, Default, Default, $iSize)
 		For $i = 1 To $aClbk[1]
 			If $i = $aClbk[1] Then $iCurCh = $iRest
-			_WinHttpWriteData($hRequest, StringMid($sData, 1 + $iChunk * ($i -1), $iCurCh))
+			_WinHttpWriteData($hRequest, StringMid($sData, 1 + $iChunk * ($i - 1), $iCurCh))
 			Call($aClbk[0], Floor($i * 100 / $aClbk[1]))
 		Next
 	Else
 		_WinHttpSendRequest($hRequest, Default, $sData)
 	EndIf
-EndFunc
+EndFunc   ;==>__WinHttpFormUpload
 
 Func __WinHttpDefault(ByRef $vInput, $vOutput)
 	If $vInput = Default Or Number($vInput) = -1 Then $vInput = $vOutput
-EndFunc
+EndFunc   ;==>__WinHttpDefault
 
 Func __WinHttpMemGlobalFree($pMem)
 	Local $aCall = DllCall("kernel32.dll", "ptr", "GlobalFree", "ptr", $pMem)
 	If @error Or $aCall[0] Then Return SetError(1, 0, 0)
 	Return 1
-EndFunc
+EndFunc   ;==>__WinHttpMemGlobalFree
 
 Func __WinHttpPtrStringLenW($pStr)
 	Local $aCall = DllCall("kernel32.dll", "dword", "lstrlenW", "ptr", $pStr)
 	If @error Then Return SetError(1, 0, 0)
 	Return $aCall[0]
-EndFunc
+EndFunc   ;==>__WinHttpPtrStringLenW
 
 Func __WinHttpUA()
 	Local Static $sUA = "Mozilla/5.0 " & __WinHttpSysInfo() & " WinHttp/" & __WinHttpVer() & " (WinHTTP/5.1) like Gecko"
 	Return $sUA
-EndFunc
+EndFunc   ;==>__WinHttpUA
 
 Func __WinHttpSysInfo()
 	Local $sDta = FileGetVersion("kernel32.dll")
@@ -2422,14 +2433,14 @@ Func __WinHttpSysInfo()
 	If StringInStr(@OSArch, "64") And Not @AutoItX64 Then $sDta &= "; WOW64"
 	$sDta &= ")"
 	Return $sDta
-EndFunc
+EndFunc   ;==>__WinHttpSysInfo
 
 Func __WinHttpVer()
 	Return "1.6.4.2"
-EndFunc
+EndFunc   ;==>__WinHttpVer
 
 Func _WinHttpBinaryConcat(ByRef $bBinary1, ByRef $bBinary2)
 	Local $bOut = _WinHttpSimpleBinaryConcat($bBinary1, $bBinary2)
 	Return SetError(@error, 0, $bOut)
-EndFunc
+EndFunc   ;==>_WinHttpBinaryConcat
 ;============================================================================================
