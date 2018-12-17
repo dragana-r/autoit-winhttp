@@ -1170,7 +1170,10 @@ Func _WinHttpSimpleFormFill(ByRef $hInternet, $sActionPage = Default, $sFormId =
 		EndIf
 	EndIf
 	$sHTML = StringRegExpReplace($sHTML, "(?s)<!--.*?-->", "") ; removing comments
+	$sHTML = StringRegExpReplace($sHTML, "(?is)<\s*head.*?/head\s*>", "") ; removing head
 	$sHTML = StringRegExpReplace($sHTML, "(?s)<!\[CDATA\[.*?\]\]>", "") ; removing CDATA
+	$sHTML = StringRegExpReplace($sHTML, "(?is)<\s*style.*?/style\s*>", "") ; removing styles
+	$sHTML = StringRegExpReplace($sHTML, "(?is)<\s*script.*?/script\s*>", "") ; removing scripts
 	Local $fSend = False ; preset 'Sending flag'
 	; Find all forms on page
 	Local $aForm = StringRegExp($sHTML, "(?si)<\s*form(?:[^\w])\s*(.*?)(?:(?:<\s*/form\s*>)|\Z)", 3)
