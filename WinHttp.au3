@@ -2159,7 +2159,7 @@ Func __WinHttpHTML5FormAttribs(ByRef $aDtas, ByRef $aFlds, ByRef $iNumParams, By
 						$iImgCur += 1
 				EndSwitch
 			Next
-			ElseIf $aSpl[0] = "name" Then
+		ElseIf $aSpl[0] = "name" Then
 			Local $sInpNme = $aSpl[1], $sType
 			For $i = 0 To UBound($aInput) - 1 ; for all input elements
 				$sType = __WinHttpAttribVal($aInput[$i], "type")
@@ -2381,13 +2381,14 @@ Func __WinHttpSetCredentials($hRequest, $sHeaders = "", $sOptional = "", $sCredN
 EndFunc
 
 Func __WinHttpFormUpload($hRequest, $sHeaders, $sData)
+	#forceref $sHeaders ; already added by the caller
 	Local $aClbk = _WinHttpSimpleFormFill_SetUploadCallback()
 	If $aClbk[0] <> Default Then
 		Local $iSize = StringLen($sData), $iChunk = Floor($iSize / $aClbk[1]), $iRest = $iSize - ($aClbk[1] - 1) * $iChunk, $iCurCh = $iChunk
 		_WinHttpSendRequest($hRequest, Default, Default, $iSize)
 		For $i = 1 To $aClbk[1]
 			If $i = $aClbk[1] Then $iCurCh = $iRest
-			_WinHttpWriteData($hRequest, StringMid($sData, 1 + $iChunk * ($i -1), $iCurCh))
+			_WinHttpWriteData($hRequest, StringMid($sData, 1 + $iChunk * ($i - 1), $iCurCh))
 			Call($aClbk[0], Floor($i * 100 / $aClbk[1]))
 		Next
 	Else
