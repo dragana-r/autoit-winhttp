@@ -1844,14 +1844,16 @@ Func _WinHttpSimpleSSLRequest($hConnect, $sType = Default, $sPath = Default, $sR
 	Local $hRequest = _WinHttpSimpleSendSSLRequest($hConnect, $sType, $sPath, $sReferer, $sDta, $sHeader, $iIgnoreCertErrors)
 	If @error Then Return SetError(@error, 0, 0)
 	__WinHttpSetCredentials($hRequest, $sHeader, $sDta, $sCredName, $sCredPass)
+	Local $iExtended = _WinHttpQueryHeaders($hRequest, $WINHTTP_QUERY_STATUS_CODE)
+
 	If $fGetHeaders Then
 		Local $aData[3] = [_WinHttpQueryHeaders($hRequest), _WinHttpSimpleReadData($hRequest, $iMode), _WinHttpQueryOption($hRequest, $WINHTTP_OPTION_URL)]
 		_WinHttpCloseHandle($hRequest)
-		Return $aData
+		Return SetExtended($iExtended, $aData)
 	EndIf
 	Local $sOutData = _WinHttpSimpleReadData($hRequest, $iMode)
 	_WinHttpCloseHandle($hRequest)
-	Return $sOutData
+	Return SetExtended($iExtended, $sOutData)
 EndFunc
 
 ; #FUNCTION# ;===============================================================================
