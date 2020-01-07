@@ -2043,7 +2043,7 @@ Func __WinHttpURLEncode($vData, $sEncType = "")
 	$vData = __WinHttpHTMLDecode($vData)
 	If $sEnctype = "text/plain" Then Return StringReplace($vData, " ", "+", 0, 1)
 	Local $aURLArray[8] = ["http", 1, "", 80, "", "", BinaryToString(StringToBinary($vData, 4), 1), ""]
-	Return StringReplace(StringReplace(StringTrimLeft(_WinHttpCreateUrl($aURLArray), 7), "&", "%26", 0, 1), ";", "%3B", 0, 1)
+	Return StringReplace(StringReplace(StringReplace(StringReplace(StringReplace(StringReplace(StringReplace(StringReplace(StringReplace(StringReplace(StringReplace(StringReplace(StringReplace(StringReplace(StringReplace(StringReplace(StringTrimLeft(_WinHttpCreateUrl($aURLArray), 7), "!", "%21", 0, 1), "#", "%23", 0, 1), "$", "%24", 0, 1), "&", "%26", 0, 1), "'", "%27", 0, 1), "(", "%28", 0, 1), ")", "%29", 0, 1), "*", "%2A", 0, 1), "+", "%2B", 0, 1), ",", "%2C", 0, 1), "/", "%2F", 0, 1), ":", "%3A", 0, 1), ";", "%3B", 0, 1), "=", "%3D", 0, 1), "?", "%3F", 0, 1), "@", "%40", 0, 1)
 EndFunc
 
 Func __WinHttpHTMLDecode($vData)
