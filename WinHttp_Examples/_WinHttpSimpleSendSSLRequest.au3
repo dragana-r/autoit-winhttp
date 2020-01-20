@@ -4,9 +4,8 @@
 
 Opt("MustDeclareVars", 1)
 
-; Windows Live ID. JavaScript required to sign in, remember that.
-Global $sDomain = "accountservices.passport.net"
-Global $sPage = "uiresetpw.srf"
+Global $sDomain = "github.com"
+Global $sPage = "dragana-r/autoit-winhttp"
 
 ; Initialize and get session handle
 Global $hOpen = _WinHttpOpen()
