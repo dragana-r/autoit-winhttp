@@ -748,3 +748,11 @@ a.home:hover
 	cursor:arrow;
 	font-size:0;
 }
+
+@media print
+{
+	a.button
+	{
+		display: none !important;
+	}
+}
