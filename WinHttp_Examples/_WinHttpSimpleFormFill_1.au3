@@ -18,7 +18,7 @@ $hOpen = _WinHttpOpen()
 ; Get connection handle
 $hConnect = _WinHttpConnect($hOpen, "w3schools.com")
 ; Fill form on this page
-$sRead = _WinHttpSimpleFormFill($hConnect, "html/html_forms.asp", "index:0", "name:firstname", "Miyake", "name:lastname", "Issey")
+$sRead = _WinHttpSimpleFormFill($hConnect, "html/html_forms.asp", "index:0", "name:fname", "Miyake", "name:lname", "Issey")
 ; Close connection handle
 _WinHttpCloseHandle($hConnect)
 ; Close session handle

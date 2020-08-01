@@ -1,7 +1,7 @@
 #include "WinHttp.au3"
 
 ; Example 5:
-; 1. Open try.coderlearner.com form-action page (http://try.coderlearner.com/html5/form/form_formaction_ex_2.html)
+; 1. Open paratus.hr form-action page (https://paratus.hr/software/testing/html5form/)
 ; 2. Fill form on that page with these values/conditins:
 ; - form is default one
 ; - set -User- and -Password- data to input boxes. Locate input boxes by their names -loginName- and -loginPass-
@@ -10,9 +10,9 @@
 ; Initialize and get session handle
 $hOpen = _WinHttpOpen()
 ; Get connection handle
-$hConnect = _WinHttpConnect($hOpen, "http://try.coderlearner.com")
+$hConnect = _WinHttpConnect($hOpen, "https://paratus.hr")
 ; Fill form on this page
-$aRead = _WinHttpSimpleFormFill($hConnect, "html5/form/form_formaction_ex_2.html", _
+$aRead = _WinHttpSimpleFormFill($hConnect, "/software/testing/html5form/", _
 		Default, _
 		"name:loginName", "User", _
 		"name:loginPass", "Password", _
