@@ -1795,7 +1795,13 @@ Func _WinHttpSimpleSendSSLRequest($hConnect, $sType = Default, $sPath = Default,
 	_WinHttpSetOption($hRequest, $WINHTTP_OPTION_REDIRECT_POLICY, $WINHTTP_OPTION_REDIRECT_POLICY_ALWAYS)
 	_WinHttpSetOption(_WinHttpQueryOption(_WinHttpQueryOption($hRequest, $WINHTTP_OPTION_PARENT_HANDLE), $WINHTTP_OPTION_PARENT_HANDLE), $WINHTTP_OPTION_SECURE_PROTOCOLS, BitOR($WINHTTP_FLAG_SECURE_PROTOCOL_ALL, $WINHTTP_FLAG_SECURE_PROTOCOL_TLS1_1, $WINHTTP_FLAG_SECURE_PROTOCOL_TLS1_2))
 	_WinHttpSendRequest($hRequest, $sHeader, $sDta)
-	If @error Then Return SetError(2, 0 * _WinHttpCloseHandle($hRequest), 0)
+	If @error Then
+		If __WinHttpGetLastError() = $ERROR_WINHTTP_SECURE_FAILURE Then
+			_WinHttpSetOption(_WinHttpQueryOption(_WinHttpQueryOption($hRequest, $WINHTTP_OPTION_PARENT_HANDLE), $WINHTTP_OPTION_PARENT_HANDLE), $WINHTTP_OPTION_SECURE_PROTOCOLS, BitOR($WINHTTP_FLAG_SECURE_PROTOCOL_TLS1, $WINHTTP_FLAG_SECURE_PROTOCOL_TLS1_1, $WINHTTP_FLAG_SECURE_PROTOCOL_TLS1_2))
+			_WinHttpSendRequest($hRequest, $sHeader, $sDta)
+			If @error Then Return SetError(2, 0 * _WinHttpCloseHandle($hRequest), 0)
+		EndIf
+	EndIf
 	_WinHttpReceiveResponse($hRequest)
 	If @error Then Return SetError(3, 0 * _WinHttpCloseHandle($hRequest), 0)
 	Return $hRequest
@@ -2413,6 +2419,12 @@ EndFunc
 
 Func __WinHttpPtrStringLenW($pStr)
 	Local $aCall = DllCall("kernel32.dll", "dword", "lstrlenW", "ptr", $pStr)
+	If @error Then Return SetError(1, 0, 0)
+	Return $aCall[0]
+EndFunc
+
+Func __WinHttpGetLastError()
+	Local $aCall = DllCall("kernel32.dll", "dword", "GetLastError")
 	If @error Then Return SetError(1, 0, 0)
 	Return $aCall[0]
 EndFunc
