@@ -953,14 +953,18 @@ Func _WinHttpSetOption($hInternet, $iOption, $vSetting, $iSize = Default)
 			$sType = "wstr"
 			If (IsDllStruct($vSetting) Or IsPtr($vSetting)) Then Return SetError(3, 0, 0)
 			If $iSize < 1 Then $iSize = StringLen($vSetting)
-		Case $WINHTTP_OPTION_CLIENT_CERT_CONTEXT, $WINHTTP_OPTION_GLOBAL_PROXY_CREDS, $WINHTTP_OPTION_GLOBAL_SERVER_CREDS, $WINHTTP_OPTION_HTTP_VERSION, _
+		Case $WINHTTP_OPTION_GLOBAL_PROXY_CREDS, $WINHTTP_OPTION_GLOBAL_SERVER_CREDS, $WINHTTP_OPTION_HTTP_VERSION, _
 				$WINHTTP_OPTION_PROXY
 			$sType = "ptr"
 			If Not (IsDllStruct($vSetting) Or IsPtr($vSetting)) Then Return SetError(3, 0, 0)
+		Case $WINHTTP_OPTION_CLIENT_CERT_CONTEXT
+			$sType = "ptr"
+			If Not (IsDllStruct($vSetting) Or IsPtr($vSetting)) And Not $vSetting=NULL Then Return SetError(3, 0, 0)
+
 		Case Else
 			Return SetError(1, 0, 0)
 	EndSwitch
-	If $iSize < 1 Then
+	If $iSize < 1 And Not( $iOption = $WINHTTP_OPTION_CLIENT_CERT_CONTEXT And $vSetting=NULL) Then
 		If IsDllStruct($vSetting) Then
 			$iSize = DllStructGetSize($vSetting)
 		Else
@@ -1800,6 +1804,10 @@ Func _WinHttpSimpleSendSSLRequest($hConnect, $sType = Default, $sPath = Default,
 			_WinHttpSetOption(_WinHttpQueryOption(_WinHttpQueryOption($hRequest, $WINHTTP_OPTION_PARENT_HANDLE), $WINHTTP_OPTION_PARENT_HANDLE), $WINHTTP_OPTION_SECURE_PROTOCOLS, BitOR($WINHTTP_FLAG_SECURE_PROTOCOL_TLS1, $WINHTTP_FLAG_SECURE_PROTOCOL_TLS1_1, $WINHTTP_FLAG_SECURE_PROTOCOL_TLS1_2))
 			_WinHttpSendRequest($hRequest, $sHeader, $sDta)
 			If @error Then Return SetError(2, 0 * _WinHttpCloseHandle($hRequest), 0)
+		 elseif __WinHttpGetLastError() = $ERROR_WINHTTP_CLIENT_AUTH_CERT_NEEDED Then
+			   _WinHttpSetOption($hrequest, $WINHTTP_OPTION_CLIENT_CERT_CONTEXT,NULL,0)
+			   _WinHttpSendRequest($hRequest, $sHeader, $sDta)
+			   If @error Then Return SetError(2, 0 * _WinHttpCloseHandle($hRequest), 0)
 		EndIf
 	EndIf
 	_WinHttpReceiveResponse($hRequest)
