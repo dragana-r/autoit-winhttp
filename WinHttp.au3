@@ -1805,7 +1805,7 @@ Func _WinHttpSimpleSendSSLRequest($hConnect, $sType = Default, $sPath = Default,
 			_WinHttpSendRequest($hRequest, $sHeader, $sDta)
 			If @error Then Return SetError(2, 0 * _WinHttpCloseHandle($hRequest), 0)
 		 elseif __WinHttpGetLastError() = $ERROR_WINHTTP_CLIENT_AUTH_CERT_NEEDED Then
-			   _WinHttpSetOption($hrequest, $WINHTTP_OPTION_CLIENT_CERT_CONTEXT,NULL,0)
+			   _WinHttpSetOption($hrequest, $WINHTTP_OPTION_CLIENT_CERT_CONTEXT,$WINHTTP_NO_CLIENT_CERT_CONTEXT,0)
 			   _WinHttpSendRequest($hRequest, $sHeader, $sDta)
 			   If @error Then Return SetError(2, 0 * _WinHttpCloseHandle($hRequest), 0)
 		EndIf
